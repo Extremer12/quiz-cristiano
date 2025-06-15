@@ -5,13 +5,11 @@
 class QuestionManager {
     constructor() {
         this.questions = [];
+        // ✅ CORREGIDO: Solo 4 categorías para coincidir con single-player.js
         this.categories = [
             { id: 'antiguo-testamento', name: 'Antiguo Testamento', icon: 'fa-book', color: '#8E44AD' },
             { id: 'nuevo-testamento', name: 'Nuevo Testamento', icon: 'fa-cross', color: '#3498DB' },
             { id: 'personajes-biblicos', name: 'Personajes Bíblicos', icon: 'fa-user', color: '#E67E22' },
-            { id: 'historia-iglesia', name: 'Historia de la Iglesia', icon: 'fa-church', color: '#27AE60' },
-            { id: 'profecias-revelaciones', name: 'Profecías y Revelaciones', icon: 'fa-scroll', color: '#C0392B' },
-            { id: 'vida-jesus', name: 'Vida de Jesús', icon: 'fa-dove', color: '#F1C40F' },
             { id: 'doctrina-cristiana', name: 'Doctrina Cristiana', icon: 'fa-pray', color: '#9B59B6' }
         ];
     }

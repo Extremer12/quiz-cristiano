@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Reglas para usuarios autenticados
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Reglas para datos de juego
+    match /gameData/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Reglas para logros (solo lectura pública, escritura autenticada)
+    match /achievements/{achievementId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Reglas para rankings (lectura pública)
+    match /rankings/{rankingId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Reglas para productos de la tienda (solo lectura)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if false; // Solo admins pueden modificar productos
+    }
+  }
+}

@@ -6,13 +6,14 @@
     <title>Tienda - Quiz Cristiano</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/pages/store.css">
+    <link rel="stylesheet" href="css/pages/safari-fixes.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <button class="back-btn" onclick="window.location.href='index.html'">
+            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio" aria-label="Volver al inicio">
                 <i class="fas fa-arrow-left"></i>
             </button>
             <h1>Tienda</h1>
@@ -21,7 +22,7 @@
                     <i class="fas fa-coins"></i>
                     <span id="coins-display">0</span>
                 </span>
-                <button class="inventory-btn" onclick="showInventory()">
+                <button class="inventory-btn" onclick="showInventory()" title="Ver inventario" aria-label="Abrir inventario">
                     <i class="fas fa-backpack"></i>
                     <span class="inventory-count" id="inventory-count">0</span>
                 </button>
@@ -101,7 +102,7 @@
             <div class="section-header">
                 <h2>Productos Disponibles</h2>
                 <div class="sort-options">
-                    <select id="sort-select" onchange="sortProducts(this.value)">
+                    <select id="sort-select" onchange="sortProducts(this.value)" title="Ordenar productos" aria-label="Ordenar productos por">
                         <option value="rarity">Por rareza</option>
                         <option value="price-low">Precio: Menor a mayor</option>
                         <option value="price-high">Precio: Mayor a menor</option>

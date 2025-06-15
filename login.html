@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Quiz Cristiano</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Lato', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('./assets/images/fondo.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            margin-bottom: 30px;
+            opacity: 0.8;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        
+        .benefits {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .benefits h4 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        
+        .benefit-item i {
+            color: #27ae60;
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .google-btn {
+            background: #ffffff;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .google-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .guest-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .guest-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+            font-size: 0.9rem;
+        }
+        
+        .skip-login {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .skip-login a {
+            color: #ffd700;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .skip-login a:hover {
+            opacity: 1;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="logo">Quiz Cristiano</h1>
+        <p class="subtitle">Inicia sesión para sincronizar tu progreso en la nube</p>
+        
+        <div class="benefits">
+            <h4>Beneficios de crear cuenta:</h4>
+            <div class="benefit-item">
+                <i class="fas fa-cloud"></i>
+                <span>Progreso guardado en la nube</span>
+            </div>
+            <div class="benefit-item">
+                <i class="fas fa-trophy"></i>
+                <span>Logros sincronizados</span>
+            </div>
+            <div class="benefit-item">
+                <i class="fas fa-coins"></i>
+                <span>Monedas protegidas</span>
+            </div>
+            <div class="benefit-item">
+                <i class="fas fa-users"></i>
+                <span>Acceso a rankings globales</span>
+            </div>
+        </div>
+        
+        <div class="error-message" id="error-message">
+            <!-- Los errores aparecen aquí -->
+        </div>
+        
+        <button class="login-btn google-btn" id="google-btn" onclick="signInWithGoogle()">
+            <i class="fab fa-google"></i>
+            <span>Continuar con Google</span>
+        </button>
+        
+        <button class="login-btn guest-btn" id="guest-btn" onclick="signInAsGuest()">
+            <i class="fas fa-user-secret"></i>
+            <span>Jugar como Invitado</span>
+        </button>
+        
+        <div class="skip-login">
+            <a href="index.html">Omitir por ahora</a>
+        </div>
+    </div>
+
+    <script type="module">
+        // 🔥 IMPORTAR FIREBASE CONFIGURACIÓN
+        import { 
+            auth, 
+            signInWithGoogle as firebaseSignInWithGoogle, 
+            signInAsGuest as firebaseSignInAsGuest,
+            saveUserData, 
+            getUserData,
+            analytics 
+        } from './js/config/firebase-config.js';
+        
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { logEvent } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoading(btnId, loadingText) {
+            const btn = document.getElementById(btnId);
+            const btnText = btn.querySelector('span');
+            
+            btn.classList.add('loading');
+            btnText.textContent = loadingText;
+            
+            return () => {
+                btn.classList.remove('loading');
+            };
+        }
+
+        window.signInWithGoogle = async function() {
+            const stopLoading = showLoading('google-btn', 'Iniciando sesión...');
+            
+            try {
+                // Usar función de firebase-config.js
+                const user = await firebaseSignInWithGoogle();
+                
+                // Log analytics event
+                logEvent(analytics, 'login', { method: 'google' });
+                
+                // Migrar datos locales
+                await migrateLocalData(user);
+                
+                // Guardar info del usuario
+                await saveUserData(user.uid, {
+                    profile: {
+                        name: user.displayName,
+                        email: user.email,
+                        photo: user.photoURL,
+                        loginMethod: 'google',
+                        lastLogin: new Date(),
+                        createdAt: new Date()
+                    }
+                });
+                
+                // Guardar en localStorage para acceso rápido
+                localStorage.setItem('currentUser', JSON.stringify({
+                    uid: user.uid,
+                    name: user.displayName,
+                    email: user.email,
+                    photo: user.photoURL,
+                    loginMethod: 'google'
+                }));
+                
+                console.log('🎉 Login completado, redirigiendo...');
+                // Verificar si hay una página de redirect guardada
+                const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
+                sessionStorage.removeItem('redirectAfterLogin');
+                window.location.href = redirectUrl;
+                
+            } catch (error) {
+                stopLoading();
+                
+                let errorMessage = 'Error al iniciar sesión. ';
+                
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        errorMessage += 'Ventana cerrada por el usuario.';
+                        break;
+                    case 'auth/popup-blocked':
+                        errorMessage += 'Popup bloqueado por el navegador.';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        errorMessage += 'Solicitud cancelada.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage += 'Error de conexión.';
+                        break;
+                    default:
+                        errorMessage += 'Intenta de nuevo.';
+                        console.error('Error details:', error);
+                }
+                
+                showError(errorMessage);
+                
+                // Restaurar botón
+                const btn = document.getElementById('google-btn');
+                btn.querySelector('span').textContent = 'Continuar con Google';
+            }
+        };
+
+        window.signInAsGuest = async function() {
+            const stopLoading = showLoading('guest-btn', 'Entrando como invitado...');
+            
+            try {
+                const user = await firebaseSignInAsGuest();
+                
+                // Log analytics event
+                logEvent(analytics, 'login', { method: 'anonymous' });
+                
+                // Migrar datos locales
+                await migrateLocalData(user);
+                
+                // Guardar info del usuario anónimo
+                await saveUserData(user.uid, {
+                    profile: {
+                        name: 'Invitado',
+                        email: null,
+                        photo: null,
+                        loginMethod: 'anonymous',
+                        lastLogin: new Date(),
+                        createdAt: new Date()
+                    }
+                });
+                
+                localStorage.setItem('currentUser', JSON.stringify({
+                    uid: user.uid,
+                    name: 'Invitado',
+                    email: null,
+                    photo: null,
+                    loginMethod: 'anonymous'
+                }));
+                
+                console.log('🎉 Login anónimo completado, redirigiendo...');
+                // Verificar si hay una página de redirect guardada
+                const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
+                sessionStorage.removeItem('redirectAfterLogin');
+                window.location.href = redirectUrl;
+                
+            } catch (error) {
+                stopLoading();
+                console.error('Error en login anónimo:', error);
+                showError('Error al entrar como invitado. Intenta de nuevo.');
+                
+                // Restaurar botón
+                const btn = document.getElementById('guest-btn');
+                btn.querySelector('span').textContent = 'Jugar como Invitado';
+            }
+        };
+
+        async function migrateLocalData(user) {
+            try {
+                console.log('📦 Verificando datos locales para migrar...');
+                
+                const localGameData = localStorage.getItem('quizCristianoData');
+                const localAchievements = localStorage.getItem('quizCristianoAchievements');
+                
+                if (localGameData || localAchievements) {
+                    console.log('📤 Migrando datos locales a Firestore...');
+                    
+                    const migrationData = {};
+                    
+                    if (localGameData) {
+                        migrationData.gameData = JSON.parse(localGameData);
+                    }
+                    
+                    if (localAchievements) {
+                        migrationData.achievements = JSON.parse(localAchievements);
+                    }
+                    
+                    // Guardar en Firestore
+                    await saveUserData(user.uid, {
+                        migratedData: migrationData,
+                        migrationDate: new Date()
+                    });
+                    
+                    console.log('✅ Migración completada');
+                }
+            } catch (error) {
+                console.warn('⚠️ Error en migración (continuando...):', error);
+            }
+        }
+
+        // Verificar si ya está logueado
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('👤 Usuario ya logueado:', user.displayName || 'Invitado');
+                // Si ya está logueado, redirigir
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Log page view
+        logEvent(analytics, 'page_view', { page_title: 'Login' });
+    </script>
+</body>
+</html>

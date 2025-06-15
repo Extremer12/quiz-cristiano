@@ -6,6 +6,7 @@
     <title>Quiz Cristiano</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/pages/safari-fixes.css">
     <style>
         /* TODOS LOS ESTILOS EN UNA SOLA PÁGINA */
         * {
@@ -581,6 +582,44 @@
             transform: translateY(-2px);
         }
 
+        /* Pantalla de carga */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-logo h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .loading-spinner {
+            font-size: 3rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .loading-content p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
@@ -615,6 +654,26 @@
             }
         }
     </style>
+
+    <!-- PWA Configuration -->
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quiz Cristiano">
+    <meta name="msapplication-TileColor" content="#1e3c8a">
+    <meta name="msapplication-TileImage" content="assets/icons/icon-192.png">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="assets/icons/icon-512.png">
+
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-square150x150logo" content="assets/icons/icon-192.png">
+    <meta name="msapplication-square310x310logo" content="assets/icons/icon-512.png">
 </head>
 <body>
         <!-- Header -->
@@ -700,6 +759,10 @@
             <i class="fas fa-moon"></i>
             <span>Modo Oscuro</span>
         </a>
+    <a href="#" class="menu-item" id="install-app-btn" style="display: none;" onclick="installApp()">
+    <i class="fas fa-download"></i>
+    <span>Instalar App</span>
+</a>    
     </div>
 
     <!-- Overlay -->
@@ -777,7 +840,20 @@
         </a>
     </nav>
 
-    <script>
+    <!-- Pantalla de carga mientras verifica autenticación -->
+<div class="loading-screen" id="loading-screen">
+    <div class="loading-content">
+        <div class="loading-logo">
+            <h1>Quiz Cristiano</h1>
+        </div>
+        <div class="loading-spinner">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
+        <p>Verificando sesión...</p>
+    </div>
+</div>
+
+<script>
         // JAVASCRIPT COMPLETAMENTE CORREGIDO
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🎮 Quiz Cristiano cargado');
@@ -793,6 +869,7 @@
             const speechBubble = document.getElementById('speech-bubble');
             const multiplayerBtn = document.getElementById('multiplayer-btn');
             const comingSoonModal = document.getElementById('coming-soon-modal');
+            const loadingScreen = document.getElementById('loading-screen');
 
             // Elementos de estadísticas
             const coinsStatElement = document.getElementById('coins-stat');
@@ -975,6 +1052,211 @@
                 });
             }
 
+            // En index.html - agregar al dropdown menu
+let deferredPrompt;
+let isInstalled = false;
+
+// Verificar si ya está instalada
+if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+    isInstalled = true;
+    console.log('📱 App ya está instalada');
+}
+
+// Escuchar evento de instalación
+window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('📱 PWA: Install prompt available');
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallButton();
+});
+
+// Mostrar botón de instalación
+function showInstallButton() {
+    const installBtn = document.getElementById('install-app-btn');
+    if (installBtn && !isInstalled) {
+        installBtn.style.display = 'flex';
+        
+        // Animación de entrada
+        installBtn.style.animation = 'slideInLeft 0.5s ease';
+    }
+}
+
+// Instalar la app
+window.installApp = async function() {
+    if (!deferredPrompt) {
+        console.log('❌ PWA: No install prompt available');
+        return;
+    }
+    
+    const installBtn = document.getElementById('install-app-btn');
+    const originalText = installBtn.querySelector('span').textContent;
+    
+    // Mostrar loading
+    installBtn.querySelector('span').textContent = 'Instalando...';
+    installBtn.style.opacity = '0.6';
+    
+    try {
+        // Mostrar prompt de instalación
+        deferredPrompt.prompt();
+        
+        // Esperar respuesta del usuario
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            console.log('✅ PWA: User accepted installation');
+            installBtn.style.display = 'none';
+            showInstallationSuccess();
+        } else {
+            console.log('❌ PWA: User declined installation');
+        }
+        
+    } catch (error) {
+        console.error('❌ PWA: Installation error:', error);
+    } finally {
+        // Restaurar botón
+        installBtn.querySelector('span').textContent = originalText;
+        installBtn.style.opacity = '1';
+        deferredPrompt = null;
+    }
+};
+
+// Mostrar confirmación de instalación
+function showInstallationSuccess() {
+    const notification = document.createElement('div');
+    notification.className = 'install-notification';
+    notification.innerHTML = `
+        <div class="install-notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span>¡App instalada correctamente!</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('✅ SW: Registered successfully', registration.scope);
+            
+            // Verificar actualizaciones
+            registration.addEventListener('updatefound', () => {
+                console.log('🔄 SW: New version available');
+                const newWorker = registration.installing;
+                
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        showUpdateAvailable();
+                    }
+                });
+            });
+            
+        } catch (error) {
+            console.error('❌ SW: Registration failed:', error);
+        }
+    });
+}
+
+// Mostrar notificación de actualización
+function showUpdateAvailable() {
+    const updateNotification = document.createElement('div');
+    updateNotification.className = 'update-notification';
+    updateNotification.innerHTML = `
+        <div class="update-content">
+            <span>Nueva versión disponible</span>
+            <button onclick="updateApp()">Actualizar</button>
+        </div>
+    `;
+    
+    document.body.appendChild(updateNotification);
+}
+
+// Actualizar la app
+window.updateApp = function() {
+    window.location.reload();
+};
+
+// ============================================
+// ESTILOS PARA NOTIFICACIONES PWA
+// ============================================
+
+const pwaStyles = document.createElement('style');
+pwaStyles.textContent = `
+    .install-notification,
+    .update-notification {
+        position: fixed;
+        top: 20px;
+        right: -400px;
+        background: rgba(39, 174, 96, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        padding: 15px 20px;
+        border: 1px solid #27ae60;
+        box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+        z-index: 2000;
+        transition: right 0.5s ease;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .install-notification.show,
+    .update-notification.show {
+        right: 20px;
+    }
+    
+    .install-notification-content,
+    .update-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .update-content button {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .update-content button:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    @keyframes slideInLeft {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @media (max-width: 480px) {
+        .install-notification,
+        .update-notification {
+            right: -350px;
+            max-width: 300px;
+        }
+        
+        .install-notification.show,
+        .update-notification.show {
+            right: 10px;
+        }
+    }
+`;
+
+document.head.appendChild(pwaStyles);
+            
             // ============================================
             // INICIALIZACIÓN
             // ============================================
@@ -988,5 +1270,168 @@
             console.log('✅ Index.html inicializado correctamente');
         });
     </script>
+
+<!-- Agregar después del cierre </body> -->
+
+<script type="module">
+    // 🔥 IMPORTAR FIREBASE Y VERIFICAR AUTENTICACIÓN
+    import { auth } from './js/config/firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    // ============================================
+    // VERIFICACIÓN DE AUTENTICACIÓN
+    // ============================================
+
+    let authChecked = false;
+    let currentUser = null;
+
+    function checkAuthState() {
+        console.log('🔐 Verificando estado de autenticación...');
+        
+        // Verificar localStorage primero (más rápido)
+        const storedUser = localStorage.getItem('currentUser');
+        
+        if (storedUser) {
+            try {
+                currentUser = JSON.parse(storedUser);
+                console.log('👤 Usuario encontrado en localStorage:', currentUser.name);
+                showMainApp();
+                return;
+            } catch (error) {
+                console.warn('⚠️ Error parseando usuario de localStorage:', error);
+                localStorage.removeItem('currentUser');
+            }
+        }
+        
+        // Si no hay usuario en localStorage, verificar con Firebase
+        onAuthStateChanged(auth, (user) => {
+            authChecked = true;
+            
+            if (user) {
+                console.log('✅ Usuario autenticado con Firebase:', user.displayName || 'Invitado');
+                
+                // Guardar en localStorage para próximos accesos
+                const userData = {
+                    uid: user.uid,
+                    name: user.displayName || 'Invitado',
+                    email: user.email,
+                    photo: user.photoURL,
+                    loginMethod: user.isAnonymous ? 'anonymous' : 'google'
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                currentUser = userData;
+                showMainApp();
+                
+            } else {
+                console.log('❌ Usuario NO autenticado, redirigiendo a login...');
+                redirectToLogin();
+            }
+        });
+        
+        // Timeout de seguridad (si Firebase tarda mucho en responder)
+        setTimeout(() => {
+            if (!authChecked) {
+                console.log('⏰ Timeout de autenticación, redirigiendo a login...');
+                redirectToLogin();
+            }
+        }, 3000);
+    }
+
+    function showMainApp() {
+        console.log('🏠 Mostrando aplicación principal');
+        
+        // Ocultar loading si existe
+        const loadingElement = document.querySelector('.loading-screen');
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+        
+        // Mostrar contenido principal
+        const mainContent = document.querySelector('.container');
+        if (mainContent) {
+            mainContent.style.display = 'block';
+            mainContent.style.opacity = '1';
+        }
+        
+        // Actualizar UI con datos del usuario
+        updateUserUI();
+    }
+
+    function redirectToLogin() {
+        console.log('🔄 Redirigiendo a login...');
+        
+        // Guardar la página actual para redirigir después del login
+        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+        
+        // Redireccionar
+        window.location.href = 'login.html';
+    }
+
+    function updateUserUI() {
+        if (!currentUser) return;
+        
+        // Actualizar nombre de usuario si hay elementos que lo muestren
+        const userNameElements = document.querySelectorAll('.user-name');
+        userNameElements.forEach(element => {
+            element.textContent = currentUser.name;
+        });
+        
+        // Actualizar avatar si hay elementos que lo muestren
+        const userAvatarElements = document.querySelectorAll('.user-avatar');
+        userAvatarElements.forEach(element => {
+            if (currentUser.photo) {
+                element.src = currentUser.photo;
+            }
+        });
+        
+        console.log('👤 UI actualizada para:', currentUser.name);
+    }
+
+    // ============================================
+    // FUNCIONES ADICIONALES
+    // ============================================
+
+    function logout() {
+        console.log('🚪 Cerrando sesión...');
+        
+        // Limpiar localStorage
+        localStorage.removeItem('currentUser');
+        sessionStorage.clear();
+        
+        // Cerrar sesión en Firebase
+        auth.signOut().then(() => {
+            console.log('✅ Sesión cerrada correctamente');
+            window.location.href = 'login.html';
+        }).catch((error) => {
+            console.error('❌ Error cerrando sesión:', error);
+            // Forzar redirect aunque haya error
+            window.location.href = 'login.html';
+        });
+    }
+
+    // Hacer logout accesible globalmente
+    window.logout = logout;
+
+    // ============================================
+    // INICIALIZACIÓN
+    // ============================================
+
+    // Ejecutar verificación al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 DOM cargado, verificando autenticación...');
+        
+        // Ocultar contenido principal inicialmente
+        const mainContent = document.querySelector('.container');
+        if (mainContent) {
+            mainContent.style.opacity = '0';
+        }
+        
+        // Verificar autenticación
+        checkAuthState();
+    });
+
+    console.log('🔐 Script de autenticación cargado');
+</script>
 </body>
 </html>
