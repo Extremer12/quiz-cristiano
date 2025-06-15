@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logros - Quiz Cristiano</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pages/logros.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Logros</h1>
+            <div class="header-stats">
+                <span class="coins-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="coins-count">0</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Estadísticas Generales -->
+        <section class="achievements-overview">
+            <div class="overview-card">
+                <div class="overview-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="overview-info">
+                    <h3>Logros Desbloqueados</h3>
+                    <p class="overview-number" id="total-achievements">0/25</p>
+                </div>
+            </div>
+            
+            <div class="overview-card">
+                <div class="overview-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="overview-info">
+                    <h3>Puntos de Logro</h3>
+                    <p class="overview-number" id="achievement-points">0</p>
+                </div>
+            </div>
+
+            <div class="progress-overview">
+                <h3>Progreso General</h3>
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-bar"></div>
+                    </div>
+                    <span class="progress-percentage" id="progress-percentage">0%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filtros -->
+        <section class="achievements-filters">
+            <button class="filter-btn active" onclick="filterAchievements('all')">
+                <i class="fas fa-th"></i> Todos
+            </button>
+            <button class="filter-btn" onclick="filterAchievements('unlocked')">
+                <i class="fas fa-unlock"></i> Desbloqueados
+            </button>
+            <button class="filter-btn" onclick="filterAchievements('locked')">
+                <i class="fas fa-lock"></i> Bloqueados
+            </button>
+            <button class="filter-btn" onclick="filterAchievements('progreso')">
+                <i class="fas fa-chart-line"></i> Progreso
+            </button>
+            <button class="filter-btn" onclick="filterAchievements('maestria')">
+                <i class="fas fa-crown"></i> Maestría
+            </button>
+            <button class="filter-btn" onclick="filterAchievements('rachas')">
+                <i class="fas fa-fire"></i> Rachas
+            </button>
+        </section>
+
+        <!-- Grid de Logros -->
+        <section class="achievements-container">
+            <div class="achievements-grid" id="achievements-grid">
+                <!-- Los logros se cargan dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Modal de Detalle de Logro -->
+        <div class="modal achievement-modal" id="achievement-modal">
+            <div class="achievement-modal-content">
+                <!-- Contenido se carga dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="single-player.html" class="nav-item">
+                <i class="fas fa-play"></i>
+                <span>Jugar</span>
+            </a>
+            <a href="ranking.html" class="nav-item">
+                <i class="fas fa-trophy"></i>
+                <span>Ranking</span>
+            </a>
+            <a href="logros.html" class="nav-item active">
+                <i class="fas fa-medal"></i>
+                <span>Logros</span>
+            </a>
+            <a href="store.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>Tienda</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/pages/logros.js"></script>
+</body>
+</html>

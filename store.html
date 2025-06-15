@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda - Quiz Cristiano</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pages/store.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Tienda</h1>
+            <div class="header-stats">
+                <span class="coins-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="coins-display">0</span>
+                </span>
+                <button class="inventory-btn" onclick="showInventory()">
+                    <i class="fas fa-backpack"></i>
+                    <span class="inventory-count" id="inventory-count">0</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Búsqueda y Filtros -->
+        <section class="store-controls">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Buscar productos..." onkeyup="searchProducts(this.value)">
+                </div>
+            </div>
+            
+            <div class="category-filters">
+                <button class="category-filter active" onclick="filterStore('all')">
+                    <i class="fas fa-th"></i> Todos
+                </button>
+                <button class="category-filter" onclick="filterStore('powerups')">
+                    <i class="fas fa-magic"></i> Power-ups
+                </button>
+                <button class="category-filter" onclick="filterStore('cosmetics')">
+                    <i class="fas fa-tshirt"></i> Cosméticos
+                </button>
+                <button class="category-filter" onclick="filterStore('expansions')">
+                    <i class="fas fa-expand"></i> Expansiones
+                </button>
+                <button class="category-filter" onclick="filterStore('bundles')">
+                    <i class="fas fa-gift"></i> Packs
+                </button>
+            </div>
+        </section>
+
+        <!-- Ofertas Destacadas -->
+        <section class="featured-offers">
+            <div class="featured-header">
+                <h2><i class="fas fa-star"></i> Ofertas Destacadas</h2>
+                <span class="limited-time">
+                    <i class="fas fa-clock"></i> Tiempo limitado
+                </span>
+            </div>
+            
+            <div class="featured-carousel">
+                <div class="featured-item">
+                    <div class="featured-badge">¡NUEVO!</div>
+                    <div class="featured-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3>Pack del Principiante</h3>
+                    <p>Todo lo esencial para empezar</p>
+                    <div class="featured-price">
+                        <span class="original-price">1,350</span>
+                        <span class="discount-price">1,000 <i class="fas fa-coins"></i></span>
+                    </div>
+                    <div class="featured-savings">¡Ahorra 350 monedas!</div>
+                </div>
+                
+                <div class="featured-item legendary">
+                    <div class="featured-badge legendary">LEGENDARIO</div>
+                    <div class="featured-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3>Pack del Maestro</h3>
+                    <p>El pack más completo disponible</p>
+                    <div class="featured-price">
+                        <span class="original-price">5,000</span>
+                        <span class="discount-price">3,500 <i class="fas fa-coins"></i></span>
+                    </div>
+                    <div class="featured-savings">¡Ahorra 1,500 monedas!</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grid de Productos -->
+        <section class="store-section">
+            <div class="section-header">
+                <h2>Productos Disponibles</h2>
+                <div class="sort-options">
+                    <select id="sort-select" onchange="sortProducts(this.value)">
+                        <option value="rarity">Por rareza</option>
+                        <option value="price-low">Precio: Menor a mayor</option>
+                        <option value="price-high">Precio: Mayor a menor</option>
+                        <option value="name">Por nombre</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="store-grid" id="store-grid">
+                <!-- Los productos se cargan dinámicamente -->
+                <div class="loading-skeleton">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de Compra -->
+        <div class="modal purchase-modal" id="purchase-modal">
+            <div class="purchase-modal-content">
+                <!-- Contenido se carga dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Modal de Inventario -->
+        <div class="modal inventory-modal" id="inventory-modal">
+            <div class="inventory-modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-backpack"></i> Mi Inventario</h2>
+                    <button class="close-modal-btn" onclick="closeInventoryModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="inventory-stats">
+                        <div class="inventory-stat">
+                            <i class="fas fa-box"></i>
+                            <span>Artículos totales: <strong id="total-items">0</strong></span>
+                        </div>
+                        <div class="inventory-stat">
+                            <i class="fas fa-coins"></i>
+                            <span>Valor total: <strong id="total-value">0</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="inventory-grid" id="inventory-grid">
+                        <!-- Contenido del inventario se carga dinámicamente -->
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeInventoryModal()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificaciones Toast -->
+        <div class="toast-container" id="toast-container">
+            <!-- Las notificaciones aparecen aquí -->
+        </div>
+
+        <!-- Tips de Ayuda -->
+        <div class="help-tips">
+            <div class="tip-card">
+                <i class="fas fa-lightbulb"></i>
+                <h4>💡 Consejo</h4>
+                <p>Los power-ups te ayudan en partidas difíciles. ¡Úsalos sabiamente!</p>
+            </div>
+            
+            <div class="tip-card">
+                <i class="fas fa-gift"></i>
+                <h4>🎁 Packs</h4>
+                <p>Los packs ofrecen grandes descuentos. ¡Ahorra comprando varios artículos juntos!</p>
+            </div>
+            
+            <div class="tip-card">
+                <i class="fas fa-star"></i>
+                <h4>⭐ Rareza</h4>
+                <p>Los artículos legendarios son únicos y ofrecen bonificaciones especiales.</p>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="single-player.html" class="nav-item">
+                <i class="fas fa-play"></i>
+                <span>Jugar</span>
+            </a>
+            <a href="ranking.html" class="nav-item">
+                <i class="fas fa-trophy"></i>
+                <span>Ranking</span>
+            </a>
+            <a href="logros.html" class="nav-item">
+                <i class="fas fa-medal"></i>
+                <span>Logros</span>
+            </a>
+            <a href="store.html" class="nav-item active">
+                <i class="fas fa-store"></i>
+                <span>Tienda</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/pages/store.js"></script>
+    
+    <!-- Script adicional para funciones específicas del HTML -->
+    <script>
+        // ============================================
+        // FUNCIONES ADICIONALES PARA EL HTML
+        // ============================================
+        
+        function sortProducts(criteria) {
+            console.log('🔄 Ordenando productos por:', criteria);
+            // Esta función se puede implementar más tarde
+            // Por ahora, re-renderizar con el filtro actual
+            renderStore(currentFilter);
+        }
+        
+        // Actualizar display de monedas desde localStorage
+        function updateCoinsDisplay() {
+            try {
+                const gameData = localStorage.getItem('quizCristianoData');
+                if (gameData) {
+                    const data = JSON.parse(gameData);
+                    const coinsElement = document.getElementById('coins-display');
+                    if (coinsElement) {
+                        coinsElement.textContent = data.coins || 0;
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error actualizando display de monedas:', error);
+            }
+        }
+        
+        // Actualizar display cada 2 segundos
+        setInterval(updateCoinsDisplay, 2000);
+        
+        // Efectos visuales adicionales
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada para las ofertas destacadas
+            setTimeout(() => {
+                const featuredItems = document.querySelectorAll('.featured-item');
+                featuredItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.animation = 'slideInUp 0.6s ease forwards';
+                    }, index * 200);
+                });
+            }, 500);
+            
+            // Efectos de hover para los tips
+            const tipCards = document.querySelectorAll('.tip-card');
+            tipCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Actualizar monedas al cargar
+            updateCoinsDisplay();
+        });
+        
+        // Animaciones adicionales
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .featured-item {
+                opacity: 0;
+            }
+            
+            .tip-card {
+                transition: all 0.3s ease;
+            }
+            
+            .loading-skeleton {
+                display: flex;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+            
+            .skeleton-card {
+                width: 300px;
+                height: 200px;
+                background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+                background-size: 200% 100%;
+                animation: skeletonLoading 1.5s infinite;
+                border-radius: 15px;
+            }
+            
+            @keyframes skeletonLoading {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

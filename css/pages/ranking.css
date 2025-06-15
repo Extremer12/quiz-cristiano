@@ -1,0 +1,699 @@
+/* Estilos específicos para la página de ranking */
+
+/* Contenedor principal del ranking */
+.ranking-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ranking-title {
+    font-size: 2rem;
+    color: var(--deep-gold);
+    margin-bottom: 30px;
+    text-align: center;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Pestañas de filtros */
+.ranking-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.ranking-tab {
+    padding: 12px 25px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    color: var(--text-color);
+    border: 2px solid transparent;
+}
+
+.ranking-tab.active {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-tab:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Podio de ganadores */
+.winners-podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    width: 100%;
+    max-width: 600px;
+    height: 250px;
+    position: relative;
+}
+
+.podium-place {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.5s ease;
+}
+
+.podium-place.first {
+    z-index: 3;
+    margin: 0 -20px;
+}
+
+.podium-place.second {
+    z-index: 2;
+}
+
+.podium-place.third {
+    z-index: 1;
+}
+
+.player-avatar-podium {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 3px solid;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.podium-place.first .player-avatar-podium {
+    width: 100px;
+    height: 100px;
+    border-color: var(--gold);
+}
+
+.podium-place.second .player-avatar-podium {
+    border-color: var(--silver);
+}
+
+.podium-place.third .player-avatar-podium {
+    border-color: var(--bronze);
+}
+
+.player-avatar-podium img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.player-avatar-podium i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+.podium-place.first .player-avatar-podium i {
+    font-size: 3rem;
+}
+
+.player-name-podium {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.player-score-podium {
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.podium-block {
+    width: 120px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.podium-place.first .podium-block {
+    height: 120px;
+    width: 150px;
+    background: linear-gradient(to bottom, var(--gold), #DAA520);
+}
+
+.podium-place.second .podium-block {
+    height: 90px;
+    background: linear-gradient(to bottom, var(--silver), #A9A9A9);
+}
+
+.podium-place.third .podium-block {
+    height: 60px;
+    background: linear-gradient(to bottom, var(--bronze), #A0522D);
+}
+
+.podium-number {
+    font-size: 2rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Tabla de clasificación */
+.ranking-table-container {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ranking-table th {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+    color: var(--text-color);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.ranking-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ranking-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ranking-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.rank-cell {
+    width: 60px;
+    text-align: center;
+}
+
+.rank-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.rank-1 .rank-number {
+    background-color: var(--gold);
+    color: #333;
+}
+
+.rank-2 .rank-number {
+    background-color: var(--silver);
+    color: #333;
+}
+
+.rank-3 .rank-number {
+    background-color: var(--bronze);
+    color: #333;
+}
+
+.player-cell {
+    display: flex;
+    align-items: center;
+}
+
+.player-avatar-table {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    overflow: hidden;
+}
+
+.player-avatar-table img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.player-avatar-table i {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.player-name-table {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.score-cell {
+    font-weight: bold;
+    color: var(--accent-color);
+    text-align: right;
+}
+
+.games-cell, .win-rate-cell {
+    text-align: center;
+    color: var(--text-color);
+}
+
+/* Filtros adicionales */
+.ranking-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+}
+
+.filter-label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.filter-select {
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 2px solid var(--primary-color);
+    background-color: white;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+.search-input {
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 2px solid var(--primary-color);
+    background-color: white;
+    color: var(--text-color);
+    width: 200px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+    width: 250px;
+}
+
+/* Paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 10px;
+}
+
+.page-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--text-color);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.page-button.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.page-button:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 1);
+    border-color: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-arrow {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--text-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-arrow:hover {
+    background-color: rgba(255, 255, 255, 1);
+    color: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-arrow.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-arrow.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Animaciones para la página de ranking */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceInUp {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-20px);
+    }
+    80% {
+        transform: translateY(10px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+    }
+    100% {
+        transform: translateY(0) rotate(360deg);
+    }
+}
+
+@keyframes shine {
+    0% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.5) drop-shadow(0 0 10px gold);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
+
+@keyframes animate-crown {
+    0% {
+        transform: translateY(-50px) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(-10px) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Estilos para la corona */
+.crown {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--gold);
+    font-size: 2rem;
+    z-index: 10;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+    transition: all 0.3s ease;
+}
+
+.crown.animate-crown {
+    animation: animate-crown 1s forwards;
+}
+
+.crown.shine {
+    animation: shine 1s forwards;
+}
+
+/* Efecto de carga para la tabla */
+.ranking-table-container.loading {
+    position: relative;
+}
+
+.ranking-table-container.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.ranking-table-container.loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+    z-index: 11;
+}
+
+@keyframes spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Estilos para las partículas */
+.particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.7;
+    z-index: 1;
+}
+
+/* Mejoras para el podio */
+.winners-podium {
+    perspective: 1000px;
+}
+
+.podium-place {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.podium-place:hover {
+    transform: translateY(-10px);
+    filter: brightness(1.1);
+}
+
+.podium-block {
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.podium-place:hover .podium-block {
+    transform: rotateX(10deg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Efecto para tu posición */
+.your-position {
+    position: relative;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.your-position::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        rgba(255, 215, 0, 0.1) 0%, 
+        rgba(255, 255, 255, 0) 50%, 
+        rgba(255, 215, 0, 0.1) 100%);
+    animation: shine-effect 3s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes shine-effect {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+}
+
+.highlighted {
+    background-color: rgba(255, 215, 0, 0.1);
+    animation: pulse 2s infinite;
+}
+
+/* Mejoras para los botones de paginación */
+.page-button, .page-arrow {
+    transition: all 0.3s ease;
+    transform: translateY(0);
+}
+
+.page-button:hover, .page-arrow:hover {
+    transform: translateY(-5px);
+}
+
+.page-button.active {
+    animation: pulse 2s infinite;
+}
+
+/* Mejoras para los filtros */
+.ranking-tab {
+    position: relative;
+    overflow: hidden;
+}
+
+.ranking-tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.ranking-tab:hover::after {
+    width: 80%;
+}
+
+.ranking-tab.active::after {
+    width: 100%;
+}
+
+/* Efecto de entrada para los elementos */
+.ranking-title, .ranking-tabs, .ranking-filters, .winners-podium, 
+.ranking-table-container, .pagination {
+    opacity: 0;
+}
