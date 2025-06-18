@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Quiz Cristiano</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Perfil de usuario - Quiz Cristiano">
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <link rel="stylesheet" href="css/pages/perfil.css">
+    
+    <!-- SCRIPT DE MODO OSCURO GLOBAL -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Header -->
+        <header class="profile-header">
+            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="profile-title">
+                <h1>Mi Perfil</h1>
+                <p>Personaliza tu experiencia</p>
+            </div>
+            
+            <div class="save-indicator" id="save-indicator" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </header>
+
+        <!-- Foto de Perfil Section -->
+        <section class="avatar-section">
+            <div class="avatar-container">
+                <div class="current-avatar" id="current-avatar" onclick="showAvatarModal()">
+                    <img src="assets/images/mascota.png" alt="Avatar actual" id="avatar-image">
+                    <div class="avatar-overlay">
+                        <i class="fas fa-camera"></i>
+                        <span>Cambiar</span>
+                    </div>
+                </div>
+                <div class="avatar-info">
+                    <h3 id="display-name">Jugador</h3>
+                    <p class="user-level" id="user-level">Principiante</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulario de Perfil -->
+        <section class="profile-form-section">
+            <div class="form-container">
+                <h3><i class="fas fa-user-edit"></i> Información Personal</h3>
+                
+                <div class="form-group">
+                    <label for="username">Nombre de Usuario</label>
+                    <div class="input-container">
+                        <input type="text" id="username" placeholder="Elige tu nombre de usuario" maxlength="20">
+                        <div class="validation-status" id="username-status">
+                            <i class="fas fa-circle-notch fa-spin"></i>
+                        </div>
+                    </div>
+                    <div class="input-help">
+                        <span id="username-help">3-20 caracteres, solo letras, números y guiones bajos</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="display-name-input">Nombre a Mostrar</label>
+                    <input type="text" id="display-name-input" placeholder="Tu nombre para mostrar" maxlength="30">
+                    <div class="input-help">
+                        <span>Este nombre aparecerá en los rankings</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="favorite-verse">Versículo Favorito (Opcional)</label>
+                    <textarea id="favorite-verse" placeholder="Comparte tu versículo bíblico favorito..." maxlength="200" rows="3"></textarea>
+                    <div class="character-count">
+                        <span id="verse-count">0</span>/200
+                    </div>
+                </div>
+
+                <button class="save-profile-btn" id="save-profile-btn" onclick="saveProfile()">
+                    <i class="fas fa-save"></i>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Estadísticas del Usuario -->
+        <section class="stats-section">
+            <h3><i class="fas fa-chart-line"></i> Mis Estadísticas</h3>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="games-played">0</span>
+                        <span class="stat-label">Partidas Jugadas</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="victories">0</span>
+                        <span class="stat-label">Victorias</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="total-coins">0</span>
+                        <span class="stat-label">Monedas Ganadas</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="achievements-count">0</span>
+                        <span class="stat-label">Logros</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="win-rate">0%</span>
+                        <span class="stat-label">Tasa de Victoria</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="current-streak">0</span>
+                        <span class="stat-label">Racha Actual</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progreso y Nivel -->
+        <section class="progress-section">
+            <h3><i class="fas fa-star"></i> Progreso</h3>
+            
+            <div class="level-card">
+                <div class="level-info">
+                    <div class="level-badge" id="level-badge">
+                        <span id="current-level">1</span>
+                    </div>
+                    <div class="level-details">
+                        <h4 id="level-name">Principiante</h4>
+                        <p id="level-description">Sigue jugando para subir de nivel</p>
+                    </div>
+                </div>
+                
+                <div class="experience-bar">
+                    <div class="exp-info">
+                        <span>Experiencia</span>
+                        <span id="exp-text">0 / 100</span>
+                    </div>
+                    <div class="exp-bar">
+                        <div class="exp-fill" id="exp-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de Selección de Avatar -->
+        <div class="avatar-modal" id="avatar-modal" style="display: none;">
+            <div class="modal-overlay" onclick="closeAvatarModal()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Elige tu Avatar</h3>
+                    <button class="modal-close" onclick="closeAvatarModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="avatars-grid" id="avatars-grid">
+                        <!-- Avatares se cargan dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="notifications-container" id="notifications-container">
+            <!-- Las notificaciones aparecen aquí -->
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="single-player-new.html" class="nav-item">
+                <i class="fas fa-play"></i>
+                <span>Jugar</span>
+            </a>
+            <a href="ranking.html" class="nav-item">
+                <i class="fas fa-trophy"></i>
+                <span>Ranking</span>
+            </a>
+            <a href="logros.html" class="nav-item">
+                <i class="fas fa-medal"></i>
+                <span>Logros</span>
+            </a>
+            <a href="store.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>Tienda</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/modules/gamedatamanager.js"></script>
+    <script src="js/modules/dark-mode.js"></script>
+    <script src="js/pages/perfil.js"></script>
+
+    <!-- Script de inicialización -->
+    <script>
+        // Variables globales
+        let usernameCheckTimeout = null;
+        
+        // Funciones globales para el HTML
+        window.showAvatarModal = function() {
+            if (typeof openAvatarSelector === 'function') {
+                openAvatarSelector();
+            }
+        };
+        
+        window.closeAvatarModal = function() {
+            const modal = document.getElementById('avatar-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        };
+        
+        window.saveProfile = function() {
+            if (typeof saveUserProfile === 'function') {
+                saveUserProfile();
+            }
+        };
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('👤 Perfil HTML cargado');
+            
+            // Verificar elementos críticos
+            const criticalElements = [
+                'avatar-image', 'username', 'display-name-input',
+                'games-played', 'victories', 'total-coins'
+            ];
+            
+            criticalElements.forEach(id => {
+                const element = document.getElementById(id);
+                console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
+            });
+        });
+    </script>
+</body>
+</html>

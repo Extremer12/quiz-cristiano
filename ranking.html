@@ -4,213 +4,269 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking - Quiz Cristiano</title>
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/pages/ranking.css">
-    <link rel="stylesheet" href="./css/responsive.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Ranking de Quiz Cristiano - Compite con otros jugadores">
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <link rel="stylesheet" href="css/pages/ranking.css">
+    
+    <!-- SCRIPT DE MODO OSCURO GLOBAL -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+        })();
+    </script>
 </head>
 <body>
-    <div class="animated-background"></div>
-    
-    <!-- Partículas brillantes -->
-    <div class="particles-container"></div>
-    
-    <!-- Contenido principal -->
-    <main class="main-content">
-        <div class="ranking-container">
-            <h1 class="ranking-title">Ranking de Jugadores</h1>
+    <div class="ranking-container">
+        <!-- Header -->
+        <header class="ranking-header">
+            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio">
+                <i class="fas fa-arrow-left"></i>
+            </button>
             
-            <!-- Pestañas de filtros -->
-            <div class="ranking-tabs">
-                <div class="ranking-tab active" data-filter="global">Global</div>
-                <div class="ranking-tab" data-filter="friends">Amigos</div>
-                <div class="ranking-tab" data-filter="weekly">Semanal</div>
-                <div class="ranking-tab" data-filter="monthly">Mensual</div>
+            <div class="ranking-title">
+                <h1>Ranking Global</h1>
+                <p>Compite con jugadores de todo el mundo</p>
             </div>
             
-            <!-- Filtros adicionales -->
-            <div class="ranking-filters">
-                <div class="filter-group">
-                    <label class="filter-label">Categoría:</label>
-                    <select class="filter-select" title="Filtrar por categoría" aria-label="Filtrar por categoría"></select>
-                        <option value="all">Todas</option>
-                        <option value="bible">Biblia</option>
-                        <option value="history">Historia</option>
-                        <option value="theology">Teología</option>
-                    </select>
-                </div>
-                <input type="text" class="search-input" placeholder="Buscar jugador...">
+            <div class="player-coins">
+                <i class="fas fa-coins"></i>
+                <span id="coins-display">0</span>
             </div>
-            
-            <!-- Podio de ganadores -->
-            <div class="winners-podium">
-                <div class="podium-place second">
-                    <div class="player-avatar-podium">
-                        <img src="./assets/images/avatars/avatar2.png" alt="Segundo lugar">
-                    </div>
-                    <div class="player-name-podium">María G.</div>
-                    <div class="player-score-podium">8,750 pts</div>
-                    <div class="podium-block">
-                        <div class="podium-number">2</div>
+        </header>
+
+        <!-- Tabs de Rankings -->
+        <section class="ranking-tabs">
+            <button class="tab-btn active" onclick="switchRanking('monedas')" data-tab="monedas">
+                <i class="fas fa-coins"></i>
+                <span>Monedas</span>
+            </button>
+            <button class="tab-btn" onclick="switchRanking('victorias')" data-tab="victorias">
+                <i class="fas fa-trophy"></i>
+                <span>Victorias</span>
+            </button>
+            <button class="tab-btn" onclick="switchRanking('rachas')" data-tab="rachas">
+                <i class="fas fa-fire"></i>
+                <span>Rachas</span>
+            </button>
+            <button class="tab-btn" onclick="switchRanking('semanal')" data-tab="semanal">
+                <i class="fas fa-calendar-week"></i>
+                <span>Semanal</span>
+            </button>
+        </section>
+
+        <!-- Mi Posición -->
+        <section class="my-position">
+            <div class="my-position-card">
+                <div class="position-badge">
+                    <span id="my-position">#???</span>
+                </div>
+                <div class="my-stats">
+                    <img src="assets/images/mascota.png" alt="Mi Avatar" class="my-avatar" id="my-avatar">
+                    <div class="my-info">
+                        <h3 id="my-name">Mi Nombre</h3>
+                        <p id="my-score">0 puntos</p>
                     </div>
                 </div>
-                
-                <div class="podium-place first">
-                    <div class="crown">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="player-avatar-podium">
-                        <img src="./assets/images/avatars/avatar1.png" alt="Primer lugar">
-                    </div>
-                    <div class="player-name-podium">Juan P.</div>
-                    <div class="player-score-podium">9,320 pts</div>
-                    <div class="podium-block">
-                        <div class="podium-number">1</div>
-                    </div>
-                </div>
-                
-                <div class="podium-place third">
-                    <div class="player-avatar-podium">
-                        <img src="./assets/images/avatars/avatar3.png" alt="Tercer lugar">
-                    </div>
-                    <div class="player-name-podium">Carlos M.</div>
-                    <div class="player-score-podium">7,890 pts</div>
-                    <div class="podium-block">
-                        <div class="podium-number">3</div>
-                    </div>
+                <div class="my-badge">
+                    <i class="fas fa-user" id="my-badge-icon"></i>
                 </div>
             </div>
-            
-            <!-- Tabla de clasificación -->
-            <div class="ranking-table-container">
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Jugador</th>
-                            <th>Puntuación</th>
-                            <th>Partidas</th>
-                            <th>% Victoria</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Filas 4-10 -->
-                        <tr>
-                            <td class="rank-cell">
-                                <div class="rank-number">4</div>
-                            </td>
-                            <td class="player-cell">
-                                <div class="player-avatar-table">
-                                    <img src="./assets/images/avatars/avatar4.png" alt="Avatar">
-                                </div>
-                                <div class="player-name-table">Ana R.</div>
-                            </td>
-                            <td class="score-cell">7,450 pts</td>
-                            <td class="games-cell">42</td>
-                            <td class="win-rate-cell">78%</td>
-                        </tr>
-                        <tr>
-                            <td class="rank-cell">
-                                <div class="rank-number">5</div>
-                            </td>
-                            <td class="player-cell">
-                                <div class="player-avatar-table">
-                                    <img src="./assets/images/avatars/avatar5.png" alt="Avatar">
-                                </div>
-                                <div class="player-name-table">Pedro S.</div>
-                            </td>
-                            <td class="score-cell">6,980 pts</td>
-                            <td class="games-cell">38</td>
-                            <td class="win-rate-cell">72%</td>
-                        </tr>
-                        <!-- Más filas... -->
-                        <tr>
-                            <td class="rank-cell">
-                                <div class="rank-number">6</div>
-                            </td>
-                            <td class="player-cell">
-                                <div class="player-avatar-table">
-                                    <img src="./assets/images/avatars/avatar6.png" alt="Avatar">
-                                </div>
-                                <div class="player-name-table">Laura B.</div>
-                            </td>
-                            <td class="score-cell">6,540 pts</td>
-                            <td class="games-cell">35</td>
-                            <td class="win-rate-cell">68%</td>
-                        </tr>
-                        <!-- Más filas... -->
-                    </tbody>
-                </table>
-                
-                <!-- Tu posición -->
-                <div class="your-position">
-                    <table class="ranking-table">
-                        <tbody>
-                            <tr class="highlighted">
-                                <td class="rank-cell">
-                                    <div class="rank-number">24</div>
-                                </td>
-                                <td class="player-cell">
-                                    <div class="player-avatar-table">
-                                        <img src="./assets/images/avatars/your-avatar.png" alt="Tu Avatar">
-                                    </div>
-                                    <div class="player-name-table">Tú</div>
-                                </td>
-                                <td class="score-cell">3,450 pts</td>
-                                <td class="games-cell">18</td>
-                                <td class="win-rate-cell">62%</td>
-                            </tr>
-                        </tbody>
-                    </table>
+        </section>
+
+        <!-- Podio Top 3 -->
+        <section class="podium-section">
+            <div class="podium">
+                <!-- Segundo Lugar -->
+                <div class="podium-place second" id="podium-2">
+                    <div class="podium-avatar">
+                        <img src="assets/images/mascota.png" alt="Segundo lugar">
+                        <div class="podium-crown silver">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                    </div>
+                    <div class="podium-info">
+                        <h3>Jugador 2</h3>
+                        <p>0 pts</p>
+                    </div>
+                    <div class="podium-rank">2</div>
+                </div>
+
+                <!-- Primer Lugar -->
+                <div class="podium-place first" id="podium-1">
+                    <div class="podium-avatar">
+                        <img src="assets/images/mascota.png" alt="Primer lugar">
+                        <div class="podium-crown gold">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                    </div>
+                    <div class="podium-info">
+                        <h3>Jugador 1</h3>
+                        <p>0 pts</p>
+                    </div>
+                    <div class="podium-rank">1</div>
+                </div>
+
+                <!-- Tercer Lugar -->
+                <div class="podium-place third" id="podium-3">
+                    <div class="podium-avatar">
+                        <img src="assets/images/mascota.png" alt="Tercer lugar">
+                        <div class="podium-crown bronze">
+                            <i class="fas fa-award"></i>
+                        </div>
+                    </div>
+                    <div class="podium-info">
+                        <h3>Jugador 3</h3>
+                        <p>0 pts</p>
+                    </div>
+                    <div class="podium-rank">3</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Rankings -->
+        <section class="ranking-list">
+            <div class="ranking-list-header">
+                <h3 id="ranking-type-title">Ranking de Monedas</h3>
+                <div class="refresh-btn" onclick="refreshRanking()">
+                    <i class="fas fa-sync-alt"></i>
                 </div>
             </div>
             
-            <!-- Paginación -->
-            <div class="pagination">
-                <div class="page-arrow">
-                    <i class="fas fa-chevron-left"></i>
+            <div class="players-list" id="players-list">
+                <!-- Los jugadores se cargan dinámicamente -->
+                <div class="loading-players">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando ranking...</p>
                 </div>
-                <div class="page-button active">1</div>
-                <div class="page-button">2</div>
-                <div class="page-button">3</div>
-                <div class="page-button">4</div>
-                <div class="page-button">5</div>
-                <div class="page-arrow">
-                    <i class="fas fa-chevron-right"></i>
+            </div>
+
+            <!-- Cargar más jugadores -->
+            <div class="load-more-section">
+                <button class="load-more-btn" onclick="loadMorePlayers()" id="load-more-btn">
+                    <i class="fas fa-chevron-down"></i>
+                    <span>Cargar más jugadores</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Modal de perfil de jugador -->
+        <div class="player-modal" id="player-modal" style="display: none;">
+            <div class="modal-overlay" onclick="closePlayerModal()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-player-name">Nombre del Jugador</h3>
+                    <button class="modal-close" onclick="closePlayerModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="player-profile" id="modal-player-profile">
+                        <!-- Contenido del perfil -->
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
-    
-    <!-- Barra de navegación inferior -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Inicio</span>
-        </a>
-        <a href="achievements.html" class="nav-item">
-            <i class="fas fa-trophy"></i>
-            <span>Logros</span>
-        </a>
-        <a href="single-player.html" class="nav-item play-button">
-            <div class="play-circle">
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="single-player-new.html" class="nav-item">
                 <i class="fas fa-play"></i>
-            </div>
-            <span>Jugar</span>
-        </a>
-        <a href="ranking.html" class="nav-item active">
-            <i class="fas fa-medal"></i>
-            <span>Ranking</span>
-        </a>
-        <a href="store.html" class="nav-item">
-            <i class="fas fa-store"></i>
-            <span>Tienda</span>
-        </a>
-    </nav>
-    
+                <span>Jugar</span>
+            </a>
+            <a href="ranking.html" class="nav-item active">
+                <i class="fas fa-trophy"></i>
+                <span>Ranking</span>
+            </a>
+            <a href="logros.html" class="nav-item">
+                <i class="fas fa-medal"></i>
+                <span>Logros</span>
+            </a>
+            <a href="store.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>Tienda</span>
+            </a>
+        </nav>
+    </div>
+
     <!-- Scripts -->
-    <script type="module" src="./js/app.js"></script>
-    <script type="module" src="./js/pages/ranking.js"></script>
+    <script src="js/modules/gamedatamanager.js"></script>
+    <script src="js/modules/dark-mode.js"></script>
+    <script src="js/pages/ranking.js"></script>
+
+    <!-- Script de inicialización -->
+    <script>
+        // Variables globales
+        let currentRankingType = 'monedas';
+        
+        // Funciones globales para el HTML
+        window.switchRanking = function(type) {
+            if (typeof switchToRanking === 'function') {
+                switchToRanking(type);
+            }
+        };
+        
+        window.refreshRanking = function() {
+            if (typeof refreshCurrentRanking === 'function') {
+                refreshCurrentRanking();
+            }
+        };
+        
+        window.loadMorePlayers = function() {
+            if (typeof loadMorePlayersData === 'function') {
+                loadMorePlayersData();
+            }
+        };
+        
+        window.closePlayerModal = function() {
+            const modal = document.getElementById('player-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        };
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏆 Ranking HTML cargado');
+            
+            // Verificar elementos críticos
+            const criticalElements = [
+                'coins-display', 'podium-1', 'podium-2', 'podium-3',
+                'players-list', 'my-position', 'ranking-type-title'
+            ];
+            
+            criticalElements.forEach(id => {
+                const element = document.getElementById(id);
+                console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
+            });
+        });
+    </script>
 </body>
 </html>

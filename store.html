@@ -20,6 +20,7 @@
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/dark-mode.css">
     <link rel="stylesheet" href="css/pages/store.css">
     
     <!-- SCRIPT DE MODO OSCURO GLOBAL - APLICAR INMEDIATAMENTE -->
@@ -41,188 +42,108 @@
     </script>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio" aria-label="Volver al inicio">
+    <div class="store-container">
+        <!-- Header Simplificado -->
+        <header class="store-header">
+            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio">
                 <i class="fas fa-arrow-left"></i>
             </button>
-            <h1>Tienda</h1>
-            <div class="header-stats">
-                <span class="coins-display">
-                    <i class="fas fa-coins"></i>
-                    <span id="coins-display">0</span>
-                </span>
-                <button class="inventory-btn" onclick="showInventory()" title="Ver inventario" aria-label="Abrir inventario">
-                    <i class="fas fa-backpack"></i>
-                    <span class="inventory-count" id="inventory-count">0</span>
-                </button>
+            
+            <div class="store-title">
+                <h1>Tienda</h1>
+                <p>Mejora tu experiencia de juego</p>
+            </div>
+            
+            <div class="player-coins">
+                <i class="fas fa-coins"></i>
+                <span id="coins-display">0</span>
             </div>
         </header>
 
-        <!-- Búsqueda y Filtros -->
-        <section class="store-controls">
-            <div class="search-container">
-                <div class="search-input-wrapper">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="search-input" placeholder="Buscar productos..." onkeyup="searchProducts(this.value)">
-                </div>
-            </div>
-            
-            <div class="category-filters">
-                <button class="category-filter active" onclick="filterStore('all')">
-                    <i class="fas fa-th"></i> Todos
-                </button>
-                <button class="category-filter" onclick="filterStore('powerups')">
-                    <i class="fas fa-magic"></i> Power-ups
-                </button>
-                <button class="category-filter" onclick="filterStore('cosmetics')">
-                    <i class="fas fa-tshirt"></i> Cosméticos
-                </button>
-                <button class="category-filter" onclick="filterStore('expansions')">
-                    <i class="fas fa-expand"></i> Expansiones
-                </button>
-                <button class="category-filter" onclick="filterStore('bundles')">
-                    <i class="fas fa-gift"></i> Packs
-                </button>
-            </div>
-        </section>
-
-        <!-- Ofertas Destacadas -->
-        <section class="featured-offers">
-            <div class="featured-header">
-                <h2><i class="fas fa-star"></i> Ofertas Destacadas</h2>
-                <span class="limited-time">
-                    <i class="fas fa-clock"></i> Tiempo limitado
-                </span>
-            </div>
-            
-            <div class="featured-carousel">
-                <div class="featured-item">
-                    <div class="featured-badge">¡NUEVO!</div>
-                    <div class="featured-icon">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <h3>Pack del Principiante</h3>
-                    <p>Todo lo esencial para empezar</p>
-                    <div class="featured-price">
-                        <span class="original-price">1,500</span>
-                        <span class="discount-price">1,200 <i class="fas fa-coins"></i></span>
-                    </div>
-                    <div class="featured-savings">¡Ahorra 300 monedas!</div>
-                </div>
-                
-                <div class="featured-item legendary">
-                    <div class="featured-badge legendary">LEGENDARIO</div>
-                    <div class="featured-icon">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <h3>Mega Pack Power-ups</h3>
-                    <p>El pack más completo disponible</p>
-                    <div class="featured-price">
-                        <span class="original-price">4,500</span>
-                        <span class="discount-price">3,500 <i class="fas fa-coins"></i></span>
-                    </div>
-                    <div class="featured-savings">¡Ahorra 1,000 monedas!</div>
+        <!-- Mascota Joy con Corona (si está desbloqueada) -->
+        <section class="mascot-showcase">
+            <div class="mascot-container">
+                <img src="assets/images/mascota.png" alt="Joy" class="mascot-store" id="mascot-store">
+                <div class="mascot-status">
+                    <span id="mascot-status-text"> Aquí podrás adquirir objetos incribles!!</span>
                 </div>
             </div>
         </section>
 
-        <!-- Grid de Productos -->
-        <section class="store-section">
+        <!-- Power-ups Section -->
+        <section class="powerups-section">
             <div class="section-header">
-                <h2>Productos Disponibles</h2>
-                <div class="sort-options">
-                    <select id="sort-select" onchange="sortProducts(this.value)" title="Ordenar productos" aria-label="Ordenar productos por">
-                        <option value="price-asc">Precio: Menor a Mayor</option>
-                        <option value="price-desc">Precio: Mayor a Menor</option>
-                        <option value="rarity">Por Rareza</option>
-                        <option value="name">Por Nombre</option>
-                    </select>
-                </div>
+                <h2><i class="fas fa-magic"></i> Power-ups</h2>
+                <p>Herramientas para dominar las preguntas</p>
             </div>
             
-            <div class="store-grid" id="store-grid">
-                <!-- Los productos se cargan dinámicamente -->
-                <div class="loading-skeleton">
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                </div>
+            <div class="products-grid" id="powerups-grid">
+                <!-- Power-ups se cargan dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Premium Section -->
+        <section class="premium-section">
+            <div class="section-header">
+                <h2><i class="fas fa-crown"></i> Premium</h2>
+                <p>Elementos especiales y únicos</p>
+            </div>
+            
+            <div class="products-grid" id="premium-grid">
+                <!-- Elementos premium se cargan dinámicamente -->
             </div>
         </section>
 
         <!-- Modal de Compra -->
-        <div class="modal purchase-modal" id="purchase-modal" style="display: none;">
-            <div class="purchase-modal-content">
-                <!-- Contenido se carga dinámicamente -->
-            </div>
-        </div>
-
-        <!-- Modal de Inventario -->
-        <div class="modal inventory-modal" id="inventory-modal" style="display: none;">
-            <div class="inventory-modal-content">
+        <div class="purchase-modal" id="purchase-modal" style="display: none;">
+            <div class="modal-overlay" onclick="closePurchaseModal()"></div>
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h2><i class="fas fa-backpack"></i> Mi Inventario</h2>
-                    <button class="close-modal-btn" onclick="closeInventoryModal()">
+                    <h3 id="modal-title">Confirmar Compra</h3>
+                    <button class="modal-close" onclick="closePurchaseModal()">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
                 <div class="modal-body">
-                    <div class="inventory-stats">
-                        <div class="inventory-stat">
-                            <i class="fas fa-magic"></i>
-                            <span>Power-ups</span>
-                            <strong id="inventory-powerups-count">0</strong>
-                        </div>
-                        <div class="inventory-stat">
-                            <i class="fas fa-tshirt"></i>
-                            <span>Cosméticos</span>
-                            <strong id="inventory-cosmetics-count">0</strong>
-                        </div>
-                        <div class="inventory-stat">
-                            <i class="fas fa-gift"></i>
-                            <span>Packs</span>
-                            <strong id="inventory-bundles-count">0</strong>
-                        </div>
+                    <div class="product-preview" id="modal-product">
+                        <!-- Contenido del producto -->
                     </div>
-                    
-                    <div class="inventory-grid" id="inventory-grid">
-                        <!-- Items del inventario se cargan dinámicamente -->
+                    <div class="purchase-info">
+                        <div class="cost-breakdown">
+                            <div class="cost-item">
+                                <span>Precio:</span>
+                                <span id="modal-price">0 monedas</span>
+                            </div>
+                            <div class="cost-item total">
+                                <span>Total:</span>
+                                <span id="modal-total">0 monedas</span>
+                            </div>
+                        </div>
+                        <div class="coins-info">
+                            <div class="coins-current">
+                                <span>Tienes:</span>
+                                <span id="modal-current-coins">0 monedas</span>
+                            </div>
+                            <div class="coins-remaining">
+                                <span>Te quedarán:</span>
+                                <span id="modal-remaining-coins">0 monedas</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
                 <div class="modal-footer">
-                    <button class="btn" onclick="closeInventoryModal()">Cerrar</button>
+                    <button class="btn-cancel" onclick="closePurchaseModal()">Cancelar</button>
+                    <button class="btn-purchase" id="confirm-purchase-btn" onclick="confirmPurchase()">
+                        <i class="fas fa-shopping-cart"></i>
+                        Comprar
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Notificaciones Toast -->
-        <div class="toast-container" id="toast-container">
+        <!-- Notificaciones -->
+        <div class="notifications-container" id="notifications-container">
             <!-- Las notificaciones aparecen aquí -->
-        </div>
-
-        <!-- Tips de Ayuda -->
-        <div class="help-tips">
-            <div class="tip-card">
-                <i class="fas fa-lightbulb"></i>
-                <h4>💡 Consejo</h4>
-                <p>Los power-ups te ayudan en partidas difíciles. ¡Úsalos sabiamente!</p>
-            </div>
-            
-            <div class="tip-card">
-                <i class="fas fa-gift"></i>
-                <h4>🎁 Packs</h4>
-                <p>Los packs ofrecen grandes descuentos. ¡Ahorra comprando varios artículos juntos!</p>
-            </div>
-            
-            <div class="tip-card">
-                <i class="fas fa-star"></i>
-                <h4>⭐ Rareza</h4>
-                <p>Los artículos legendarios son únicos y ofrecen bonificaciones especiales.</p>
-            </div>
         </div>
 
         <!-- Bottom Navigation -->
@@ -231,7 +152,7 @@
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
-            <a href="single-player.html" class="nav-item">
+            <a href="single-player-new.html" class="nav-item">
                 <i class="fas fa-play"></i>
                 <span>Jugar</span>
             </a>
@@ -252,58 +173,19 @@
 
     <!-- JavaScript -->
     <script src="js/modules/gamedatamanager.js"></script>
+    <script src="js/modules/dark-mode.js"></script>
     <script src="js/pages/store.js"></script>
 
-    <!-- Script adicional para funciones específicas del HTML -->
+    <!-- Script de inicialización -->
     <script>
-        // ============================================
-        // FUNCIONES GLOBALES PARA EL HTML - CORREGIDAS
-        // ============================================
+        // Variables globales
+        let currentPurchaseProduct = null;
         
-        // Variable global para filtro actual
-        let currentFilter = 'all';
-        
-        // ✅ FUNCIONES FALTANTES AÑADIDAS
-        window.filterStore = function(category) {
-            console.log('🔍 Filtrando por categoría:', category);
-            
-            // Actualizar filtros activos
-            document.querySelectorAll('.category-filter').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Actualizar filtro actual
-            currentFilter = category;
-            
-            // Renderizar con nuevo filtro
-            if (typeof renderStore === 'function') {
-                renderStore(category);
-            }
-        };
-        
-        window.searchProducts = function(searchTerm) {
-            console.log('🔎 Buscando:', searchTerm);
-            if (typeof renderStore === 'function') {
-                renderStore(currentFilter, searchTerm);
-            }
-        };
-        
-        window.showInventory = function() {
-            console.log('🎒 Abriendo inventario');
-            const modal = document.getElementById('inventory-modal');
-            if (modal) {
-                if (typeof updateInventoryDisplay === 'function') {
-                    updateInventoryDisplay();
-                }
-                modal.style.display = 'flex';
-            }
-        };
-        
-        window.closeInventoryModal = function() {
-            const modal = document.getElementById('inventory-modal');
-            if (modal) {
-                modal.style.display = 'none';
+        // Funciones globales para el HTML
+        window.buyProduct = function(productId) {
+            console.log('🛒 Iniciando compra:', productId);
+            if (typeof showPurchaseModal === 'function') {
+                showPurchaseModal(productId);
             }
         };
         
@@ -314,209 +196,27 @@
             }
         };
         
-        window.purchaseProduct = function(productId, quantity = 1) {
-            console.log(`💰 Intentando comprar: ${productId} x${quantity}`);
-            
-            if (typeof findProductById === 'function' && typeof playerData !== 'undefined') {
-                const product = findProductById(productId);
-                if (!product) {
-                    console.error('Producto no encontrado:', productId);
-                    return;
-                }
-                
-                const totalCost = product.price * quantity;
-                
-                if (playerData.coins >= totalCost) {
-                    // Realizar compra
-                    playerData.coins -= totalCost;
-                    
-                    // Añadir al inventario
-                    for (let i = 0; i < quantity; i++) {
-                        if (typeof addToInventory === 'function') {
-                            addToInventory(product);
-                        }
-                    }
-                    
-                    // Actualizar UI
-                    if (typeof updatePlayerStats === 'function') updatePlayerStats();
-                    if (typeof savePlayerData === 'function') savePlayerData();
-                    closePurchaseModal();
-                    if (typeof renderStore === 'function') renderStore(currentFilter);
-                    
-                    // Mostrar confirmación
-                    if (typeof showPurchaseConfirmation === 'function') {
-                        showPurchaseConfirmation(product, quantity);
-                    }
-                    
-                    console.log(`✅ Compra exitosa: ${quantity}x ${product.name}`);
-                } else {
-                    console.warn('💸 Monedas insuficientes');
-                    showNotification('No tienes suficientes monedas', 'error');
-                }
+        window.confirmPurchase = function() {
+            if (currentPurchaseProduct && typeof processPurchase === 'function') {
+                processPurchase(currentPurchaseProduct);
             }
         };
         
-        window.sortProducts = function(criteria) {
-            console.log('🔄 Ordenando productos por:', criteria);
-            if (typeof renderStore === 'function') {
-                renderStore(currentFilter);
-            }
-        };
-        
-        function updateCoinsDisplay() {
-            try {
-                const gameData = localStorage.getItem('quizCristianoData');
-                if (gameData) {
-                    const data = JSON.parse(gameData);
-                    const coinsElement = document.getElementById('coins-display');
-                    if (coinsElement) {
-                        coinsElement.textContent = data.coins || 0;
-                    }
-                }
-            } catch (error) {
-                console.warn('⚠️ Error actualizando display de monedas:', error);
-            }
-        }
-        
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'error' ? '#e74c3c' : '#27ae60'};
-                color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                z-index: 2000;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-        
-        // ============================================
-        // INICIALIZACIÓN MEJORADA
-        // ============================================
-        
+        // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏪 Inicializando tienda...');
+            console.log('🏪 Store HTML cargado');
             
-            // Verificar que los elementos existen antes de inicializar
-            setTimeout(() => {
-                const storeGrid = document.getElementById('store-grid');
-                if (storeGrid) {
-                    console.log('✅ Elementos DOM encontrados');
-                    updateCoinsDisplay();
-                } else {
-                    console.error('❌ Elemento store-grid no encontrado');
-                }
-            }, 100);
+            // Verificar elementos críticos
+            const criticalElements = [
+                'coins-display', 'mascot-store', 'powerups-grid', 
+                'premium-grid', 'purchase-modal'
+            ];
             
-            // Actualizar monedas cada 2 segundos
-            setInterval(updateCoinsDisplay, 2000);
-            
-            // Efectos visuales adicionales
-            setTimeout(() => {
-                // Animación de entrada para las ofertas destacadas
-                const featuredItems = document.querySelectorAll('.featured-item');
-                featuredItems.forEach((item, index) => {
-                    setTimeout(() => {
-                        item.style.animation = 'slideInUp 0.6s ease forwards';
-                    }, index * 200);
-                });
-            }, 500);
-            
-            // Efectos de hover para los tips
-            const tipCards = document.querySelectorAll('.tip-card');
-            tipCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px) scale(1.02)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
+            criticalElements.forEach(id => {
+                const element = document.getElementById(id);
+                console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
             });
         });
-        
-        // Animaciones CSS adicionales
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            .featured-item {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            
-            .tip-card {
-                transition: transform 0.3s ease;
-            }
-            
-            .loading-skeleton {
-                display: flex;
-                gap: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .skeleton-card {
-                width: 300px;
-                height: 200px;
-                background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
-                background-size: 200% 100%;
-                animation: skeletonLoading 1.5s infinite;
-                border-radius: 15px;
-            }
-            
-            @keyframes skeletonLoading {
-                0% { background-position: 200% 0; }
-                100% { background-position: -200% 0; }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Debug para verificar carga
-        setTimeout(() => {
-            console.log('🔍 Debug - Verificando carga:');
-            console.log('STORE_PRODUCTS:', typeof STORE_PRODUCTS !== 'undefined' ? 'Definido' : 'No definido');
-            console.log('renderStore function:', typeof renderStore === 'function' ? 'Disponible' : 'No disponible');
-            console.log('Elements:', document.getElementById('store-grid') ? 'Grid encontrado' : 'Grid no encontrado');
-            
-            // Forzar renderizado si la función está disponible
-            if (typeof renderStore === 'function') {
-                console.log('🔄 Forzando renderizado inicial...');
-                renderStore('all');
-            }
-        }, 2000);
     </script>
 </body>
 </html>
