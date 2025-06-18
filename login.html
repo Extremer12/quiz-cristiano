@@ -336,7 +336,7 @@
                 // Verificar si hay una página de redirect guardada
                 const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
                 sessionStorage.removeItem('redirectAfterLogin');
-                window.location.href = redirectUrl;
+                window.location.replace(redirectUrl); // Cambiado de href a replace
                 
             } catch (error) {
                 stopLoading();
@@ -405,7 +405,7 @@
                 // Verificar si hay una página de redirect guardada
                 const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
                 sessionStorage.removeItem('redirectAfterLogin');
-                window.location.href = redirectUrl;
+                window.location.replace(redirectUrl); // Cambiado de href a replace
                 
             } catch (error) {
                 stopLoading();
@@ -451,12 +451,31 @@
             }
         }
 
-        // Verificar si ya está logueado
+        // Verificar si ya está logueado (MEJORADO)
         onAuthStateChanged(auth, (user) => {
+            console.log('🔄 Estado de auth en login:', user ? 'autenticado' : 'no autenticado');
+            
             if (user) {
-                console.log('👤 Usuario ya logueado:', user.displayName || 'Invitado');
-                // Si ya está logueado, redirigir
-                window.location.href = 'index.html';
+                console.log('👤 Usuario ya logueado, redirigiendo...');
+                
+                // Guardar datos del usuario
+                localStorage.setItem('currentUser', JSON.stringify({
+                    uid: user.uid,
+                    name: user.displayName || 'Invitado',
+                    email: user.email,
+                    photo: user.photoURL,
+                    loginMethod: user.isAnonymous ? 'anonymous' : 'google'
+                }));
+                
+                // Remover flag de skip si existe
+                localStorage.removeItem('skipLogin');
+                
+                // Pequeño delay para evitar bucles
+                setTimeout(() => {
+                    const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
+                    sessionStorage.removeItem('redirectAfterLogin');
+                    window.location.replace(redirectUrl); // usar replace en lugar de href
+                }, 500);
             }
         });
 

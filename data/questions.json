@@ -183,8 +183,8 @@
         "id": "pb1",
         "category": "personajes-biblicos",
         "text": "¿Quién fue el hombre más fuerte de la Biblia?",
-        "options": ["David", "Sansón", "Goliat", "Saúl"],
-        "correctIndex": 1,
+        "options": ["Sansón", "David", "Goliat", "Saúl"],
+        "correctIndex": 0,
         "difficulty": "fácil",
         "reference": "Jueces 13-16"
     },
@@ -192,7 +192,7 @@
         "id": "pb2",
         "category": "personajes-biblicos",
         "text": "¿Quién fue llevado al cielo en un carro de fuego?",
-        "options": ["Moisés", "Elías", "Enoc", "Ezequiel"],
+        "options": ["Moisés", "Elías", "Enoc", "Elíseo"],
         "correctIndex": 1,
         "difficulty": "medio",
         "reference": "2 Reyes 2:11"
@@ -200,9 +200,9 @@
     {
         "id": "pb3",
         "category": "personajes-biblicos",
-        "text": "¿Quién fue arrojado al foso de los leones?",
-        "options": ["Daniel", "David", "Jonás", "José"],
-        "correctIndex": 0,
+        "text": "¿Quién fue echado al foso de los leones?",
+        "options": ["José", "Daniel", "Ezequiel", "Nehemías"],
+        "correctIndex": 1,
         "difficulty": "fácil",
         "reference": "Daniel 6:16"
     },
@@ -272,91 +272,28 @@
     {
         "id": "dc1",
         "category": "doctrina-cristiana",
-        "text": "¿Cuántas personas componen la Trinidad?",
-        "options": ["Dos", "Tres", "Cuatro", "Una"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "Mateo 28:19"
-    },
-    {
-        "id": "dc2",
-        "category": "doctrina-cristiana",
-        "text": "¿Cuál es el primer mandamiento?",
-        "options": ["No matarás", "Amarás a Dios sobre todas las cosas", "No robarás", "Honrarás padre y madre"],
+        "text": "¿Cuál es el gran mandamiento según Jesús?",
+        "options": ["No matarás", "Amar a Dios sobre todas las cosas", "No robarás", "Honra a padre y madre"],
         "correctIndex": 1,
         "difficulty": "fácil",
         "reference": "Mateo 22:37-38"
     },
     {
-        "id": "dc3",
+        "id": "dc2",
         "category": "doctrina-cristiana",
-        "text": "¿Qué significa la palabra 'Evangelio'?",
-        "options": ["Buenas nuevas", "Enseñanza", "Palabra sagrada", "Mandamiento"],
+        "text": "¿Cuántos libros tiene la Biblia completa?",
+        "options": ["66", "73", "76", "81"],
         "correctIndex": 0,
-        "difficulty": "medio",
-        "reference": "Marcos 1:1"
-    },
-    {
-        "id": "dc4",
-        "category": "doctrina-cristiana",
-        "text": "¿Cuántos libros tiene la Biblia protestante?",
-        "options": ["73", "66", "72", "64"],
-        "correctIndex": 1,
         "difficulty": "medio",
         "reference": "Canon bíblico"
     },
     {
-        "id": "dc5",
+        "id": "dc3",
         "category": "doctrina-cristiana",
-        "text": "¿Qué es la gracia de Dios?",
-        "options": ["Favor inmerecido", "Bendición material", "Oración", "Buenas obras"],
-        "correctIndex": 0,
+        "text": "¿Cómo se obtiene la salvación según la doctrina cristiana?",
+        "options": ["Por obras", "Por fe en Cristo", "Por tradición", "Por herencia"],
+        "correctIndex": 1,
         "difficulty": "medio",
         "reference": "Efesios 2:8"
-    },
-    {
-        "id": "dc6",
-        "category": "doctrina-cristiana",
-        "text": "¿Cuál es la oración que Jesús enseñó?",
-        "options": ["Padre Nuestro", "Ave María", "Gloria", "Credo"],
-        "correctIndex": 0,
-        "difficulty": "fácil",
-        "reference": "Mateo 6:9-13"
-    },
-    {
-        "id": "dc7",
-        "category": "doctrina-cristiana",
-        "text": "¿Qué es la justificación por la fe?",
-        "options": ["Salvación por obras", "Salvación por fe únicamente", "Salvación mixta", "No existe"],
-        "correctIndex": 1,
-        "difficulty": "medio",
-        "reference": "Romanos 5:1"
-    },
-    {
-        "id": "dc8",
-        "category": "doctrina-cristiana",
-        "text": "¿Cuáles son los frutos del Espíritu?",
-        "options": ["Amor, gozo, paz", "Fe, esperanza, caridad", "Sabiduría, entendimiento", "Todas las anteriores"],
-        "correctIndex": 0,
-        "difficulty": "medio",
-        "reference": "Gálatas 5:22"
-    },
-    {
-        "id": "dc9",
-        "category": "doctrina-cristiana",
-        "text": "¿Qué es la santificación?",
-        "options": ["Proceso de crecimiento espiritual", "Momento de conversión", "Bautismo", "Confirmación"],
-        "correctIndex": 0,
-        "difficulty": "medio",
-        "reference": "1 Tesalonicenses 4:3"
-    },
-    {
-        "id": "dc10",
-        "category": "doctrina-cristiana",
-        "text": "¿Cuál es el gran mandamiento?",
-        "options": ["No matarás", "Amar a Dios y al prójimo", "No robarás", "Honrar a los padres"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "Mateo 22:37-39"
     }
 ]

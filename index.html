@@ -3,12 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Cristiano</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Quiz Cristiano - Pon a Prueba tu Fe</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Pon a prueba tu conocimiento bíblico con Quiz Cristiano. Juego educativo con preguntas del Antiguo y Nuevo Testamento.">
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Quiz Cristiano">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    
     <style>
-        /* TODOS LOS ESTILOS EN UNA SOLA PÁGINA */
+        /* ================================================
+        ESTILOS PRINCIPALES - SOLO PANTALLA PRINCIPAL
+        ================================================ */
+        
         * {
             margin: 0;
             padding: 0;
@@ -17,342 +38,466 @@
 
         body {
             font-family: 'Lato', Arial, sans-serif;
-            background-image: url('assets/images/fondo.png'); 
+            background-image: var(--bg-image);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
             min-height: 100vh;
-            color: white;
-        }
-
-        /* Fallback si no carga la imagen */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            margin-bottom: 100px; /* Espacio para bottom nav */
-        }
-
-        /* Header */
-        .header {
-            background: rgba(255, 255, 255, 0.1);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            overflow-x: hidden;
             position: relative;
         }
 
-        .header-content {
+        .container {
+            min-height: 100vh;
+            padding-bottom: 100px;
+            position: relative;
+        }
+
+        /* ============================================
+           OCULTAR BOTÓN DE MODO OSCURO INDEPENDIENTE
+           ============================================ */
+        
+        .theme-toggle {
+            display: none !important;
+        }
+
+        /* ============================================
+           HEADER CON MENU TOGGLE
+           ============================================ */
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
 
-        .logo-container {
-            text-align: center;
-            flex: 1;
+        [data-theme="dark"] .header {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .menu-toggle {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        [data-theme="dark"] .menu-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        [data-theme="dark"] .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .logo-title {
             font-family: 'Cinzel', serif;
-            font-size: 2rem;
+            font-size: 1.9rem;
             color: #ffd700;
             margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 700;
         }
 
-        .logo-subtitle {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin: 5px 0 0 0;
-        }
-
-        /* Menú toggle */
-        .menu-toggle {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
+        .user-menu {
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
+            gap: 15px;
         }
 
-        .menu-toggle:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
+        .coins-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            font-weight: 600;
+            color: #ffd700;
+            font-size: 1.1rem;
         }
 
-        .menu-toggle i {
-            font-size: 18px;
+        .coins-display i {
+            font-size: 1.3rem;
         }
 
-        .menu-toggle.active i.fa-bars {
-            display: none;
-        }
-
-        .menu-toggle.active i.fa-times {
-            display: block;
-        }
-
-        .menu-toggle i.fa-times {
-            display: none;
-        }
+        /* ============================================
+           DROPDOWN MENU - REDISEÑADO MODERNO
+           ============================================ */
 
         .dropdown-menu {
             position: fixed;
             top: 0;
-            right: -300px;
-            width: 280px;
+            left: -50%;
+            width: 50%;
             height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(30px);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+            transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="dark"] .dropdown-menu {
             background: rgba(0, 0, 0, 0.9);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            z-index: 1000;
-            transition: right 0.3s ease;
-            padding: 20px;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
         }
 
-        .dropdown-menu.active {
-            right: 0;
+        .dropdown-menu.show {
+            left: 0;
         }
 
-        .menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+        .dropdown-header {
+            padding: 30px 20px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .menu-header h3 {
-            color: white;
-            margin: 0;
-        }
-
-        .close-menu {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 0;
-            color: white;
-            text-decoration: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: opacity 0.3s ease;
-        }
-
-        .menu-item:hover {
-            opacity: 0.7;
-        }
-
-        .menu-item i {
-            margin-right: 15px;
-            width: 20px;
             text-align: center;
         }
 
-        /* Overlay */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
+        [data-theme="dark"] .dropdown-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .dropdown-header h3 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .dropdown-header p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            color: #fff;
+        }
+
+        .dropdown-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Mascota */
-        .mascot-section {
-            text-align: center;
-            margin: 30px 0;
-            position: relative;
-        }
-
-        .mascot-container {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .mascot-container:hover {
+        .dropdown-close:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: scale(1.1);
         }
 
+        .dropdown-content {
+            flex: 1;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #3a86ff;
+            transform: translateX(10px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* ============================================
+           MASCOTA CON CLICK PARA MOSTRAR DIÁLOGO
+           ============================================ */
+
+        .mascot-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px 20px;
+            text-align: center;
+        }
+
+        .mascot-container {
+            position: relative;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
         .mascot-image {
-            width: 100%;
-            height: 100%;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            border: 3px solid #ffd700;
             object-fit: cover;
+            border: 4px solid #ffd700;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .mascot-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3);
         }
 
         .speech-bubble {
-            position: absolute;
-            bottom: 130px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(67, 97, 238, 0.9);
-            color: white;
-            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
-            min-width: 250px;
-            text-align: center;
-            font-size: 14px;
+            padding: 15px 20px;
+            margin-top: 20px;
+            position: relative;
+            max-width: 300px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
             transition: all 0.3s ease;
         }
 
-        .speech-bubble.hidden {
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-50%) translateY(10px);
+        [data-theme="dark"] .speech-bubble {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .speech-bubble::after {
+        .speech-bubble.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .speech-bubble::before {
             content: '';
             position: absolute;
-            top: 100%;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            border: 10px solid transparent;
-            border-top-color: rgba(67, 97, 238, 0.9);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid rgba(0, 0, 0, 0.7);
         }
 
-        /* Botones de juego */
-        .game-buttons {
+        [data-theme="dark"] .speech-bubble::before {
+            border-bottom-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .speech-text {
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* ============================================
+           BOTONES PRINCIPALES - MÁS GRANDES Y SIMÉTRICOS
+           ============================================ */
+
+        .main-buttons {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            margin: 30px 0;
+            margin: 30px 20px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .game-button {
+            padding: 25px 35px;
+            border: none;
+            border-radius: 18px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            padding: 20px 25px;
-            border-radius: 15px;
-            text-decoration: none;
-            color: white;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border: none;
-            cursor: pointer;
-            background: transparent;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+            min-height: 70px;
         }
 
-        .game-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        .game-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .game-button:hover::before {
+            left: 100%;
         }
 
         .game-button i {
             font-size: 1.5rem;
-            margin-right: 15px;
         }
 
         .single-player {
-            background: linear-gradient(135deg, #3a86ff, #2980b9);
+            background: linear-gradient(135deg, #3a86ff, #2563eb);
+            color: white;
+            box-shadow: 0 6px 18px rgba(58, 134, 255, 0.3);
+        }
+
+        .single-player:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(58, 134, 255, 0.4);
         }
 
         .multiplayer {
-            background: linear-gradient(135deg, #38b000, #27ae60);
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 6px 18px rgba(139, 92, 246, 0.3);
         }
 
-        /* Estadísticas */
+        .multiplayer:hover {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        /* ============================================
+           ESTADÍSTICAS DEL JUGADOR - SIMÉTRICO
+           ============================================ */
+
         .player-stats {
             display: flex;
             justify-content: space-around;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 30px 0;
+            margin: 30px 20px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        [data-theme="dark"] .player-stats {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            color: white;
+            gap: 10px;
+            flex: 1;
         }
 
-        .stat-item i {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .stat-item i.fa-star {
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
             color: #ffd700;
-        }
-
-        .stat-item i.fa-coins {
-            color: #f39c12;
-        }
-
-        .stat-item i.fa-trophy {
-            color: #e74c3c;
         }
 
         .stat-value {
             font-size: 1.4rem;
             font-weight: bold;
-            display: block;
+            color: #fff;
         }
 
         .stat-label {
-            font-size: 0.8rem;
-            opacity: 0.8;
+            font-size: 0.9rem;
+            color: #fff;
+            opacity: 0.7;
+            font-weight: 500;
         }
 
-        /* Bottom nav */
+        /* ============================================
+           BOTTOM NAVIGATION
+           ============================================ */
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(30px);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            align-items: center;
+            padding: 12px 0;
             z-index: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .bottom-nav {
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .nav-item {
@@ -360,1078 +505,423 @@
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: #666;
+            color: #fff;
             font-size: 0.75rem;
-            padding: 5px 10px;
+            padding: 8px 12px;
             border-radius: 10px;
             transition: all 0.3s ease;
-            border: none;
-            background: none;
-            cursor: pointer;
+            font-weight: 500;
+            min-width: 60px;
         }
 
-        .nav-item.active,
-        .nav-item:hover {
+        .nav-item:hover,
+        .nav-item.active {
             color: #3a86ff;
-            background: rgba(58, 134, 255, 0.1);
+            background: rgba(58, 134, 255, 0.2);
+            transform: translateY(-2px);
         }
 
         .nav-item i {
             font-size: 1.2rem;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+
+        /* Botón de play central más grande */
         .play-button {
-            color: white !important;
+            position: relative;
+            background: linear-gradient(135deg, #ffd700, #f39c12);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            margin-top: -10px;
+        }
+
+        .play-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.5);
+            color: #2c3e50;
+        }
+
+        .play-button i {
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .play-button span {
+            display: none;
         }
 
         .play-circle {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #3a86ff, #2980b9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2px;
-        }
-        .coming-soon-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-        }
-
-        .coming-soon-content {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            color: white;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-            animation: modalSlideIn 0.4s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                transform: scale(0.8) translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* FALTABA ESTE KEYFRAME */
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .coming-soon-content::before {
-            content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            animation: playPulse 2s infinite;
         }
 
-        .coming-soon-content > * {
-            position: relative;
-            z-index: 1;
+        @keyframes playPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
         }
 
-        .coming-soon-title {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
+        /* ============================================
+           OVERLAY PARA CERRAR MENÚ
+           ============================================ */
 
-        .coming-soon-emoji {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            display: block;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-
-        .coming-soon-description {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-
-        .features-preview {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 25px 0;
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-        }
-
-        .features-preview h4 {
-            color: #ffd700;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .feature {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            padding: 8px 0;
-            font-size: 1rem;
-        }
-
-        .feature i {
-            margin-right: 12px;
-            color: #ffd700;
-            width: 20px;
-        }
-
-        .notify-section {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .notify-section h4 {
-            color: #ffd700;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .email-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            outline: none;
-        }
-
-        .email-input::placeholder {
-            color: #666;
-        }
-
-        .notify-btn {
-            background: linear-gradient(135deg, #ffd700, #f39c12);
-            color: #333;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-right: 10px;
-        }
-
-        .notify-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-        }
-
-        .modal-close-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        /* Pantalla de carga */
-        .loading-screen {
+        .menu-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            color: white;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        .loading-content {
-            text-align: center;
+        .menu-overlay.show {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .loading-logo h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            color: #ffd700;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
 
-        .loading-spinner {
-            font-size: 3rem;
-            color: #ffd700;
-            margin-bottom: 20px;
-        }
-
-        .loading-content p {
-            font-size: 1.1rem;
-            opacity: 0.8;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .container {
+            .dropdown-menu {
+                width: 80%;
+                left: -80%;
+            }
+
+            .header {
+                margin: 10px;
                 padding: 15px;
             }
-            
+
             .logo-title {
-                font-size: 1.8rem;
-            }
-            
-            .game-button {
-                padding: 18px 20px;
-                font-size: 1rem;
-            }
-            
-            .dropdown-menu {
-                width: 260px;
-                right: -280px;
+                font-size: 1.6rem;
             }
 
-            .coming-soon-content {
-                padding: 30px 20px;
-                margin: 20px;
+            .mascot-image {
+                width: 120px;
+                height: 120px;
             }
-            
-            .coming-soon-title {
-                font-size: 2rem;
+
+            .main-buttons {
+                margin: 20px 15px;
+                max-width: none;
             }
-            
-            .coming-soon-emoji {
-                font-size: 3rem;
+
+            .player-stats {
+                margin: 20px 15px;
+                max-width: none;
+            }
+
+            .speech-bubble {
+                max-width: 250px;
+                padding: 12px 16px;
+            }
+
+            .dropdown-close {
+                top: 15px;
+                right: 15px;
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .dropdown-item {
+                padding: 12px 20px;
+                font-size: 0.95rem;
             }
         }
     </style>
-
-    <!-- PWA Configuration -->
-    <meta name="theme-color" content="#ffd700">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Quiz Cristiano">
-    <meta name="msapplication-TileColor" content="#1e3c8a">
-    <meta name="msapplication-TileImage" content="assets/icons/icon-192.png">
-
-    <!-- Manifest -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="assets/icons/icon-512.png">
-
-    <!-- Microsoft Tiles -->
-    <meta name="msapplication-square150x150logo" content="assets/icons/icon-192.png">
-    <meta name="msapplication-square310x310logo" content="assets/icons/icon-512.png">
 </head>
 <body>
-        <!-- Header -->
+    <!-- Verificar autenticación al cargar -->
+    <script>
+        // Redirigir a login si no hay usuario autenticado
+        const currentUser = localStorage.getItem('currentUser');
+        const skipLogin = localStorage.getItem('skipLogin');
+        
+        if (!currentUser && !skipLogin) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Pantalla Principal -->
+    <div class="container">
+        <!-- Header con menú toggle -->
         <header class="header">
-            <div class="header-content">
-                <button class="menu-toggle" id="menu-toggle" title="Abrir menú">
-                    <i class="fas fa-bars"></i>
-                    <i class="fas fa-times"></i>
-                </button>
-                
-                <div class="logo-container">
-                    <h1 class="logo-title">Quiz Cristiano</h1>
-                    <p class="logo-subtitle">Conocimiento Bíblico</p>
+            <button class="menu-toggle" onclick="toggleMenu()" title="Menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="logo-title">Quiz Cristiano</h1>
+            <div class="user-menu">
+                <div class="coins-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="user-coins">0</span>
                 </div>
             </div>
         </header>
 
-        <!-- Mascota -->
-        <div class="mascot-section">
-            <div class="speech-bubble hidden" id="speech-bubble">
-                <p>¡Hola! Soy Joy, tu guía en este viaje bíblico. ¿En qué puedo ayudarte hoy?</p>
+        <!-- Overlay para cerrar menú -->
+        <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
+
+        <!-- Dropdown Menu - Rediseñado moderno -->
+        <div class="dropdown-menu" id="dropdown-menu">
+            <button class="dropdown-close" onclick="toggleMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="dropdown-header">
+                <h3>Menú Principal</h3>
+                <p>Opciones y configuración</p>
             </div>
-            <div class="mascot-container" id="mascot-joy">
-                <img src="./assets/images/mascota.png" alt="Joy - Mascota del juego" class="mascot-image">
+
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item" onclick="showProfile()">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </a>
+                <a href="#" class="dropdown-item" onclick="showSettings()">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </a>
+                <a href="#" class="dropdown-item" onclick="showHelp()">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Ayuda</span>
+                </a>
+                <a href="#" class="dropdown-item" onclick="toggleDarkMode()">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                    <span id="theme-text">Modo Oscuro</span>
+                </a>
+                <a href="#" class="dropdown-item" onclick="installApp()">
+                    <i class="fas fa-download"></i>
+                    <span>Instalar App</span>
+                </a>
+                <a href="login.html" class="dropdown-item">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Cambiar Usuario</span>
+                </a>
             </div>
         </div>
 
-        <!-- Botones de juego -->
-        <div class="game-buttons">
-            <a href="single-player.html" class="game-button single-player">
+        <!-- Mascota con click para mostrar diálogo -->
+        <section class="mascot-section">
+            <div class="mascot-container" onclick="toggleSpeech()">
+                <img src="./assets/images/mascota.png" alt="Joy - Mascota del Quiz" class="mascot-image">
+            </div>
+            <div class="speech-bubble" id="speech-bubble">
+                <p class="speech-text">¡Hola! Soy Joy, tu guía en este viaje bíblico. ¿Listo para poner a prueba tu fe?</p>
+            </div>
+        </section>
+
+        <!-- Botones principales -->
+        <section class="main-buttons">
+            <a href="single-player-new.html" class="game-button single-player">
                 <i class="fas fa-user"></i>
                 <span>Modo Individual</span>
             </a>
-            
-            <button class="game-button multiplayer" id="multiplayer-btn">
+            <a href="multiplayer.html" class="game-button multiplayer">
                 <i class="fas fa-users"></i>
-                <span>Multijugador</span>
-            </button>
-        </div>
+                <span>Modo Multijugador</span>
+            </a>
+        </section>
 
-        <!-- Estadísticas -->
-        <div class="player-stats">
+        <!-- Estadísticas del Jugador -->
+        <section class="player-stats">
             <div class="stat-item">
-                <i class="fas fa-star"></i>
-                <span class="stat-value" id="level-stat">1</span>
-                <span class="stat-label">Nivel</span>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-coins"></i>
-                <span class="stat-value" id="coins-stat">0</span>
-                <span class="stat-label">Monedas</span>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-trophy"></i>
-                <span class="stat-value" id="victories-stat">0</span>
-                <span class="stat-label">Victorias</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Menú desplegable -->
-    <div class="dropdown-menu" id="dropdown-menu">
-        <div class="menu-header">
-            <h3>Menú</h3>
-            <button class="close-menu" id="close-menu" title="Cerrar menú">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <a href="#" class="menu-item">
-            <i class="fas fa-user-circle"></i>
-            <span>Perfil</span>
-        </a>
-        <a href="#" class="menu-item">
-            <i class="fas fa-cog"></i>
-            <span>Configuración</span>
-        </a>
-        <a href="#" class="menu-item">
-            <i class="fas fa-question-circle"></i>
-            <span>Ayuda</span>
-        </a>
-        <a href="#" class="menu-item">
-            <i class="fas fa-moon"></i>
-            <span>Modo Oscuro</span>
-        </a>
-    <a href="#" class="menu-item" id="install-app-btn" style="display: none;" onclick="installApp()">
-    <i class="fas fa-download"></i>
-    <span>Instalar App</span>
-</a>    
-    </div>
-
-    <!-- Overlay -->
-    <div class="menu-overlay" id="menu-overlay"></div>
-
-    <!-- Modal Próximamente -->
-    <div class="coming-soon-modal" id="coming-soon-modal">
-        <div class="coming-soon-content">
-            <span class="coming-soon-emoji">🚀</span>
-            <h2 class="coming-soon-title">¡Próximamente!</h2>
-            
-            <p class="coming-soon-description">
-                El modo multijugador está en desarrollo. Mientras tanto, ¡conviértete en un experto bíblico en el modo individual!
-            </p>
-            
-            <div class="features-preview">
-                <h4>🎮 Lo que viene:</h4>
-                <div class="feature">
-                    <i class="fas fa-bolt"></i>
-                    <span>Desafíos en tiempo real</span>
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
                 </div>
-                <div class="feature">
-                    <i class="fas fa-users"></i>
-                    <span>Salas privadas con amigos</span>
+                <div class="stat-value" id="player-level">1</div>
+                <div class="stat-label">Nivel</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-coins"></i>
                 </div>
-                <div class="feature">
+                <div class="stat-value" id="player-coins">0</div>
+                <div class="stat-label">Monedas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
                     <i class="fas fa-trophy"></i>
-                    <span>Torneos bíblicos semanales</span>
                 </div>
-                <div class="feature">
-                    <i class="fas fa-medal"></i>
-                    <span>Rankings globales</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-gift"></i>
-                    <span>Recompensas exclusivas</span>
-                </div>
+                <div class="stat-value" id="player-victories">0</div>
+                <div class="stat-label">Victorias</div>
             </div>
-            
-            <div class="notify-section">
-                <h4>📧 ¿Quieres ser el primero en saberlo?</h4>
-                <input type="email" class="email-input" placeholder="tu@email.com" id="notify-email">
-                <button class="notify-btn" onclick="notifyMe()">Notificarme</button>
-            </div>
-            
-            <div style="margin-top: 20px;">
-                <button class="modal-close-btn" onclick="closeComingSoon()">¡Entendido!</button>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Bottom nav -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">
-            <i class="fas fa-home"></i>
-            <span>Inicio</span>
-        </a>
-        <a href="logros.html" class="nav-item">
-            <i class="fas fa-trophy"></i>
-            <span>Logros</span>
-        </a>
-        <a href="single-player.html" class="nav-item play-button">
-            <div class="play-circle">
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="store.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>Tienda</span>
+            </a>
+            <a href="ranking.html" class="nav-item">
+                <i class="fas fa-trophy"></i>
+                <span>Ranking</span>
+            </a>
+            <a href="single-player-new.html" class="nav-item play-button">
+                <div class="play-circle"></div>
                 <i class="fas fa-play"></i>
-            </div>
-            <span>Jugar</span>
-        </a>
-        <button class="nav-item" onclick="openMultiplayerModal()" id="nav-multiplayer">
-            <i class="fas fa-users"></i>
-            <span>Multijugador</span>
-        </button>
-        <a href="store.html" class="nav-item">
-            <i class="fas fa-store"></i>
-            <span>Tienda</span>
-        </a>
-    </nav>
-
-    <!-- Pantalla de carga mientras verifica autenticación -->
-<div class="loading-screen" id="loading-screen">
-    <div class="loading-content">
-        <div class="loading-logo">
-            <h1>Quiz Cristiano</h1>
-        </div>
-        <div class="loading-spinner">
-            <i class="fas fa-circle-notch fa-spin"></i>
-        </div>
-        <p>Verificando sesión...</p>
+            </a>
+            <a href="logros.html" class="nav-item">
+                <i class="fas fa-medal"></i>
+                <span>Logros</span>
+            </a>
+            <a href="multiplayer.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Multi</span>
+            </a>
+        </nav>
     </div>
-</div>
 
-<script>
-        // JAVASCRIPT COMPLETAMENTE CORREGIDO
+    <!-- Scripts simplificados -->
+    <script src="js/modules/dark-mode.js"></script>
+    <script type="module" src="js/app.js"></script>
+
+    <script>
+        // ============================================
+        // FUNCIONALIDAD BÁSICA DEL INDEX - CON TEMA GLOBAL
+        // ============================================
+
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const speechBubble = document.getElementById('speech-bubble');
+
+        let speechVisible = false;
+
+        // ✅ FUNCIÓN DE MODO OSCURO MEJORADA
+        window.toggleDarkMode = function() {
+            const newTheme = window.toggleGlobalTheme();
+            updateThemeMenuIcon();
+            showThemeNotification(newTheme);
+        };
+
+        function updateThemeMenuIcon() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const themeMenuText = document.getElementById('theme-menu-text');
+            
+            if (themeMenuText) {
+                themeMenuText.textContent = currentTheme === 'dark' ? 'Modo Claro' : 'Modo Oscuro';
+            }
+        }
+
+        function showThemeNotification(theme) {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    background: var(--surface-primary);
+                    backdrop-filter: var(--backdrop-blur);
+                    border: 1px solid var(--border-primary);
+                    border-radius: 15px;
+                    padding: 15px 20px;
+                    z-index: 2000;
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    box-shadow: var(--shadow-primary);
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    color: var(--text-primary);
+                    font-weight: 600;
+                ">
+                    <i class="fas ${theme === 'dark' ? 'fa-moon' : 'fa-sun'}"></i>
+                    <span>Modo ${theme === 'dark' ? 'Oscuro' : 'Claro'} activado</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animación
+            setTimeout(() => {
+                notification.firstElementChild.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remover
+            setTimeout(() => {
+                notification.firstElementChild.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Resto de funciones...
+        window.toggleMenu = function() {
+            dropdownMenu.classList.toggle('show');
+            menuOverlay.classList.toggle('show');
+        };
+
+        window.toggleSpeech = function() {
+            speechVisible = !speechVisible;
+            speechBubble.classList.toggle('show', speechVisible);
+        };
+
+        // Cargar estadísticas del usuario
+        function loadUserStats() {
+            try {
+                const gameData = localStorage.getItem('quizCristianoData');
+                const achievementsData = localStorage.getItem('quizCristianoAchievements');
+                
+                if (gameData) {
+                    const data = JSON.parse(gameData);
+                    document.getElementById('user-coins').textContent = data.coins || 0;
+                    document.getElementById('games-played').textContent = data.gamesPlayed || 0;
+                    document.getElementById('victories').textContent = data.victories || 0;
+                    document.getElementById('current-streak').textContent = data.currentStreak || 0;
+                }
+                
+                if (achievementsData) {
+                    const achievements = JSON.parse(achievementsData);
+                    document.getElementById('achievements-count').textContent = achievements.unlocked?.length || 0;
+                }
+            } catch (error) {
+                console.warn('Error cargando estadísticas:', error);
+            }
+        }
+
+        // Escuchar cambios de tema
+        window.addEventListener('themeChanged', () => {
+            updateThemeMenuIcon();
+        });
+
+        // Cerrar menú con tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (dropdownMenu.classList.contains('show')) {
+                    toggleMenu();
+                }
+                if (speechVisible) {
+                    toggleSpeech();
+                }
+            }
+        });
+
+        // Inicializar
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎮 Quiz Cristiano cargado');
-
-            // ============================================
-            // ELEMENTOS DEL DOM
-            // ============================================
-            const menuToggle = document.getElementById('menu-toggle');
-            const dropdownMenu = document.getElementById('dropdown-menu');
-            const menuOverlay = document.getElementById('menu-overlay');
-            const closeMenu = document.getElementById('close-menu');
-            const mascotJoy = document.getElementById('mascot-joy');
-            const speechBubble = document.getElementById('speech-bubble');
-            const multiplayerBtn = document.getElementById('multiplayer-btn');
-            const comingSoonModal = document.getElementById('coming-soon-modal');
-            const loadingScreen = document.getElementById('loading-screen');
-
-            // Elementos de estadísticas
-            const coinsStatElement = document.getElementById('coins-stat');
-            const levelStatElement = document.getElementById('level-stat');
-            const victoriesStatElement = document.getElementById('victories-stat');
-
-            let isMenuOpen = false;
-
-            // ============================================
-            // CARGAR Y ACTUALIZAR ESTADÍSTICAS
-            // ============================================
-            function loadAndUpdateStats() {
-                try {
-                    const savedData = localStorage.getItem('quizCristianoData');
-                    if (savedData) {
-                        const data = JSON.parse(savedData);
-                        
-                        // Actualizar monedas
-                        const coins = data.coins || 0;
-                        coinsStatElement.textContent = coins;
-                        
-                        // Calcular nivel basado en monedas (cada 100 monedas = 1 nivel)
-                        const level = Math.floor(coins / 100) + 1;
-                        levelStatElement.textContent = level;
-                        
-                        // Victorias (puedes implementar un contador específico después)
-                        const victories = data.victories || 0;
-                        victoriesStatElement.textContent = victories;
-                        
-                        console.log('📊 Estadísticas actualizadas:', { coins, level, victories });
-                    }
-                } catch (error) {
-                    console.warn('⚠️ Error cargando estadísticas:', error);
-                }
-            }
-
-            // ============================================
-            // FUNCIONES DEL MENÚ
-            // ============================================
-            function openMenu() {
-                isMenuOpen = true;
-                dropdownMenu.classList.add('active');
-                menuOverlay.classList.add('active');
-                menuToggle.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                console.log('📋 Menú abierto');
-            }
-
-            function closeMenuFunction() {
-                isMenuOpen = false;
-                dropdownMenu.classList.remove('active');
-                menuOverlay.classList.remove('active');
-                menuToggle.classList.remove('active');
-                document.body.style.overflow = '';
-                console.log('❌ Menú cerrado');
-            }
-
-            // ============================================
-            // FUNCIONES DEL MODAL MULTIJUGADOR
-            // ============================================
-            function openMultiplayerModal() {
-                console.log('🎮 Abriendo modal multijugador');
-                comingSoonModal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-
-            // Función global para cerrar modal
-            window.closeComingSoon = function() {
-                console.log('❌ Cerrando modal multijugador');
-                comingSoonModal.style.display = 'none';
-                document.body.style.overflow = '';
-            };
-
-            // Función global para notificaciones
-            window.notifyMe = function() {
-                const email = document.getElementById('notify-email').value;
-                
-                if (!email) {
-                    alert('Por favor, ingresa tu email');
-                    return;
-                }
-                
-                if (!email.includes('@')) {
-                    alert('Por favor, ingresa un email válido');
-                    return;
-                }
-
-                // Simular guardado de email
-                console.log('📧 Email para notificación:', email);
-                
-                // Guardar en localStorage para futuro uso
-                localStorage.setItem('notifyEmail', email);
-                
-                // Mostrar confirmación
-                alert('¡Perfecto! Te notificaremos cuando el multijugador esté listo 🎮');
-                
-                // Limpiar campo y cerrar modal
-                document.getElementById('notify-email').value = '';
-                closeComingSoon();
-            };
-
-            // Función global para bottom nav
-            window.openMultiplayerModal = openMultiplayerModal;
-
-            // ============================================
-            // EVENT LISTENERS
-            // ============================================
-            
-            // Menú toggle
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    if (isMenuOpen) {
-                        closeMenuFunction();
-                    } else {
-                        openMenu();
-                    }
-                });
-            }
-
-            // Cerrar menú
-            if (closeMenu) {
-                closeMenu.addEventListener('click', closeMenuFunction);
-            }
-
-            if (menuOverlay) {
-                menuOverlay.addEventListener('click', closeMenuFunction);
-            }
-
-            // Botón multijugador principal
-            if (multiplayerBtn) {
-                multiplayerBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openMultiplayerModal();
-                });
-            }
-
-            // Mascota
-            if (mascotJoy && speechBubble) {
-                mascotJoy.addEventListener('click', function() {
-                    speechBubble.classList.toggle('hidden');
-                    
-                    if (!speechBubble.classList.contains('hidden')) {
-                        setTimeout(() => {
-                            speechBubble.classList.add('hidden');
-                        }, 4000);
-                    }
-                });
-            }
-
-            // Cerrar modal con ESC
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (comingSoonModal && comingSoonModal.style.display === 'flex') {
-                        closeComingSoon();
-                    }
-                    if (isMenuOpen) {
-                        closeMenuFunction();
-                    }
-                }
-            });
-
-            // Cerrar modal haciendo clic fuera
-            if (comingSoonModal) {
-                comingSoonModal.addEventListener('click', function(e) {
-                    if (e.target === comingSoonModal) {
-                        closeComingSoon();
-                    }
-                });
-            }
-
-            // ============================================
-            // MANEJO DE IMÁGENES
-            // ============================================
-            const mascotImage = document.querySelector('.mascot-image');
-            if (mascotImage) {
-                mascotImage.addEventListener('error', function() {
-                    console.warn('⚠️ Imagen de mascota no encontrada');
-                    this.style.display = 'none';
-                    this.parentNode.innerHTML = '<i class="fas fa-user-circle" style="font-size: 100px; color: #ffd700;"></i>';
-                });
-            }
-
-            // En index.html - agregar al dropdown menu
-let deferredPrompt;
-let isInstalled = false;
-
-// Verificar si ya está instalada
-if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
-    isInstalled = true;
-    console.log('📱 App ya está instalada');
-}
-
-// Escuchar evento de instalación
-window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('📱 PWA: Install prompt available');
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallButton();
-});
-
-// Mostrar botón de instalación
-function showInstallButton() {
-    const installBtn = document.getElementById('install-app-btn');
-    if (installBtn && !isInstalled) {
-        installBtn.style.display = 'flex';
-        
-        // Animación de entrada
-        installBtn.style.animation = 'slideInLeft 0.5s ease';
-    }
-}
-
-// Instalar la app
-window.installApp = async function() {
-    if (!deferredPrompt) {
-        console.log('❌ PWA: No install prompt available');
-        return;
-    }
-    
-    const installBtn = document.getElementById('install-app-btn');
-    const originalText = installBtn.querySelector('span').textContent;
-    
-    // Mostrar loading
-    installBtn.querySelector('span').textContent = 'Instalando...';
-    installBtn.style.opacity = '0.6';
-    
-    try {
-        // Mostrar prompt de instalación
-        deferredPrompt.prompt();
-        
-        // Esperar respuesta del usuario
-        const { outcome } = await deferredPrompt.userChoice;
-        
-        if (outcome === 'accepted') {
-            console.log('✅ PWA: User accepted installation');
-            installBtn.style.display = 'none';
-            showInstallationSuccess();
-        } else {
-            console.log('❌ PWA: User declined installation');
-        }
-        
-    } catch (error) {
-        console.error('❌ PWA: Installation error:', error);
-    } finally {
-        // Restaurar botón
-        installBtn.querySelector('span').textContent = originalText;
-        installBtn.style.opacity = '1';
-        deferredPrompt = null;
-    }
-};
-
-// Mostrar confirmación de instalación
-function showInstallationSuccess() {
-    const notification = document.createElement('div');
-    notification.className = 'install-notification';
-    notification.innerHTML = `
-        <div class="install-notification-content">
-            <i class="fas fa-check-circle"></i>
-            <span>¡App instalada correctamente!</span>
-        </div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 100);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-// Registrar Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', async () => {
-        try {
-            const registration = await navigator.serviceWorker.register('/sw.js');
-            console.log('✅ SW: Registered successfully', registration.scope);
-            
-            // Verificar actualizaciones
-            registration.addEventListener('updatefound', () => {
-                console.log('🔄 SW: New version available');
-                const newWorker = registration.installing;
-                
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        showUpdateAvailable();
-                    }
-                });
-            });
-            
-        } catch (error) {
-            console.error('❌ SW: Registration failed:', error);
-        }
-    });
-}
-
-// Mostrar notificación de actualización
-function showUpdateAvailable() {
-    const updateNotification = document.createElement('div');
-    updateNotification.className = 'update-notification';
-    updateNotification.innerHTML = `
-        <div class="update-content">
-            <span>Nueva versión disponible</span>
-            <button onclick="updateApp()">Actualizar</button>
-        </div>
-    `;
-    
-    document.body.appendChild(updateNotification);
-}
-
-// Actualizar la app
-window.updateApp = function() {
-    window.location.reload();
-};
-
-// ============================================
-// ESTILOS PARA NOTIFICACIONES PWA
-// ============================================
-
-const pwaStyles = document.createElement('style');
-pwaStyles.textContent = `
-    .install-notification,
-    .update-notification {
-        position: fixed;
-        top: 20px;
-        right: -400px;
-        background: rgba(39, 174, 96, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 15px;
-        padding: 15px 20px;
-        border: 1px solid #27ae60;
-        box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
-        z-index: 2000;
-        transition: right 0.5s ease;
-        color: white;
-        font-weight: 600;
-    }
-    
-    .install-notification.show,
-    .update-notification.show {
-        right: 20px;
-    }
-    
-    .install-notification-content,
-    .update-content {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .update-content button {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 15px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .update-content button:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-    
-    @keyframes slideInLeft {
-        from { transform: translateX(-20px); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @media (max-width: 480px) {
-        .install-notification,
-        .update-notification {
-            right: -350px;
-            max-width: 300px;
-        }
-        
-        .install-notification.show,
-        .update-notification.show {
-            right: 10px;
-        }
-    }
-`;
-
-document.head.appendChild(pwaStyles);
-            
-            // ============================================
-            // INICIALIZACIÓN
-            // ============================================
-            
-            // Cargar estadísticas al inicio
-            loadAndUpdateStats();
-
-            // Actualizar estadísticas cada 5 segundos (para reflejar cambios de otras páginas)
-            setInterval(loadAndUpdateStats, 5000);
-
-            console.log('✅ Index.html inicializado correctamente');
+            updateThemeMenuIcon();
+            loadUserStats();
+            setInterval(loadUserStats, 3000);
         });
     </script>
-
-<!-- Agregar después del cierre </body> -->
-
-<script type="module">
-    // 🔥 IMPORTAR FIREBASE Y VERIFICAR AUTENTICACIÓN
-    import { auth } from './js/config/firebase-config.js';
-    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-    // ============================================
-    // VERIFICACIÓN DE AUTENTICACIÓN
-    // ============================================
-
-    let authChecked = false;
-    let currentUser = null;
-
-    function checkAuthState() {
-        console.log('🔐 Verificando estado de autenticación...');
-        
-        // Verificar localStorage primero (más rápido)
-        const storedUser = localStorage.getItem('currentUser');
-        
-        if (storedUser) {
-            try {
-                currentUser = JSON.parse(storedUser);
-                console.log('👤 Usuario encontrado en localStorage:', currentUser.name);
-                showMainApp();
-                return;
-            } catch (error) {
-                console.warn('⚠️ Error parseando usuario de localStorage:', error);
-                localStorage.removeItem('currentUser');
-            }
-        }
-        
-        // Si no hay usuario en localStorage, verificar con Firebase
-        onAuthStateChanged(auth, (user) => {
-            authChecked = true;
-            
-            if (user) {
-                console.log('✅ Usuario autenticado con Firebase:', user.displayName || 'Invitado');
-                
-                // Guardar en localStorage para próximos accesos
-                const userData = {
-                    uid: user.uid,
-                    name: user.displayName || 'Invitado',
-                    email: user.email,
-                    photo: user.photoURL,
-                    loginMethod: user.isAnonymous ? 'anonymous' : 'google'
-                };
-                
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                currentUser = userData;
-                showMainApp();
-                
-            } else {
-                console.log('❌ Usuario NO autenticado, redirigiendo a login...');
-                redirectToLogin();
-            }
-        });
-        
-        // Timeout de seguridad (si Firebase tarda mucho en responder)
-        setTimeout(() => {
-            if (!authChecked) {
-                console.log('⏰ Timeout de autenticación, redirigiendo a login...');
-                redirectToLogin();
-            }
-        }, 3000);
-    }
-
-    function showMainApp() {
-        console.log('🏠 Mostrando aplicación principal');
-        
-        // Ocultar loading si existe
-        const loadingElement = document.querySelector('.loading-screen');
-        if (loadingElement) {
-            loadingElement.style.display = 'none';
-        }
-        
-        // Mostrar contenido principal
-        const mainContent = document.querySelector('.container');
-        if (mainContent) {
-            mainContent.style.display = 'block';
-            mainContent.style.opacity = '1';
-        }
-        
-        // Actualizar UI con datos del usuario
-        updateUserUI();
-    }
-
-    function redirectToLogin() {
-        console.log('🔄 Redirigiendo a login...');
-        
-        // Guardar la página actual para redirigir después del login
-        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
-        
-        // Redireccionar
-        window.location.href = 'login.html';
-    }
-
-    function updateUserUI() {
-        if (!currentUser) return;
-        
-        // Actualizar nombre de usuario si hay elementos que lo muestren
-        const userNameElements = document.querySelectorAll('.user-name');
-        userNameElements.forEach(element => {
-            element.textContent = currentUser.name;
-        });
-        
-        // Actualizar avatar si hay elementos que lo muestren
-        const userAvatarElements = document.querySelectorAll('.user-avatar');
-        userAvatarElements.forEach(element => {
-            if (currentUser.photo) {
-                element.src = currentUser.photo;
-            }
-        });
-        
-        console.log('👤 UI actualizada para:', currentUser.name);
-    }
-
-    // ============================================
-    // FUNCIONES ADICIONALES
-    // ============================================
-
-    function logout() {
-        console.log('🚪 Cerrando sesión...');
-        
-        // Limpiar localStorage
-        localStorage.removeItem('currentUser');
-        sessionStorage.clear();
-        
-        // Cerrar sesión en Firebase
-        auth.signOut().then(() => {
-            console.log('✅ Sesión cerrada correctamente');
-            window.location.href = 'login.html';
-        }).catch((error) => {
-            console.error('❌ Error cerrando sesión:', error);
-            // Forzar redirect aunque haya error
-            window.location.href = 'login.html';
-        });
-    }
-
-    // Hacer logout accesible globalmente
-    window.logout = logout;
-
-    // ============================================
-    // INICIALIZACIÓN
-    // ============================================
-
-    // Ejecutar verificación al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 DOM cargado, verificando autenticación...');
-        
-        // Ocultar contenido principal inicialmente
-        const mainContent = document.querySelector('.container');
-        if (mainContent) {
-            mainContent.style.opacity = '0';
-        }
-        
-        // Verificar autenticación
-        checkAuthState();
-    });
-
-    console.log('🔐 Script de autenticación cargado');
-</script>
 </body>
 </html>

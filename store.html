@@ -4,10 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda - Quiz Cristiano</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/pages/store.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Tienda de Quiz Cristiano - Power-ups y elementos especiales">
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/pages/store.css">
+    
+    <!-- SCRIPT DE MODO OSCURO GLOBAL - APLICAR INMEDIATAMENTE -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+            
+            console.log(`🌙 Store tema aplicado: ${theme}`);
+        })();
+    </script>
 </head>
 <body>
     <div class="app-container">
@@ -75,24 +106,24 @@
                     <h3>Pack del Principiante</h3>
                     <p>Todo lo esencial para empezar</p>
                     <div class="featured-price">
-                        <span class="original-price">1,350</span>
-                        <span class="discount-price">1,000 <i class="fas fa-coins"></i></span>
+                        <span class="original-price">1,500</span>
+                        <span class="discount-price">1,200 <i class="fas fa-coins"></i></span>
                     </div>
-                    <div class="featured-savings">¡Ahorra 350 monedas!</div>
+                    <div class="featured-savings">¡Ahorra 300 monedas!</div>
                 </div>
                 
                 <div class="featured-item legendary">
                     <div class="featured-badge legendary">LEGENDARIO</div>
                     <div class="featured-icon">
-                        <i class="fas fa-medal"></i>
+                        <i class="fas fa-crown"></i>
                     </div>
-                    <h3>Pack del Maestro</h3>
+                    <h3>Mega Pack Power-ups</h3>
                     <p>El pack más completo disponible</p>
                     <div class="featured-price">
-                        <span class="original-price">5,000</span>
+                        <span class="original-price">4,500</span>
                         <span class="discount-price">3,500 <i class="fas fa-coins"></i></span>
                     </div>
-                    <div class="featured-savings">¡Ahorra 1,500 monedas!</div>
+                    <div class="featured-savings">¡Ahorra 1,000 monedas!</div>
                 </div>
             </div>
         </section>
@@ -103,10 +134,10 @@
                 <h2>Productos Disponibles</h2>
                 <div class="sort-options">
                     <select id="sort-select" onchange="sortProducts(this.value)" title="Ordenar productos" aria-label="Ordenar productos por">
-                        <option value="rarity">Por rareza</option>
-                        <option value="price-low">Precio: Menor a mayor</option>
-                        <option value="price-high">Precio: Mayor a menor</option>
-                        <option value="name">Por nombre</option>
+                        <option value="price-asc">Precio: Menor a Mayor</option>
+                        <option value="price-desc">Precio: Mayor a Menor</option>
+                        <option value="rarity">Por Rareza</option>
+                        <option value="name">Por Nombre</option>
                     </select>
                 </div>
             </div>
@@ -122,14 +153,14 @@
         </section>
 
         <!-- Modal de Compra -->
-        <div class="modal purchase-modal" id="purchase-modal">
+        <div class="modal purchase-modal" id="purchase-modal" style="display: none;">
             <div class="purchase-modal-content">
                 <!-- Contenido se carga dinámicamente -->
             </div>
         </div>
 
         <!-- Modal de Inventario -->
-        <div class="modal inventory-modal" id="inventory-modal">
+        <div class="modal inventory-modal" id="inventory-modal" style="display: none;">
             <div class="inventory-modal-content">
                 <div class="modal-header">
                     <h2><i class="fas fa-backpack"></i> Mi Inventario</h2>
@@ -141,17 +172,24 @@
                 <div class="modal-body">
                     <div class="inventory-stats">
                         <div class="inventory-stat">
-                            <i class="fas fa-box"></i>
-                            <span>Artículos totales: <strong id="total-items">0</strong></span>
+                            <i class="fas fa-magic"></i>
+                            <span>Power-ups</span>
+                            <strong id="inventory-powerups-count">0</strong>
                         </div>
                         <div class="inventory-stat">
-                            <i class="fas fa-coins"></i>
-                            <span>Valor total: <strong id="total-value">0</strong></span>
+                            <i class="fas fa-tshirt"></i>
+                            <span>Cosméticos</span>
+                            <strong id="inventory-cosmetics-count">0</strong>
+                        </div>
+                        <div class="inventory-stat">
+                            <i class="fas fa-gift"></i>
+                            <span>Packs</span>
+                            <strong id="inventory-bundles-count">0</strong>
                         </div>
                     </div>
                     
                     <div class="inventory-grid" id="inventory-grid">
-                        <!-- Contenido del inventario se carga dinámicamente -->
+                        <!-- Items del inventario se cargan dinámicamente -->
                     </div>
                 </div>
                 
@@ -213,22 +251,118 @@
     </div>
 
     <!-- JavaScript -->
+    <script src="js/modules/gamedatamanager.js"></script>
     <script src="js/pages/store.js"></script>
-    
+
     <!-- Script adicional para funciones específicas del HTML -->
     <script>
         // ============================================
-        // FUNCIONES ADICIONALES PARA EL HTML
+        // FUNCIONES GLOBALES PARA EL HTML - CORREGIDAS
         // ============================================
         
-        function sortProducts(criteria) {
-            console.log('🔄 Ordenando productos por:', criteria);
-            // Esta función se puede implementar más tarde
-            // Por ahora, re-renderizar con el filtro actual
-            renderStore(currentFilter);
-        }
+        // Variable global para filtro actual
+        let currentFilter = 'all';
         
-        // Actualizar display de monedas desde localStorage
+        // ✅ FUNCIONES FALTANTES AÑADIDAS
+        window.filterStore = function(category) {
+            console.log('🔍 Filtrando por categoría:', category);
+            
+            // Actualizar filtros activos
+            document.querySelectorAll('.category-filter').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Actualizar filtro actual
+            currentFilter = category;
+            
+            // Renderizar con nuevo filtro
+            if (typeof renderStore === 'function') {
+                renderStore(category);
+            }
+        };
+        
+        window.searchProducts = function(searchTerm) {
+            console.log('🔎 Buscando:', searchTerm);
+            if (typeof renderStore === 'function') {
+                renderStore(currentFilter, searchTerm);
+            }
+        };
+        
+        window.showInventory = function() {
+            console.log('🎒 Abriendo inventario');
+            const modal = document.getElementById('inventory-modal');
+            if (modal) {
+                if (typeof updateInventoryDisplay === 'function') {
+                    updateInventoryDisplay();
+                }
+                modal.style.display = 'flex';
+            }
+        };
+        
+        window.closeInventoryModal = function() {
+            const modal = document.getElementById('inventory-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        };
+        
+        window.closePurchaseModal = function() {
+            const modal = document.getElementById('purchase-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        };
+        
+        window.purchaseProduct = function(productId, quantity = 1) {
+            console.log(`💰 Intentando comprar: ${productId} x${quantity}`);
+            
+            if (typeof findProductById === 'function' && typeof playerData !== 'undefined') {
+                const product = findProductById(productId);
+                if (!product) {
+                    console.error('Producto no encontrado:', productId);
+                    return;
+                }
+                
+                const totalCost = product.price * quantity;
+                
+                if (playerData.coins >= totalCost) {
+                    // Realizar compra
+                    playerData.coins -= totalCost;
+                    
+                    // Añadir al inventario
+                    for (let i = 0; i < quantity; i++) {
+                        if (typeof addToInventory === 'function') {
+                            addToInventory(product);
+                        }
+                    }
+                    
+                    // Actualizar UI
+                    if (typeof updatePlayerStats === 'function') updatePlayerStats();
+                    if (typeof savePlayerData === 'function') savePlayerData();
+                    closePurchaseModal();
+                    if (typeof renderStore === 'function') renderStore(currentFilter);
+                    
+                    // Mostrar confirmación
+                    if (typeof showPurchaseConfirmation === 'function') {
+                        showPurchaseConfirmation(product, quantity);
+                    }
+                    
+                    console.log(`✅ Compra exitosa: ${quantity}x ${product.name}`);
+                } else {
+                    console.warn('💸 Monedas insuficientes');
+                    showNotification('No tienes suficientes monedas', 'error');
+                }
+            }
+        };
+        
+        window.sortProducts = function(criteria) {
+            console.log('🔄 Ordenando productos por:', criteria);
+            if (typeof renderStore === 'function') {
+                renderStore(currentFilter);
+            }
+        };
+        
         function updateCoinsDisplay() {
             try {
                 const gameData = localStorage.getItem('quizCristianoData');
@@ -244,13 +378,65 @@
             }
         }
         
-        // Actualizar display cada 2 segundos
-        setInterval(updateCoinsDisplay, 2000);
-        
-        // Efectos visuales adicionales
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animación de entrada para las ofertas destacadas
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'error' ? '#e74c3c' : '#27ae60'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                z-index: 2000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
             setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // ============================================
+        // INICIALIZACIÓN MEJORADA
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏪 Inicializando tienda...');
+            
+            // Verificar que los elementos existen antes de inicializar
+            setTimeout(() => {
+                const storeGrid = document.getElementById('store-grid');
+                if (storeGrid) {
+                    console.log('✅ Elementos DOM encontrados');
+                    updateCoinsDisplay();
+                } else {
+                    console.error('❌ Elemento store-grid no encontrado');
+                }
+            }, 100);
+            
+            // Actualizar monedas cada 2 segundos
+            setInterval(updateCoinsDisplay, 2000);
+            
+            // Efectos visuales adicionales
+            setTimeout(() => {
+                // Animación de entrada para las ofertas destacadas
                 const featuredItems = document.querySelectorAll('.featured-item');
                 featuredItems.forEach((item, index) => {
                     setTimeout(() => {
@@ -270,12 +456,9 @@
                     this.style.transform = 'translateY(0) scale(1)';
                 });
             });
-            
-            // Actualizar monedas al cargar
-            updateCoinsDisplay();
         });
         
-        // Animaciones adicionales
+        // Animaciones CSS adicionales
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideInUp {
@@ -291,16 +474,18 @@
             
             .featured-item {
                 opacity: 0;
+                transform: translateY(30px);
             }
             
             .tip-card {
-                transition: all 0.3s ease;
+                transition: transform 0.3s ease;
             }
             
             .loading-skeleton {
                 display: flex;
                 gap: 20px;
                 flex-wrap: wrap;
+                justify-content: center;
             }
             
             .skeleton-card {
@@ -318,6 +503,20 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // Debug para verificar carga
+        setTimeout(() => {
+            console.log('🔍 Debug - Verificando carga:');
+            console.log('STORE_PRODUCTS:', typeof STORE_PRODUCTS !== 'undefined' ? 'Definido' : 'No definido');
+            console.log('renderStore function:', typeof renderStore === 'function' ? 'Disponible' : 'No disponible');
+            console.log('Elements:', document.getElementById('store-grid') ? 'Grid encontrado' : 'Grid no encontrado');
+            
+            // Forzar renderizado si la función está disponible
+            if (typeof renderStore === 'function') {
+                console.log('🔄 Forzando renderizado inicial...');
+                renderStore('all');
+            }
+        }, 2000);
     </script>
 </body>
 </html>

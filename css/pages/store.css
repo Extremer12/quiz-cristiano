@@ -1455,3 +1455,150 @@
     100% { transform: rotate(360deg); }
 }
 
+/* ============================================
+   SELECTOR DE CANTIDAD
+   ============================================ */
+
+.quantity-selector {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.quantity-selector h4 {
+    color: var(--white);
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.quantity-controls button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    color: var(--white);
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quantity-controls button:hover {
+    background: var(--primary-dark);
+    transform: scale(1.1);
+}
+
+.quantity-controls button:disabled {
+    background: var(--gray);
+    cursor: not-allowed;
+    transform: none;
+}
+
+#quantity-input {
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: var(--white);
+    outline: none;
+}
+
+.quantity-info {
+    font-size: 0.9rem;
+    color: var(--white);
+    opacity: 0.8;
+    margin-bottom: 15px;
+}
+
+.total-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: var(--gold);
+    font-weight: 600;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.original-price-strike {
+    text-decoration: line-through;
+    opacity: 0.7;
+    font-size: 0.9rem;
+    margin: 5px 0;
+}
+
+.savings-amount {
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin: 5px 0;
+}
+
+.player-coins-info,
+.remaining-coins {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+.insufficient-warning {
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 15px 0;
+}
+
+/* ============================================
+   RESPONSIVE PARA SELECTOR
+   ============================================ */
+
+@media (max-width: 480px) {
+    .quantity-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .quantity-controls button {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    #quantity-input {
+        width: 60px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .player-coins-info,
+    .remaining-coins {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+
