@@ -1,0 +1,100 @@
+/**
+ * ================================================
+ * ESTILOS ESPECÍFICOS PARA PÁGINAS DE TEXTO
+ * Aplicar overlay más opaco para mejor legibilidad
+ * ================================================
+ */
+
+/* ✅ OVERRIDE DEL OVERLAY PARA PÁGINAS DE TEXTO */
+body.text-page::before {
+    background: var(--bg-overlay-text) !important; /* ✅ MUY OPACO */
+}
+
+/* ✅ SUPERFICIES MÁS OPACAS PARA PÁGINAS DE TEXTO */
+.text-page .header,
+.text-page .content,
+.text-page .contact-form,
+.text-page .help-section,
+.text-page .faq-section,
+.text-page .contact-methods,
+.text-page .contact-card {
+    background: var(--surface-text-primary) !important;
+    backdrop-filter: blur(25px) saturate(1.8) !important;
+    border: 1px solid var(--border-primary) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ✅ SUPERFICIES SECUNDARIAS PARA TEXTO */
+.text-page .contact-info,
+.text-page .faq-item,
+.text-page .info-box,
+.text-page .warning-box {
+    background: var(--surface-text-secondary) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--border-secondary) !important;
+}
+
+/* ✅ TEXTO MEJORADO PARA PÁGINAS DE CONTENIDO */
+.text-page h1, 
+.text-page h2, 
+.text-page h3, 
+.text-page h4, 
+.text-page h5, 
+.text-page h6 {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
+    font-weight: 700 !important;
+}
+
+.text-page p, 
+.text-page li, 
+.text-page span:not(.highlight):not(.text-accent), 
+.text-page div:not(.back-btn):not(.submit-btn) {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ✅ INPUTS Y FORMULARIOS PARA TEXTO */
+.text-page input, 
+.text-page textarea, 
+.text-page select {
+    background: var(--surface-text-secondary) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.text-page input::placeholder,
+.text-page textarea::placeholder {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ✅ BOTONES PARA PÁGINAS DE TEXTO */
+.text-page .back-btn,
+.text-page .submit-btn,
+.text-page .btn {
+    background: rgba(255, 215, 0, 0.9) !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+}
+
+.text-page .back-btn:hover,
+.text-page .submit-btn:hover,
+.text-page .btn:hover {
+    background: rgba(255, 215, 0, 1) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4) !important;
+}
+
+/* ✅ RESPONSIVE PARA PÁGINAS DE TEXTO */
+@media (max-width: 768px) {
+    .text-page .header,
+    .text-page .content,
+    .text-page .contact-form,
+    .text-page .help-section,
+    .text-page .faq-section {
+        background: var(--surface-text-accent) !important;
+        backdrop-filter: blur(30px) !important;
+    }
+}

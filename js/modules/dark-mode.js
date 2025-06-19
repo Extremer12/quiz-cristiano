@@ -1,7 +1,7 @@
 /**
  * ================================================
- * DARK MODE CONTROLLER - CONTROLADOR DE MODO OSCURO
- * Quiz Cristiano - Sistema de temas profesional
+ * DARK MODE CONTROLLER - SIN BOTÓN INDIVIDUAL
+ * Quiz Cristiano - Solo control desde index
  * ================================================
  */
 
@@ -9,17 +9,15 @@ class DarkModeController {
     constructor() {
         this.STORAGE_KEY = 'quiz-cristiano-theme';
         this.currentTheme = 'light';
-        this.button = null;
         
         // Detectar preferencia del sistema
         this.systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         
-        console.log('🌙 Dark Mode Controller inicializado');
+        console.log('🌙 Dark Mode Controller inicializado (SIN botón individual)');
     }
 
     init() {
         this.loadTheme();
-        this.createToggleButton();
         this.bindEvents();
         this.applyTheme();
         
@@ -31,7 +29,7 @@ class DarkModeController {
             }
         });
         
-        console.log(`✅ Tema ${this.currentTheme} aplicado`);
+        console.log(`✅ Tema ${this.currentTheme} aplicado (control global)`);
     }
 
     loadTheme() {
@@ -42,30 +40,9 @@ class DarkModeController {
         console.log(`📱 Tema cargado: ${this.currentTheme}`);
     }
 
-    createToggleButton() {
-        // Verificar si ya existe el botón
-        if (document.querySelector('.theme-toggle')) return;
-
-        this.button = document.createElement('button');
-        this.button.className = 'theme-toggle';
-        this.button.setAttribute('title', 'Cambiar tema');
-        this.button.setAttribute('aria-label', 'Alternar modo oscuro');
-        
-        this.button.innerHTML = `
-            <i class="fas fa-sun light-icon"></i>
-            <i class="fas fa-moon dark-icon"></i>
-        `;
-        
-        document.body.appendChild(this.button);
-    }
-
     bindEvents() {
-        if (this.button) {
-            this.button.addEventListener('click', () => {
-                this.toggleTheme();
-            });
-        }
-
+        // ❌ NO CREAR BOTÓN INDIVIDUAL - Solo escuchar cambios externos
+        
         // Atajo de teclado: Ctrl + Shift + D
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key === 'D') {
@@ -82,9 +59,6 @@ class DarkModeController {
         this.saveTheme();
         
         console.log(`🔄 Tema cambiado a: ${this.currentTheme}`);
-        
-        // Feedback visual
-        this.animateToggle();
         
         // Analytics (si está disponible)
         if (window.gtag) {
@@ -132,17 +106,6 @@ class DarkModeController {
         localStorage.setItem(this.STORAGE_KEY, this.currentTheme);
     }
 
-    animateToggle() {
-        if (!this.button) return;
-
-        // Animación de rotación
-        this.button.style.transform = 'scale(0.8) rotate(180deg)';
-        
-        setTimeout(() => {
-            this.button.style.transform = 'scale(1) rotate(0deg)';
-        }, 150);
-    }
-
     showThemeNotification() {
         const notification = document.createElement('div');
         notification.className = 'theme-notification';
@@ -177,6 +140,13 @@ class DarkModeController {
             color: var(--text-primary);
             font-weight: 600;
         `;
+        
+        // Colores por tipo
+        if (this.currentTheme === 'dark') {
+            content.querySelector('i').style.color = '#f39c12';
+        } else {
+            content.querySelector('i').style.color = '#ffd700';
+        }
         
         document.body.appendChild(notification);
         
@@ -227,4 +197,4 @@ if (document.readyState === 'loading') {
 // Exportar para uso en otros módulos
 window.DarkModeController = darkModeController;
 
-console.log('✅ Dark Mode System cargado');
+console.log('✅ Dark Mode System cargado (SIN botón individual)');

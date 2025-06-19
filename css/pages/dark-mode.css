@@ -1,7 +1,7 @@
 /**
  * ================================================
- * DARK MODE SYSTEM - MODO OSCURO PROFESIONAL
- * Quiz Cristiano - Sistema de temas dinámico
+ * DARK MODE SYSTEM - SIN BOTÓN INDIVIDUAL
+ * Quiz Cristiano - Solo variables y temas
  * ================================================
  */
 
@@ -12,7 +12,7 @@
 :root {
     /* TEMA CLARO (por defecto) */
     --bg-primary: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
-    --bg-image: url('../../assets/images/fondo.png');  /* ✅ CORREGIDO */
+    --bg-image: url('../../assets/images/fondo.png');
     --bg-overlay: rgba(30, 60, 138, 0.7);
     
     --text-primary: #ffffff;
@@ -44,7 +44,7 @@
 
 [data-theme="dark"] {
     --bg-primary: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d2d2d 100%);
-    --bg-image: url('../../assets/images/fondo-black.png');  /* ✅ CORREGIDO */
+    --bg-image: url('../../assets/images/fondo-black.png');
     --bg-overlay: rgba(0, 0, 0, 0.8);
     
     --text-primary: #ffffff;
@@ -99,7 +99,18 @@ body::before {
 .overview-card,
 .achievement-card,
 .product-card,
-.bottom-nav {
+.bottom-nav,
+.mini-game-header,
+.joy-section,
+.study-section,
+.question-section,
+.results-section,
+.ranking-header,
+.podium-section,
+.my-position,
+.store-header,
+.powerups-section,
+.premium-section {
     background: var(--surface-primary);
     backdrop-filter: var(--backdrop-blur);
     border: 1px solid var(--border-primary);
@@ -113,7 +124,11 @@ body::before {
 .category-info,
 .bundle-preview,
 .benefits,
-.featured-item {
+.featured-item,
+.joy-speech,
+.verse-card,
+.question-card,
+.results-card {
     background: var(--surface-secondary);
     border: 1px solid var(--border-secondary);
     transition: all 0.3s ease;
@@ -134,58 +149,6 @@ p, span, div {
 .coins-display,
 .price {
     color: var(--text-accent) !important;
-}
-
-/* ============================================
-   BOTÓN DE MODO OSCURO
-   ============================================ */
-
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--surface-primary);
-    backdrop-filter: var(--backdrop-blur);
-    border: 1px solid var(--border-primary);
-    color: var(--text-primary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    z-index: 1001;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-secondary);
-}
-
-.theme-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
-    box-shadow: var(--shadow-primary);
-}
-
-.theme-toggle i {
-    transition: all 0.3s ease;
-}
-
-/* Icono para tema claro */
-.theme-toggle .light-icon {
-    display: block;
-}
-
-.theme-toggle .dark-icon {
-    display: none;
-}
-
-/* Icono para tema oscuro */
-[data-theme="dark"] .theme-toggle .light-icon {
-    display: none;
-}
-
-[data-theme="dark"] .theme-toggle .dark-icon {
-    display: block;
 }
 
 /* ============================================
@@ -235,11 +198,5 @@ p, span, div {
    ============================================ */
 
 @media (max-width: 768px) {
-    .theme-toggle {
-        top: 15px;
-        right: 15px;
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-    }
+    /* Ajustes responsivos si es necesario */
 }
