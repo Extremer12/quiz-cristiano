@@ -144,29 +144,31 @@ const SCORE_RANGES = {
 
 async function init() {
     try {
-        console.log('🏆 Inicializando Ranking Híbrido...');
+        console.log('🏆 Inicializando sistema de ranking...');
         
-        // Esperar GameDataManager
-        if (!window.GameDataManager) {
-            await waitForGameDataManager();
-        }
+        // Esperar a GameDataManager
+        await waitForGameDataManager();
         
         // Configurar listeners
         setupGameDataListeners();
         
-        // Cargar ranking inicial
+        // ✅ AGREGAR SINCRONIZACIÓN DE PERFIL
+        syncProfileData();
+        
+        // Cargar ranking por defecto
         await loadRanking('monedas');
         
-        // Actualizar displays
-        updateCoinsDisplay();
+        // Actualizar posición del usuario
         updateMyPosition();
         
+        // Actualizar monedas
+        updateCoinsDisplay();
+        
         rankingData.isInitialized = true;
-        console.log('✅ Ranking inicializado correctamente');
+        console.log('✅ Sistema de ranking inicializado correctamente');
         
     } catch (error) {
-        console.error('❌ Error inicializando Ranking:', error);
-        showNotification('Error cargando el ranking', 'error');
+        console.error('❌ Error inicializando ranking:', error);
     }
 }
 
@@ -288,25 +290,67 @@ function generateHybridRanking(type) {
 }
 
 function generateRealUserData() {
-    if (!window.GameDataManager) return null;
+    console.log('👤 Generando datos del usuario real...');
+    
+    if (!window.GameDataManager) {
+        console.warn('⚠️ GameDataManager no disponible');
+        return null;
+    }
+    
+    // Obtener datos del usuario actual
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    // ✅ OBTENER DATOS DEL PERFIL GUARDADO
+    const profileData = JSON.parse(localStorage.getItem('quiz-cristiano-profile') || '{}');
+    
+    console.log('📊 Datos del usuario:', currentUser);
+    console.log('📊 Datos del perfil:', profileData);
+    
+    // Determinar el nombre a mostrar (prioridad: displayName > username > nombre del currentUser)
+    let displayName = 'Jugador';
+    
+    if (profileData.displayName && profileData.displayName.trim()) {
+        displayName = profileData.displayName.trim();
+        console.log('✅ Usando displayName del perfil:', displayName);
+    } else if (profileData.username && profileData.username.trim()) {
+        displayName = profileData.username.trim();
+        console.log('✅ Usando username del perfil:', displayName);
+    } else if (currentUser.displayName) {
+        displayName = currentUser.displayName;
+        console.log('✅ Usando displayName del currentUser:', displayName);
+    } else if (currentUser.name && currentUser.name !== 'Invitado') {
+        displayName = currentUser.name;
+        console.log('✅ Usando name del currentUser:', displayName);
+    } else {
+        displayName = 'Jugador Anónimo';
+        console.log('⚠️ Usando nombre por defecto:', displayName);
+    }
     
     const stats = window.GameDataManager.getStats();
-    const userName = getCurrentUserName();
+    const userLevel = calculateUserLevel(stats);
     
-    return {
-        id: 'real_user',
-        name: userName,
-        avatar: getMascotAvatar(),
-        coins: stats.coins,
-        victories: stats.victories,
-        gamesPlayed: stats.gamesPlayed,
-        maxStreak: Math.floor(Math.random() * 15) + 1, // Temporal
-        weeklyScore: stats.coins * 0.3 + stats.victories * 50,
-        isReal: true,
+    const userData = {
+        name: displayName,
+        avatar: profileData.currentAvatar || currentUser.photo || getMascotAvatar(),
         isBot: false,
-        level: calculateUserLevel(stats),
-        lastActive: 'Ahora'
+        isCurrentUser: true,
+        level: userLevel.name,
+        lastActive: 'Ahora',
+        
+        // Datos según el tipo de ranking
+        coins: stats.coins || 0,
+        victories: stats.victories || 0,
+        streakCount: stats.currentStreak || 0,
+        weeklyScore: Math.floor((stats.coins || 0) * 0.1) + ((stats.victories || 0) * 10),
+        
+        // Metadatos adicionales
+        gamesPlayed: stats.gamesPlayed || 0,
+        winRate: stats.winRate || 0,
+        perfectGames: stats.perfectGames || 0
     };
+    
+    console.log('✅ Datos del usuario generados:', userData);
+    return userData;
 }
 
 function generateBotPlayerData(bot, index, type) {
@@ -343,7 +387,7 @@ function addRandomVariation(player, type) {
             player.coins += Math.floor(player.coins * (Math.random() > 0.5 ? variation : -variation));
             break;
         case 'victorias':
-            player.victories += Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+            player.victorias += Math.floor(Math.random() * 3) - 1; // -1, 0, +1
             break;
         case 'rachas':
             player.maxStreak += Math.floor(Math.random() * 3) - 1;
@@ -355,7 +399,7 @@ function addRandomVariation(player, type) {
     
     // Asegurar valores mínimos
     player.coins = Math.max(0, player.coins);
-    player.victories = Math.max(0, player.victories);
+    player.victorias = Math.max(0, player.victorias);
     player.maxStreak = Math.max(1, player.maxStreak);
     player.weeklyScore = Math.max(0, player.weeklyScore);
 }
@@ -437,7 +481,7 @@ function createPlayerElement(player) {
         <div class="player-info">
             <div class="player-name">${truncateName(player.name, 15)}</div>
             <div class="player-stats-small">
-                ${player.victories} victorias • ${player.gamesPlayed} partidas
+                ${player.victorias} victorias • ${player.gamesPlayed} partidas
             </div>
         </div>
         
@@ -458,16 +502,41 @@ function createPlayerElement(player) {
 // ============================================
 
 function getCurrentUserName() {
+    // ✅ PRIORIDAD: perfil > currentUser > fallback
+    
+    // 1. Intentar obtener del perfil guardado
     try {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(currentUser);
-            return userData.name || userData.displayName || 'Jugador';
+        const profileData = JSON.parse(localStorage.getItem('quiz-cristiano-profile') || '{}');
+        if (profileData.displayName && profileData.displayName.trim()) {
+            console.log('📝 Nombre obtenido del perfil (displayName):', profileData.displayName);
+            return profileData.displayName.trim();
+        }
+        if (profileData.username && profileData.username.trim()) {
+            console.log('📝 Nombre obtenido del perfil (username):', profileData.username);
+            return profileData.username.trim();
         }
     } catch (error) {
-        console.warn('Error obteniendo nombre de usuario:', error);
+        console.warn('⚠️ Error obteniendo nombre del perfil:', error);
     }
-    return 'Jugador';
+    
+    // 2. Intentar obtener del currentUser
+    try {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (currentUser.displayName && currentUser.displayName !== 'Invitado') {
+            console.log('📝 Nombre obtenido del currentUser (displayName):', currentUser.displayName);
+            return currentUser.displayName;
+        }
+        if (currentUser.name && currentUser.name !== 'Invitado') {
+            console.log('📝 Nombre obtenido del currentUser (name):', currentUser.name);
+            return currentUser.name;
+        }
+    } catch (error) {
+        console.warn('⚠️ Error obteniendo nombre del currentUser:', error);
+    }
+    
+    // 3. Fallback
+    console.log('📝 Usando nombre por defecto');
+    return 'Jugador Anónimo';
 }
 
 function getMascotAvatar() {
@@ -498,7 +567,7 @@ function getScoreDisplay(player, type) {
         case 'monedas':
             return `${player.coins.toLocaleString()}`;
         case 'victorias':
-            return `${player.victories}`;
+            return `${player.victorias}`;
         case 'rachas':
             return `${player.maxStreak}`;
         case 'semanal':
@@ -518,42 +587,56 @@ function truncateName(name, maxLength) {
 // ============================================
 
 function updateMyPosition() {
-    const myPositionElement = document.getElementById('my-position');
+    console.log('📍 Actualizando mi posición en el ranking...');
+    
+    // Obtener nombre actualizado
+    const myName = getCurrentUserName();
+    
+    // Actualizar elementos de "Mi Posición"
     const myNameElement = document.getElementById('my-name');
+    const myPositionElement = document.getElementById('my-position');
     const myScoreElement = document.getElementById('my-score');
     const myAvatarElement = document.getElementById('my-avatar');
-    const myBadgeElement = document.getElementById('my-badge-icon');
-    
-    if (!window.GameDataManager) return;
-    
-    const realUser = generateRealUserData();
-    if (!realUser) return;
-    
-    // Generar ranking completo para encontrar posición real
-    const fullRanking = generateHybridRanking(rankingData.currentType);
-    const userPosition = fullRanking.findIndex(p => p.isReal) + 1;
-    
-    if (myPositionElement) {
-        myPositionElement.textContent = userPosition > 0 ? `#${userPosition}` : '#???';
-    }
     
     if (myNameElement) {
-        myNameElement.textContent = realUser.name;
+        myNameElement.textContent = myName;
+        console.log('✅ Nombre actualizado en mi posición:', myName);
     }
     
-    if (myScoreElement) {
-        myScoreElement.textContent = `${getScoreDisplay(realUser, rankingData.currentType)} pts`;
+    if (myPositionElement) {
+        // Buscar la posición del usuario en el ranking actual
+        const userPosition = findUserPositionInRanking(myName);
+        myPositionElement.textContent = userPosition ? `#${userPosition}` : '#???';
+    }
+    
+    if (myScoreElement && window.GameDataManager) {
+        const stats = window.GameDataManager.getStats();
+        const scoreText = getScoreDisplay({ 
+            coins: stats.coins, 
+            victories: stats.victories, 
+            streakCount: stats.currentStreak 
+        }, rankingData.currentType);
+        myScoreElement.textContent = scoreText;
     }
     
     if (myAvatarElement) {
-        myAvatarElement.src = realUser.avatar;
+        const profileData = JSON.parse(localStorage.getItem('quiz-cristiano-profile') || '{}');
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const avatarSrc = profileData.currentAvatar || currentUser.photo || getMascotAvatar();
+        myAvatarElement.src = avatarSrc;
     }
-    
-    if (myBadgeElement) {
-        myBadgeElement.className = `fas fa-user`;
+}
+
+function findUserPositionInRanking(userName) {
+    // Buscar en el ranking actual la posición del usuario
+    const playersList = document.querySelectorAll('.player-item');
+    for (let i = 0; i < playersList.length; i++) {
+        const playerName = playersList[i].querySelector('.player-name')?.textContent;
+        if (playerName === userName) {
+            return i + 4; // +4 porque los primeros 3 están en el podio
+        }
     }
-    
-    console.log(`👤 Mi posición actualizada: #${userPosition}`);
+    return null;
 }
 
 function updateCoinsDisplay() {
@@ -675,7 +758,7 @@ function showPlayerModal(player) {
             </div>
             <div class="stat-row">
                 <span class="stat-label">Victorias:</span>
-                <span class="stat-value">${player.victories}</span>
+                <span class="stat-value">${player.victorias}</span>
             </div>
             <div class="stat-row">
                 <span class="stat-label">Partidas Jugadas:</span>
@@ -763,6 +846,38 @@ window.loadMorePlayersData = function() {
         }
     }
 };
+
+// ✅ FUNCIÓN PARA SINCRONIZAR DATOS DEL PERFIL
+function syncProfileData() {
+    console.log('🔄 Sincronizando datos del perfil con ranking...');
+    
+    // Escuchar cambios en el perfil
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'quiz-cristiano-profile') {
+            console.log('📝 Perfil actualizado, recargando ranking...');
+            updateMyPosition();
+            
+            // Recargar ranking para reflejar el nuevo nombre
+            setTimeout(() => {
+                loadRanking(rankingData.currentType);
+            }, 500);
+        }
+    });
+    
+    // También escuchar cambios desde la misma pestaña
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        const result = originalSetItem.apply(this, arguments);
+        if (key === 'quiz-cristiano-profile') {
+            console.log('📝 Perfil actualizado en la misma pestaña');
+            setTimeout(() => {
+                updateMyPosition();
+                loadRanking(rankingData.currentType);
+            }, 100);
+        }
+        return result;
+    };
+}
 
 // ============================================
 // NOTIFICACIONES

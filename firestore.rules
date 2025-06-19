@@ -1,32 +1,40 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Reglas para usuarios autenticados
+    // ✅ REGLAS MÁS PERMISIVAS PARA DESARROLLO
+    
+    // Usuarios autenticados (incluye anónimos)
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == userId || request.auth.token.firebase.sign_in_provider == 'anonymous');
     }
     
-    // Reglas para datos de juego
+    // Permitir a usuarios anónimos crear sus propios documentos
+    match /users/{userId} {
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Datos de juego - más permisivos
     match /gameData/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null;
     }
     
-    // Reglas para logros (solo lectura pública, escritura autenticada)
-    match /achievements/{achievementId} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-    
-    // Reglas para rankings (lectura pública)
+    // Rankings - lectura pública, escritura autenticada
     match /rankings/{rankingId} {
       allow read: if true;
       allow write: if request.auth != null;
     }
     
-    // Reglas para productos de la tienda (solo lectura)
+    // Productos de tienda - solo lectura
     match /products/{productId} {
       allow read: if true;
-      allow write: if false; // Solo admins pueden modificar productos
+      allow write: if false;
+    }
+    
+    // ✅ REGLA TEMPORAL PARA DESARROLLO (REMOVER EN PRODUCCIÓN)
+    match /{document=**} {
+      allow read, write: if request.auth != null;
     }
   }
 }

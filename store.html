@@ -94,7 +94,7 @@
             </div>
         </section>
 
-        <!-- Modal de Compra -->
+        <!-- Modal de Compra en store.html -->
         <div class="purchase-modal" id="purchase-modal" style="display: none;">
             <div class="modal-overlay" onclick="closePurchaseModal()"></div>
             <div class="modal-content">
@@ -176,16 +176,17 @@
     <script src="js/modules/dark-mode.js"></script>
     <script src="js/pages/store.js"></script>
 
-    <!-- Script de inicialización -->
+    <!-- Script de inicialización en store.html -->
     <script>
-        // Variables globales
-        let currentPurchaseProduct = null;
+        // ✅ NO DECLARAR currentPurchaseProduct AQUÍ (ya está en store.js)
         
         // Funciones globales para el HTML
         window.buyProduct = function(productId) {
-            console.log('🛒 Iniciando compra:', productId);
+            console.log('🛒 Iniciando compra desde HTML:', productId);
             if (typeof showPurchaseModal === 'function') {
                 showPurchaseModal(productId);
+            } else {
+                console.error('❌ showPurchaseModal no está disponible');
             }
         };
         
@@ -194,11 +195,20 @@
             if (modal) {
                 modal.style.display = 'none';
             }
+            // No tocar currentPurchaseProduct aquí, se maneja en store.js
         };
         
         window.confirmPurchase = function() {
-            if (currentPurchaseProduct && typeof processPurchase === 'function') {
-                processPurchase(currentPurchaseProduct);
+            console.log('💳 Confirmando compra desde HTML...');
+            if (typeof processPurchase === 'function') {
+                // Obtener el producto actual desde store.js
+                if (window.currentPurchaseProduct) {
+                    processPurchase(window.currentPurchaseProduct);
+                } else {
+                    console.error('❌ No hay producto para comprar');
+                }
+            } else {
+                console.error('❌ processPurchase no disponible');
             }
         };
         
@@ -216,6 +226,14 @@
                 const element = document.getElementById(id);
                 console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
             });
+            
+            // Verificar que store.js esté cargado
+            setTimeout(() => {
+                console.log('🔍 Verificando carga de store.js...');
+                console.log('- renderProducts:', typeof renderProducts);
+                console.log('- showPurchaseModal:', typeof showPurchaseModal);
+                console.log('- STORE_PRODUCTS:', typeof STORE_PRODUCTS);
+            }, 1000);
         });
     </script>
 </body>

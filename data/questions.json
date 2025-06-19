@@ -45,51 +45,6 @@
         "reference": "Génesis 41:25-32"
     },
     {
-        "id": "at6",
-        "category": "antiguo-testamento",
-        "text": "¿Cuántos años vagó el pueblo de Israel por el desierto?",
-        "options": ["20 años", "30 años", "40 años", "50 años"],
-        "correctIndex": 2,
-        "difficulty": "medio",
-        "reference": "Números 14:33-34"
-    },
-    {
-        "id": "at7",
-        "category": "antiguo-testamento",
-        "text": "¿Quién derrotó al gigante Goliat?",
-        "options": ["Saúl", "David", "Sansón", "Josué"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "1 Samuel 17:49-50"
-    },
-    {
-        "id": "at8",
-        "category": "antiguo-testamento",
-        "text": "¿Cuál de estos NO es uno de los patriarcas principales?",
-        "options": ["Abraham", "Isaac", "Jacob", "Moisés"],
-        "correctIndex": 3,
-        "difficulty": "medio",
-        "reference": "Génesis 12-50"
-    },
-    {
-        "id": "at9",
-        "category": "antiguo-testamento",
-        "text": "¿Qué rey construyó el primer templo en Jerusalén?",
-        "options": ["David", "Salomón", "Saúl", "Roboam"],
-        "correctIndex": 1,
-        "difficulty": "medio",
-        "reference": "1 Reyes 6"
-    },
-    {
-        "id": "at10",
-        "category": "antiguo-testamento",
-        "text": "¿Cuántas tribus formaban el pueblo de Israel?",
-        "options": ["10", "12", "7", "14"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "Génesis 49"
-    },
-    {
         "id": "nt1",
         "category": "nuevo-testamento",
         "text": "¿Cuántos apóstoles tuvo Jesús?",
@@ -135,51 +90,6 @@
         "reference": "Nuevo Testamento"
     },
     {
-        "id": "nt6",
-        "category": "nuevo-testamento",
-        "text": "¿Cuál es el último libro del Nuevo Testamento?",
-        "options": ["Apocalipsis", "Judas", "Hebreos", "Filemón"],
-        "correctIndex": 0,
-        "difficulty": "fácil",
-        "reference": "Nuevo Testamento"
-    },
-    {
-        "id": "nt7",
-        "category": "nuevo-testamento",
-        "text": "¿Quién fue el primer mártir cristiano según el libro de los Hechos?",
-        "options": ["Pedro", "Pablo", "Esteban", "Santiago"],
-        "correctIndex": 2,
-        "difficulty": "medio",
-        "reference": "Hechos 7:54-60"
-    },
-    {
-        "id": "nt8",
-        "category": "nuevo-testamento",
-        "text": "¿En qué isla estaba Juan cuando recibió las visiones del Apocalipsis?",
-        "options": ["Creta", "Chipre", "Patmos", "Malta"],
-        "correctIndex": 2,
-        "difficulty": "medio",
-        "reference": "Apocalipsis 1:9"
-    },
-    {
-        "id": "nt9",
-        "category": "nuevo-testamento",
-        "text": "¿Quién era el gobernador romano durante el juicio de Jesús?",
-        "options": ["Herodes", "Poncio Pilato", "César Augusto", "Tiberio"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "Mateo 27:2"
-    },
-    {
-        "id": "nt10",
-        "category": "nuevo-testamento",
-        "text": "¿A qué ciudad iban Saulo cuando tuvo su encuentro con Jesús?",
-        "options": ["Jerusalén", "Antioquía", "Damasco", "Roma"],
-        "correctIndex": 2,
-        "difficulty": "medio",
-        "reference": "Hechos 9:3"
-    },
-    {
         "id": "pb1",
         "category": "personajes-biblicos",
         "text": "¿Quién fue el hombre más fuerte de la Biblia?",
@@ -209,65 +119,20 @@
     {
         "id": "pb4",
         "category": "personajes-biblicos",
-        "text": "¿Quién fue tragado por un gran pez?",
-        "options": ["Pedro", "Pablo", "Jonás", "Daniel"],
-        "correctIndex": 2,
+        "text": "¿Cuántos días estuvo Jonás en el vientre del gran pez?",
+        "options": ["1 día", "3 días", "7 días", "40 días"],
+        "correctIndex": 1,
         "difficulty": "fácil",
         "reference": "Jonás 1:17"
     },
     {
         "id": "pb5",
         "category": "personajes-biblicos",
-        "text": "¿Quién fue la primera mujer según la Biblia?",
-        "options": ["Eva", "Sara", "María", "Rut"],
-        "correctIndex": 0,
+        "text": "¿Cómo se llamaba la primera mujer según la Biblia?",
+        "options": ["María", "Eva", "Sara", "Rebeca"],
+        "correctIndex": 1,
         "difficulty": "fácil",
         "reference": "Génesis 3:20"
-    },
-    {
-        "id": "pb6",
-        "category": "personajes-biblicos",
-        "text": "¿Quién fue el rey que pidió sabiduría a Dios?",
-        "options": ["David", "Salomón", "Saúl", "Ezequías"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "1 Reyes 3:5-14"
-    },
-    {
-        "id": "pb7",
-        "category": "personajes-biblicos",
-        "text": "¿Quién fue vendido como esclavo por sus hermanos?",
-        "options": ["Moisés", "José", "Benjamín", "Isaac"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "Génesis 37:28"
-    },
-    {
-        "id": "pb8",
-        "category": "personajes-biblicos",
-        "text": "¿Quién fue la reina que salvó al pueblo judío del exterminio?",
-        "options": ["Rut", "Ester", "Débora", "Abigail"],
-        "correctIndex": 1,
-        "difficulty": "medio",
-        "reference": "Ester 4:14"
-    },
-    {
-        "id": "pb9",
-        "category": "personajes-biblicos",
-        "text": "¿Quién fue el discípulo que dudó de la resurrección de Jesús?",
-        "options": ["Pedro", "Juan", "Tomás", "Santiago"],
-        "correctIndex": 2,
-        "difficulty": "fácil",
-        "reference": "Juan 20:24-29"
-    },
-    {
-        "id": "pb10",
-        "category": "personajes-biblicos",
-        "text": "¿Quién fue el primer rey de Israel?",
-        "options": ["David", "Saúl", "Salomón", "Samuel"],
-        "correctIndex": 1,
-        "difficulty": "fácil",
-        "reference": "1 Samuel 10:1"
     },
     {
         "id": "dc1",
@@ -295,5 +160,23 @@
         "correctIndex": 1,
         "difficulty": "medio",
         "reference": "Efesios 2:8"
+    },
+    {
+        "id": "dc4",
+        "category": "doctrina-cristiana",
+        "text": "¿Cuántas personas conforman la Trinidad?",
+        "options": ["Una", "Dos", "Tres", "Cuatro"],
+        "correctIndex": 2,
+        "difficulty": "fácil",
+        "reference": "Mateo 28:19"
+    },
+    {
+        "id": "dc5",
+        "category": "doctrina-cristiana",
+        "text": "¿Qué significa 'Emmanuel'?",
+        "options": ["Rey de reyes", "Dios con nosotros", "Príncipe de paz", "Hijo de Dios"],
+        "correctIndex": 1,
+        "difficulty": "medio",
+        "reference": "Mateo 1:23"
     }
 ]

@@ -12,9 +12,13 @@
 
 let profileData = {
     isInitialized: false,
+    username: '',
+    displayName: '',
+    favoriteVerse: '',
     currentAvatar: 'assets/images/mascota.png',
     isValidatingUsername: false,
-    hasUnsavedChanges: false
+    hasUnsavedChanges: false,
+    lastUpdated: null
 };
 
 // ✅ AVATARES DISPONIBLES (CON JOY-TROFEO)
@@ -47,47 +51,46 @@ const USER_LEVELS = [
 
 async function init() {
     try {
-        console.log('👤 Inicializando sistema de perfil...');
+        console.log('👤 Inicializando perfil...');
         
-        // 1. Esperar GameDataManager
-        if (!window.GameDataManager) {
-            await waitForGameDataManager();
-        }
+        // Esperar a que GameDataManager esté disponible
+        await waitForGameDataManager();
         
-        // 2. Configurar listeners
+        // Configurar listeners de GameDataManager
         setupGameDataListeners();
-        setupFormListeners();
         
-        // 3. Cargar datos del perfil
+        // Cargar datos del perfil
         loadProfileData();
         
-        // 4. Actualizar displays
-        updateAllDisplays();
+        // Configurar listeners del formulario
+        setupFormListeners();
         
-        // 5. Configurar validación en tiempo real
+        // Configurar validación en tiempo real
         setupRealTimeValidation();
         
+        // Actualizar todas las pantallas
+        updateAllDisplays();
+        
         profileData.isInitialized = true;
-        console.log('✅ Sistema de perfil inicializado correctamente');
+        console.log('✅ Perfil inicializado correctamente');
         
     } catch (error) {
         console.error('❌ Error inicializando perfil:', error);
-        showNotification('Error cargando el perfil', 'error');
     }
 }
 
 async function waitForGameDataManager() {
     return new Promise((resolve) => {
-        const checkGameDataManager = () => {
-            if (window.GameDataManager) {
-                console.log('✅ GameDataManager disponible para perfil');
-                resolve();
-            } else {
-                console.log('⏳ Esperando GameDataManager...');
-                setTimeout(checkGameDataManager, 100);
-            }
-        };
-        checkGameDataManager();
+        if (window.GameDataManager) {
+            resolve();
+        } else {
+            const checkInterval = setInterval(() => {
+                if (window.GameDataManager) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 100);
+        }
     });
 }
 
@@ -95,12 +98,10 @@ function setupGameDataListeners() {
     console.log('🔗 Configurando listeners para perfil...');
     
     window.GameDataManager.onCoinsChanged((data) => {
-        console.log('💰 Monedas cambiaron, actualizando perfil:', data);
         updateCoinsDisplay();
     });
     
     window.GameDataManager.onDataChanged((data) => {
-        console.log('📊 Datos cambiaron, actualizando estadísticas:', data);
         updateStatsDisplay();
         updateLevelDisplay();
     });
@@ -114,70 +115,78 @@ function loadProfileData() {
     console.log('📱 Cargando datos del perfil...');
     
     try {
-        // Cargar datos básicos
+        // Cargar desde localStorage
         const savedProfile = localStorage.getItem('quiz-cristiano-profile');
         if (savedProfile) {
-            const profile = JSON.parse(savedProfile);
+            const parsed = JSON.parse(savedProfile);
             
-            // Aplicar datos del perfil
-            const usernameInput = document.getElementById('username');
-            const displayNameInput = document.getElementById('display-name-input');
-            const favoriteVerseInput = document.getElementById('favorite-verse');
+            profileData.username = parsed.username || '';
+            profileData.displayName = parsed.displayName || '';
+            profileData.favoriteVerse = parsed.favoriteVerse || '';
+            profileData.currentAvatar = parsed.currentAvatar || 'assets/images/mascota.png';
+            profileData.lastUpdated = parsed.lastUpdated || Date.now();
             
-            if (usernameInput) usernameInput.value = profile.username || '';
-            if (displayNameInput) displayNameInput.value = profile.displayName || '';
-            if (favoriteVerseInput) favoriteVerseInput.value = profile.favoriteVerse || '';
-            
-            // Cargar avatar
-            profileData.currentAvatar = profile.avatar || 'assets/images/mascota.png';
+            console.log('✅ Datos del perfil cargados:', profileData);
+        } else {
+            console.log('📋 No hay datos de perfil guardados, usando valores por defecto');
         }
         
-        // Cargar datos del usuario actual
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(currentUser);
-            const displayNameInput = document.getElementById('display-name-input');
-            if (displayNameInput && !displayNameInput.value) {
-                displayNameInput.value = userData.name || userData.displayName || '';
-            }
-        }
-        
-        console.log('✅ Datos del perfil cargados');
+        // Llenar formulario con datos cargados
+        fillFormWithData();
         
     } catch (error) {
         console.error('❌ Error cargando datos del perfil:', error);
     }
 }
 
+function fillFormWithData() {
+    console.log('📝 Llenando formulario con datos cargados...');
+    
+    // Llenar inputs
+    const usernameInput = document.getElementById('username');
+    const displayNameInput = document.getElementById('display-name-input');
+    const favoriteVerseInput = document.getElementById('favorite-verse');
+    
+    if (usernameInput) {
+        usernameInput.value = profileData.username || '';
+    }
+    
+    if (displayNameInput) {
+        displayNameInput.value = profileData.displayName || '';
+    }
+    
+    if (favoriteVerseInput) {
+        favoriteVerseInput.value = profileData.favoriteVerse || '';
+        
+        // Actualizar contador de caracteres
+        const verseCount = document.getElementById('verse-count');
+        if (verseCount) {
+            verseCount.textContent = favoriteVerseInput.value.length;
+        }
+    }
+    
+    console.log('✅ Formulario llenado con datos');
+}
+
+// ✅ FUNCIÓN SAVE PROFILE DATA CORREGIDA
+
 function saveProfileData() {
-    console.log('💾 Guardando datos del perfil...');
+    console.log('💾 Guardando datos del perfil en localStorage...');
     
     try {
-        const usernameInput = document.getElementById('username');
-        const displayNameInput = document.getElementById('display-name-input');
-        const favoriteVerseInput = document.getElementById('favorite-verse');
-        
-        const profileData = {
-            username: usernameInput?.value || '',
-            displayName: displayNameInput?.value || '',
-            favoriteVerse: favoriteVerseInput?.value || '',
-            avatar: profileData.currentAvatar,
-            lastUpdated: Date.now()
+        const dataToSave = {
+            username: profileData.username || '',
+            displayName: profileData.displayName || '',
+            favoriteVerse: profileData.favoriteVerse || '',
+            currentAvatar: profileData.currentAvatar || 'assets/images/mascota.png',
+            lastUpdated: profileData.lastUpdated || Date.now(),
+            version: '1.0.0'
         };
         
-        localStorage.setItem('quiz-cristiano-profile', JSON.stringify(profileData));
+        localStorage.setItem('quiz-cristiano-profile', JSON.stringify(dataToSave));
+        console.log('✅ Datos del perfil guardados en localStorage');
         
-        // Actualizar también el usuario actual si es necesario
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser && displayNameInput?.value) {
-            const userData = JSON.parse(currentUser);
-            userData.name = displayNameInput.value;
-            localStorage.setItem('currentUser', JSON.stringify(userData));
-        }
-        
-        console.log('✅ Datos del perfil guardados');
         return true;
-        
     } catch (error) {
         console.error('❌ Error guardando datos del perfil:', error);
         return false;
@@ -193,15 +202,15 @@ async function validateUsername(username) {
     
     // Validaciones locales
     if (!username || username.length < 3) {
-        return { valid: false, message: 'Mínimo 3 caracteres', type: 'error' };
+        return { valid: false, message: 'El nombre debe tener al menos 3 caracteres', type: 'error' };
     }
     
     if (username.length > 20) {
-        return { valid: false, message: 'Máximo 20 caracteres', type: 'error' };
+        return { valid: false, message: 'El nombre no puede tener más de 20 caracteres', type: 'error' };
     }
     
     if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        return { valid: false, message: 'Solo letras, números y guiones bajos', type: 'error' };
+        return { valid: false, message: 'Solo letras, números y guiones bajos permitidos', type: 'error' };
     }
     
     // Simular verificación de disponibilidad
@@ -212,7 +221,7 @@ async function validateUsername(username) {
     await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay de red
     
     if (unavailableNames.includes(username.toLowerCase())) {
-        return { valid: false, message: 'Nombre no disponible', type: 'error' };
+        return { valid: false, message: 'Este nombre no está disponible', type: 'error' };
     }
     
     return { valid: true, message: 'Nombre disponible', type: 'success' };
@@ -228,40 +237,40 @@ function setupRealTimeValidation() {
     let validationTimeout = null;
     
     usernameInput.addEventListener('input', (e) => {
-        const username = e.target.value;
+        const username = e.target.value.trim();
+        
+        // Marcar como cambios no guardados
+        profileData.hasUnsavedChanges = true;
+        updateSaveButtonState();
+        
+        // Limpiar timeout anterior
+        clearTimeout(validationTimeout);
+        
+        if (username.length === 0) {
+            updateValidationStatus('', '', 'Elige un nombre único');
+            return;
+        }
         
         // Mostrar estado de verificación
-        if (usernameStatus) {
-            usernameStatus.className = 'validation-status checking';
-            usernameStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-        }
-        
-        // Cancelar validación anterior
-        if (validationTimeout) {
-            clearTimeout(validationTimeout);
-        }
+        updateValidationStatus('checking', 'fa-circle-notch fa-spin', 'Verificando disponibilidad...');
         
         // Validar después de 800ms de inactividad
         validationTimeout = setTimeout(async () => {
-            if (!username) {
-                updateValidationStatus('', '', '');
-                return;
+            try {
+                profileData.isValidatingUsername = true;
+                const result = await validateUsername(username);
+                
+                if (result.valid) {
+                    updateValidationStatus('valid', 'fa-check', result.message);
+                } else {
+                    updateValidationStatus('invalid', 'fa-times', result.message);
+                }
+            } catch (error) {
+                console.error('Error validando username:', error);
+                updateValidationStatus('invalid', 'fa-exclamation-triangle', 'Error verificando disponibilidad');
+            } finally {
+                profileData.isValidatingUsername = false;
             }
-            
-            profileData.isValidatingUsername = true;
-            const result = await validateUsername(username);
-            profileData.isValidatingUsername = false;
-            
-            updateValidationStatus(
-                result.valid ? 'valid' : 'invalid',
-                result.valid ? 'fa-check' : 'fa-times',
-                result.message
-            );
-            
-            // Marcar cambios no guardados
-            profileData.hasUnsavedChanges = true;
-            updateSaveButtonState();
-            
         }, 800);
     });
 }
@@ -276,8 +285,8 @@ function updateValidationStatus(status, icon, message) {
     }
     
     if (usernameHelp) {
-        usernameHelp.textContent = message || '3-20 caracteres, solo letras, números y guiones bajos';
-        usernameHelp.className = `input-help ${status === 'invalid' ? 'error' : status === 'valid' ? 'success' : ''}`;
+        usernameHelp.textContent = message;
+        usernameHelp.className = `input-help ${status === 'valid' ? 'success' : status === 'invalid' ? 'error' : ''}`;
     }
 }
 
@@ -300,19 +309,19 @@ window.openAvatarSelector = function() {
     avatarsGrid.innerHTML = '';
     AVAILABLE_AVATARS.forEach(avatar => {
         const isUnlocked = unlockedAvatars.includes(avatar.id);
-        const isSelected = profileData.currentAvatar === avatar.src;
+        const isSelected = avatar.src === profileData.currentAvatar;
         
         const avatarElement = document.createElement('div');
         avatarElement.className = `avatar-option ${isSelected ? 'selected' : ''} ${!isUnlocked ? 'locked' : ''}`;
-        avatarElement.onclick = () => selectAvatar(avatar, isUnlocked);
         
         avatarElement.innerHTML = `
             <img src="${avatar.src}" alt="${avatar.name}">
             ${!isUnlocked ? '<div class="avatar-lock"><i class="fas fa-lock"></i></div>' : ''}
             ${isSelected ? '<div class="avatar-selected"><i class="fas fa-check"></i></div>' : ''}
+            <div class="avatar-name">${avatar.name}</div>
         `;
         
-        avatarElement.title = avatar.name;
+        avatarElement.addEventListener('click', () => selectAvatar(avatar, isUnlocked));
         avatarsGrid.appendChild(avatarElement);
     });
     
@@ -321,7 +330,7 @@ window.openAvatarSelector = function() {
 
 function selectAvatar(avatar, isUnlocked) {
     if (!isUnlocked) {
-        showNotification(`${avatar.name} no está desbloqueado`, 'warning');
+        showNotification('Este avatar no está disponible', 'warning');
         return;
     }
     
@@ -349,13 +358,13 @@ function selectAvatar(avatar, isUnlocked) {
     // Actualizar selector
     const avatarsGrid = document.getElementById('avatars-grid');
     if (avatarsGrid) {
-        avatarsGrid.querySelectorAll('.avatar-option').forEach(option => {
-            option.classList.remove('selected');
-        });
+        const options = avatarsGrid.querySelectorAll('.avatar-option');
+        options.forEach(option => option.classList.remove('selected'));
         
         const selectedOption = avatarsGrid.querySelector(`img[src="${avatar.src}"]`)?.parentElement;
         if (selectedOption) {
             selectedOption.classList.add('selected');
+            selectedOption.innerHTML += '<div class="avatar-selected"><i class="fas fa-check"></i></div>';
         }
     }
 }
@@ -389,9 +398,8 @@ function calculateUserLevel() {
     
     // Encontrar nivel correspondiente
     for (let i = USER_LEVELS.length - 1; i >= 0; i--) {
-        const level = USER_LEVELS[i];
-        if (exp >= level.minExp) {
-            return { ...level, currentExp: Math.floor(exp) };
+        if (exp >= USER_LEVELS[i].minExp) {
+            return { ...USER_LEVELS[i], currentExp: Math.floor(exp) };
         }
     }
     
@@ -420,12 +428,12 @@ function updateLevelDisplay() {
     }
     
     if (levelDescription) {
-        if (userLevel.level >= 10) {
-            levelDescription.textContent = '¡Has alcanzado el nivel máximo!';
-        } else {
-            const nextLevel = USER_LEVELS[userLevel.level];
+        const nextLevel = USER_LEVELS.find(l => l.level === userLevel.level + 1);
+        if (nextLevel) {
             const expNeeded = nextLevel.minExp - userLevel.currentExp;
-            levelDescription.textContent = `${expNeeded} XP para el siguiente nivel`;
+            levelDescription.textContent = `${expNeeded} EXP para ${nextLevel.name}`;
+        } else {
+            levelDescription.textContent = '¡Nivel máximo alcanzado!';
         }
     }
     
@@ -434,18 +442,9 @@ function updateLevelDisplay() {
     const expText = document.getElementById('exp-text');
     
     if (expFill && expText) {
-        if (userLevel.level >= 10) {
-            expFill.style.width = '100%';
-            expText.textContent = 'MÁXIMO';
-        } else {
-            const nextLevel = USER_LEVELS[userLevel.level];
-            const currentLevelExp = userLevel.currentExp - userLevel.minExp;
-            const levelExpRange = nextLevel.minExp - userLevel.minExp;
-            const percentage = Math.min((currentLevelExp / levelExpRange) * 100, 100);
-            
-            expFill.style.width = `${percentage}%`;
-            expText.textContent = `${currentLevelExp} / ${levelExpRange}`;
-        }
+        const progress = ((userLevel.currentExp - userLevel.minExp) / (userLevel.maxExp - userLevel.minExp)) * 100;
+        expFill.style.width = `${Math.min(progress, 100)}%`;
+        expText.textContent = `${userLevel.currentExp} / ${userLevel.maxExp === Infinity ? '∞' : userLevel.maxExp}`;
     }
     
     // Actualizar nivel en el header del perfil
@@ -473,7 +472,7 @@ function updateCoinsDisplay() {
     
     const coinsDisplay = document.getElementById('coins-display');
     if (coinsDisplay) {
-        coinsDisplay.textContent = window.GameDataManager.getCoins().toLocaleString();
+        coinsDisplay.textContent = window.GameDataManager.getCoins();
     }
 }
 
@@ -487,19 +486,15 @@ function updateStatsDisplay() {
         'games-played': stats.gamesPlayed || 0,
         'victories': stats.victories || 0,
         'total-coins': stats.coins || 0,
-        'achievements-count': 0, // TODO: Integrar con sistema de logros
+        'achievements-count': 0, // Implementar cuando esté el sistema de logros
         'win-rate': stats.winRate || 0,
-        'current-streak': 0 // TODO: Implementar sistema de rachas
+        'current-streak': 0 // Implementar sistema de rachas
     };
     
     Object.entries(elements).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) {
-            if (id === 'win-rate') {
-                element.textContent = `${value}%`;
-            } else {
-                element.textContent = value.toLocaleString();
-            }
+            element.textContent = typeof value === 'number' && id === 'win-rate' ? `${value}%` : value;
         }
     });
 }
@@ -511,12 +506,22 @@ function updateAvatarDisplay() {
     }
 }
 
+// ✅ FUNCIÓN UPDATE NAME DISPLAY CORREGIDA
+
 function updateNameDisplay() {
     const displayNameElement = document.getElementById('display-name');
-    const displayNameInput = document.getElementById('display-name-input');
     
-    if (displayNameElement && displayNameInput) {
-        displayNameElement.textContent = displayNameInput.value || 'Jugador';
+    if (displayNameElement) {
+        const nameToShow = profileData.displayName || profileData.username || 'Jugador';
+        displayNameElement.textContent = nameToShow;
+        console.log(`📝 Nombre actualizado en interfaz: ${nameToShow}`);
+    }
+    
+    // También actualizar en otras partes de la app si es necesario
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (profileData.displayName) {
+        currentUser.displayName = profileData.displayName;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
     }
 }
 
@@ -527,42 +532,111 @@ function updateNameDisplay() {
 function setupFormListeners() {
     console.log('📝 Configurando listeners del formulario...');
     
-    // Contador de caracteres para versículo
-    const favoriteVerseInput = document.getElementById('favorite-verse');
-    const verseCount = document.getElementById('verse-count');
-    
-    if (favoriteVerseInput && verseCount) {
-        favoriteVerseInput.addEventListener('input', () => {
-            verseCount.textContent = favoriteVerseInput.value.length;
+    // Listener para nombre de usuario
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) {
+        usernameInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            
+            // Marcar cambios no guardados
             profileData.hasUnsavedChanges = true;
             updateSaveButtonState();
+            
+            // Validación visual básica
+            if (value.length > 0 && value.length < 3) {
+                usernameInput.style.borderColor = '#e74c3c';
+            } else if (value.length >= 3) {
+                usernameInput.style.borderColor = '#27ae60';
+            } else {
+                usernameInput.style.borderColor = '';
+            }
         });
     }
     
     // Listener para nombre a mostrar
     const displayNameInput = document.getElementById('display-name-input');
     if (displayNameInput) {
-        displayNameInput.addEventListener('input', () => {
-            updateNameDisplay();
+        displayNameInput.addEventListener('input', (e) => {
             profileData.hasUnsavedChanges = true;
             updateSaveButtonState();
+            
+            // Validación de longitud
+            if (e.target.value.length > 30) {
+                displayNameInput.style.borderColor = '#e74c3c';
+            } else {
+                displayNameInput.style.borderColor = '';
+            }
         });
     }
     
-    // Advertencia de cambios no guardados
-    window.addEventListener('beforeunload', (e) => {
-        if (profileData.hasUnsavedChanges) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    });
+    // Contador de caracteres para versículo
+    const favoriteVerseInput = document.getElementById('favorite-verse');
+    const verseCount = document.getElementById('verse-count');
+    
+    if (favoriteVerseInput && verseCount) {
+        favoriteVerseInput.addEventListener('input', (e) => {
+            const length = e.target.value.length;
+            verseCount.textContent = length;
+            
+            profileData.hasUnsavedChanges = true;
+            updateSaveButtonState();
+            
+            // Cambiar color según longitud
+            if (length > 200) {
+                verseCount.style.color = '#e74c3c';
+                favoriteVerseInput.style.borderColor = '#e74c3c';
+            } else if (length > 180) {
+                verseCount.style.color = '#f39c12';
+                favoriteVerseInput.style.borderColor = '#f39c12';
+            } else {
+                verseCount.style.color = '';
+                favoriteVerseInput.style.borderColor = '';
+            }
+        });
+    }
 }
 
+// ✅ FUNCIÓN SAVE COMPLETAMENTE CORREGIDA
+
 window.saveUserProfile = async function() {
-    console.log('💾 Guardando perfil del usuario...');
+    console.log('💾 === GUARDANDO PERFIL DEL USUARIO ===');
     
     const saveBtn = document.getElementById('save-profile-btn');
     const saveIndicator = document.getElementById('save-indicator');
+    
+    // Obtener valores del formulario
+    const usernameInput = document.getElementById('username');
+    const displayNameInput = document.getElementById('display-name-input');
+    const favoriteVerseInput = document.getElementById('favorite-verse');
+    
+    const formData = {
+        username: usernameInput?.value?.trim() || '',
+        displayName: displayNameInput?.value?.trim() || '',
+        favoriteVerse: favoriteVerseInput?.value?.trim() || ''
+    };
+    
+    console.log('📝 Datos del formulario:', formData);
+    
+    // Validaciones básicas
+    if (formData.username && formData.username.length < 3) {
+        showNotification('El nombre de usuario debe tener al menos 3 caracteres', 'error');
+        return;
+    }
+    
+    if (formData.username && formData.username.length > 20) {
+        showNotification('El nombre de usuario no puede tener más de 20 caracteres', 'error');
+        return;
+    }
+    
+    if (formData.displayName && formData.displayName.length > 30) {
+        showNotification('El nombre a mostrar no puede tener más de 30 caracteres', 'error');
+        return;
+    }
+    
+    if (formData.favoriteVerse && formData.favoriteVerse.length > 200) {
+        showNotification('El versículo favorito no puede tener más de 200 caracteres', 'error');
+        return;
+    }
     
     // Mostrar estado de guardado
     if (saveBtn) {
@@ -571,78 +645,82 @@ window.saveUserProfile = async function() {
     }
     
     try {
-        // Validar datos antes de guardar
-        const isValid = await validateFormData();
-        if (!isValid) {
-            throw new Error('Datos del formulario inválidos');
+        // 1. Validar nombre de usuario si cambió
+        if (formData.username && formData.username !== profileData.username) {
+            console.log('🔍 Validando nombre de usuario...');
+            const validation = await validateUsername(formData.username);
+            if (!validation.valid) {
+                showNotification(validation.message, 'error');
+                return;
+            }
         }
         
-        // Guardar datos
-        const success = saveProfileData();
-        if (!success) {
-            throw new Error('Error guardando datos localmente');
+        // 2. Actualizar datos del perfil
+        profileData.username = formData.username;
+        profileData.displayName = formData.displayName;
+        profileData.favoriteVerse = formData.favoriteVerse;
+        profileData.lastUpdated = Date.now();
+        
+        console.log('💾 Datos actualizados:', profileData);
+        
+        // 3. Guardar en localStorage
+        saveProfileData();
+        
+        // 4. Intentar guardar en Firebase (si está disponible)
+        try {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (currentUser.uid && window.firebase) {
+                console.log('☁️ Guardando en Firebase...');
+                // Aquí puedes agregar la lógica de Firebase cuando esté disponible
+            }
+        } catch (firebaseError) {
+            console.warn('⚠️ Error guardando en Firebase (continuando sin sincronización):', firebaseError);
         }
         
-        // Mostrar indicador de éxito
+        // 5. Actualizar interfaz
+        updateNameDisplay();
+        
+        // 6. Mostrar éxito
+        showNotification('Perfil guardado exitosamente', 'success');
+        
         if (saveIndicator) {
-            saveIndicator.style.display = 'block';
+            saveIndicator.style.display = 'inline-block';
             setTimeout(() => {
                 saveIndicator.style.display = 'none';
             }, 3000);
         }
         
-        // Resetear estado de cambios
+        // 7. Marcar como guardado
         profileData.hasUnsavedChanges = false;
         
-        showNotification('Perfil guardado exitosamente', 'success');
-        console.log('✅ Perfil guardado correctamente');
+        console.log('✅ Perfil guardado exitosamente');
         
     } catch (error) {
         console.error('❌ Error guardando perfil:', error);
-        showNotification('Error guardando el perfil', 'error');
+        showNotification('Error al guardar el perfil', 'error');
     } finally {
         // Restaurar botón
         if (saveBtn) {
-            updateSaveButtonState();
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> <span>Guardar Cambios</span>';
         }
+        
+        updateSaveButtonState();
     }
 };
-
-async function validateFormData() {
-    const usernameInput = document.getElementById('username');
-    const displayNameInput = document.getElementById('display-name-input');
-    
-    // Validar nombre de usuario si está presente
-    if (usernameInput?.value) {
-        const usernameValidation = await validateUsername(usernameInput.value);
-        if (!usernameValidation.valid) {
-            showNotification(`Nombre de usuario: ${usernameValidation.message}`, 'error');
-            return false;
-        }
-    }
-    
-    // Validar nombre a mostrar
-    if (displayNameInput?.value && displayNameInput.value.length > 30) {
-        showNotification('El nombre a mostrar es demasiado largo', 'error');
-        return false;
-    }
-    
-    return true;
-}
 
 function updateSaveButtonState() {
     const saveBtn = document.getElementById('save-profile-btn');
     if (!saveBtn) return;
     
-    if (profileData.isValidatingUsername) {
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>Validando...</span>';
-    } else if (profileData.hasUnsavedChanges) {
+    if (profileData.hasUnsavedChanges) {
         saveBtn.disabled = false;
         saveBtn.innerHTML = '<i class="fas fa-save"></i> <span>Guardar Cambios</span>';
+        saveBtn.style.opacity = '1';
     } else {
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<i class="fas fa-check"></i> <span>Todo Guardado</span>';
+        saveBtn.style.opacity = '0.6';
     }
 }
 
@@ -651,8 +729,7 @@ function updateSaveButtonState() {
 // ============================================
 
 function showNotification(message, type = 'info') {
-    console.log(`📢 Notificación: ${message} (${type})`);
-    
+    // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     
@@ -670,9 +747,10 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
+    // Estilos
     notification.style.cssText = `
         position: fixed;
-        top: 20px;
+        top: 80px;
         right: 20px;
         background: var(--surface-primary);
         backdrop-filter: var(--backdrop-blur);
@@ -695,6 +773,7 @@ function showNotification(message, type = 'info') {
         font-weight: 500;
     `;
     
+    // Colores por tipo
     const colors = {
         success: '#27ae60',
         error: '#e74c3c',
@@ -708,19 +787,64 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+    // Animación de entrada
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remover después de 4 segundos
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => notification.remove(), 300);
-    }, 3000);
+    }, 4000);
 }
+
+// ============================================
+// FUNCIONES GLOBALES PARA EL HTML
+// ============================================
+
+window.closeAvatarModal = function() {
+    const modal = document.getElementById('avatar-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+
+// ✅ FUNCIÓN DE DEBUG ADICIONAL
+window.debugProfile = function() {
+    console.log('🔍 === DEBUG PERFIL ===');
+    console.log('profileData:', typeof profileData !== 'undefined' ? profileData : 'No definido');
+    console.log('localStorage profile:', localStorage.getItem('quiz-cristiano-profile'));
+    console.log('currentUser:', localStorage.getItem('currentUser'));
+    
+    // Verificar inputs
+    const inputs = {
+        username: document.getElementById('username')?.value,
+        displayName: document.getElementById('display-name-input')?.value,
+        favoriteVerse: document.getElementById('favorite-verse')?.value
+    };
+    console.log('Valores de inputs:', inputs);
+};
 
 // ============================================
 // INICIALIZACIÓN
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('👤 Perfil HTML cargado, inicializando...');
+    console.log('👤 Perfil DOM cargado, inicializando...');
+    
+    // Verificar elementos críticos
+    const criticalElements = [
+        'username', 'display-name-input', 'favorite-verse',
+        'save-profile-btn', 'avatar-image'
+    ];
+    
+    criticalElements.forEach(id => {
+        const element = document.getElementById(id);
+        console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
+    });
+    
+    // Inicializar perfil
     init();
 });
 

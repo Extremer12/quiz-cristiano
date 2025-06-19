@@ -270,11 +270,163 @@
             signInAsGuest as firebaseSignInAsGuest,
             saveUserData, 
             getUserData,
-            analytics 
+            analytics,
+            // ✅ IMPORTAR FUNCIONES FALTANTES
+            signOut,
+            onAuthStateChanged
         } from './js/config/firebase-config.js';
-        
-        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
         import { logEvent } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+
+        // ============================================
+        // LISTENER ONAUTH COMPLETAMENTE CORREGIDO
+        // ============================================
+
+        // ✅ VERIFICACIÓN INMEDIATA DE FLAGS AL CARGAR
+        (function() {
+            console.log('🔍 === LOGIN PAGE CARGANDO ===');
+            
+            // Verificar parámetros URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const forceLogout = urlParams.get('forceLogout');
+            const emergency = urlParams.get('emergency');
+            
+            // Verificar flags de sessionStorage
+            const forceLoginActive = sessionStorage.getItem('FORCE_LOGIN_ACTIVE');
+            const changingUser = sessionStorage.getItem('CHANGING_USER_PROCESS');
+            const disableAutoLogin = sessionStorage.getItem('DISABLE_AUTO_LOGIN');
+            const logoutInProgress = localStorage.getItem('USER_LOGOUT_IN_PROGRESS');
+            const emergencyLogout = sessionStorage.getItem('EMERGENCY_LOGOUT');
+            
+            console.log('🔍 Estados detectados:', {
+                forceLogout: !!forceLogout,
+                emergency: !!emergency,
+                forceLoginActive: !!forceLoginActive,
+                changingUser: !!changingUser,
+                disableAutoLogin: !!disableAutoLogin,
+                logoutInProgress: !!logoutInProgress,
+                emergencyLogout: !!emergencyLogout
+            });
+            
+            // Si hay CUALQUIER flag de logout/cambio, limpiar todo
+            if (forceLogout || emergency || forceLoginActive || changingUser || 
+                disableAutoLogin || logoutInProgress || emergencyLogout) {
+                
+                console.log('🧹 FORZANDO LIMPIEZA COMPLETA...');
+                
+                // Limpiar localStorage completamente
+                try {
+                    localStorage.clear();
+                    console.log('✅ localStorage limpiado');
+                } catch (e) {
+                    console.error('Error limpiando localStorage:', e);
+                }
+                
+                // Establecer flag especial para bloquear redirección
+                sessionStorage.setItem('LOGIN_FORCED_STAY', 'true');
+                sessionStorage.setItem('BLOCK_AUTH_REDIRECT', 'true');
+                
+                // Limpiar URL
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+                
+                console.log('✅ Login forzado a permanecer');
+            }
+        })();
+
+        // ✅ LISTENER DE AUTENTICACIÓN MEJORADO
+        onAuthStateChanged(auth, (user) => {
+            console.log('🔄 === OnAuthStateChanged disparado ===');
+            console.log('👤 Usuario Firebase:', user ? 'Autenticado' : 'No autenticado');
+            
+            // ✅ 1. VERIFICAR FLAGS DE BLOQUEO PRIMERO
+            const loginForcedStay = sessionStorage.getItem('LOGIN_FORCED_STAY');
+            const blockAuthRedirect = sessionStorage.getItem('BLOCK_AUTH_REDIRECT');
+            const forceLoginActive = sessionStorage.getItem('FORCE_LOGIN_ACTIVE');
+            
+            console.log('🛡️ Verificando flags de bloqueo:', {
+                loginForcedStay: !!loginForcedStay,
+                blockAuthRedirect: !!blockAuthRedirect,
+                forceLoginActive: !!forceLoginActive
+            });
+            
+            // Si hay CUALQUIER flag de bloqueo, NO REDIRIGIR
+            if (loginForcedStay || blockAuthRedirect || forceLoginActive) {
+                console.log('🛑 === REDIRECCIÓN BLOQUEADA POR FLAGS ===');
+                
+                // Si hay usuario de Firebase, cerrar sesión silenciosamente
+                if (user) {
+                    console.log('🔄 Cerrando sesión silenciosa de Firebase...');
+                    signOut(auth).catch(e => {
+                        console.warn('Error en signOut silencioso:', e);
+                    });
+                }
+                
+                // Limpiar flags después de un tiempo
+                setTimeout(() => {
+                    sessionStorage.removeItem('LOGIN_FORCED_STAY');
+                    sessionStorage.removeItem('BLOCK_AUTH_REDIRECT'); 
+                    sessionStorage.removeItem('FORCE_LOGIN_ACTIVE');
+                    sessionStorage.removeItem('CHANGING_USER_PROCESS');
+                    sessionStorage.removeItem('DISABLE_AUTO_LOGIN');
+                    console.log('🧹 Flags de bloqueo limpiados');
+                }, 2000);
+                
+                return; // SALIR COMPLETAMENTE
+            }
+            
+            // ✅ 2. VERIFICAR DATOS LOCALES SOLO SI NO HAY BLOQUEO
+            const currentUser = localStorage.getItem('currentUser');
+            const skipLogin = localStorage.getItem('skipLogin');
+            
+            console.log('📊 Estado de datos locales:', {
+                currentUser: !!currentUser,
+                skipLogin: !!skipLogin
+            });
+            
+            // ✅ 3. SOLO REDIRIGIR SI HAY USUARIO Y DATOS VÁLIDOS
+            if (user && (currentUser || skipLogin)) {
+                console.log('✅ Usuario válido detectado - Preparando redirección...');
+                
+                // Actualizar datos del usuario
+                const userData = {
+                    uid: user.uid,
+                    name: user.displayName || 'Invitado',
+                    email: user.email,
+                    photo: user.photoURL,
+                    loginMethod: user.isAnonymous ? 'anonymous' : 'google'
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                localStorage.removeItem('skipLogin');
+                
+                // ✅ DELAY LARGO Y VERIFICACIÓN FINAL
+                setTimeout(() => {
+                    // Verificar una vez más que no hay flags de bloqueo
+                    const stillBlocked = sessionStorage.getItem('LOGIN_FORCED_STAY') || 
+                                       sessionStorage.getItem('BLOCK_AUTH_REDIRECT');
+                    
+                    if (!stillBlocked) {
+                        const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
+                        sessionStorage.removeItem('redirectAfterLogin');
+                        console.log('🏠 === REDIRECCIÓN FINAL A:', redirectUrl, '===');
+                        window.location.replace(redirectUrl);
+                    } else {
+                        console.log('🛑 Redirección cancelada por flags activos');
+                    }
+                }, 3000); // 3 segundos de espera
+                
+            } else if (user && !currentUser && !skipLogin) {
+                // ✅ 4. USUARIO SIN DATOS LOCALES
+                console.log('⚠️ Usuario Firebase sin datos locales - Cerrando sesión');
+                signOut(auth).catch(e => {
+                    console.warn('Error cerrando sesión inconsistente:', e);
+                });
+            } else {
+                console.log('✅ Estado normal - Usuario puede proceder con login');
+            }
+        });
 
         function showError(message) {
             const errorDiv = document.getElementById('error-message');
@@ -298,123 +450,158 @@
             };
         }
 
+        // ✅ MODIFICAR LA FUNCIÓN signInWithGoogle
         window.signInWithGoogle = async function() {
             const stopLoading = showLoading('google-btn', 'Iniciando sesión...');
             
             try {
-                // Usar función de firebase-config.js
+                console.log('🔑 === INICIANDO LOGIN GOOGLE ===');
+                
                 const user = await firebaseSignInWithGoogle();
+                console.log('✅ Login Google exitoso:', user.displayName);
                 
                 // Log analytics event
                 logEvent(analytics, 'login', { method: 'google' });
                 
-                // Migrar datos locales
-                await migrateLocalData(user);
-                
-                // Guardar info del usuario
-                await saveUserData(user.uid, {
-                    profile: {
-                        name: user.displayName,
-                        email: user.email,
-                        photo: user.photoURL,
-                        loginMethod: 'google',
-                        lastLogin: new Date(),
-                        createdAt: new Date()
-                    }
-                });
-                
-                // Guardar en localStorage para acceso rápido
-                localStorage.setItem('currentUser', JSON.stringify({
+                // ✅ GUARDAR DATOS DEL USUARIO
+                const userData = {
                     uid: user.uid,
                     name: user.displayName,
                     email: user.email,
                     photo: user.photoURL,
                     loginMethod: 'google'
-                }));
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                
+                // ✅ INTENTAR CARGAR DATOS DESDE FIREBASE
+                try {
+                    await waitForGameDataManager();
+                    if (window.GameDataManager) {
+                        const dataLoaded = await window.GameDataManager.loadFromFirebase();
+                        if (dataLoaded) {
+                            console.log('🎉 Datos del usuario restaurados desde Firebase');
+                        } else {
+                            console.log('📱 Nuevo usuario o sin datos previos');
+                        }
+                    }
+                } catch (loadError) {
+                    console.warn('⚠️ Error cargando datos del usuario:', loadError);
+                }
+                
+                // ✅ GUARDAR ESTRUCTURA INICIAL EN FIREBASE
+                try {
+                    await saveUserData(user.uid, {
+                        profile: {
+                            name: user.displayName,
+                            email: user.email,
+                            photo: user.photoURL,
+                            loginMethod: 'google',
+                            lastLogin: new Date(),
+                            createdAt: new Date()
+                        },
+                        gameData: window.GameDataManager ? window.GameDataManager.gameData : {
+                            coins: 0,
+                            gamesPlayed: 0,
+                            victories: 0,
+                            perfectGames: 0
+                        },
+                        inventory: window.GameDataManager ? window.GameDataManager.inventory : {
+                            eliminate: 0,
+                            timeExtender: 0,
+                            secondChance: 0
+                        }
+                    });
+                } catch (saveError) {
+                    console.warn('⚠️ Error guardando datos iniciales:', saveError);
+                }
                 
                 console.log('🎉 Login completado, redirigiendo...');
-                // Verificar si hay una página de redirect guardada
-                const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
-                sessionStorage.removeItem('redirectAfterLogin');
-                window.location.replace(redirectUrl); // Cambiado de href a replace
+                
+                setTimeout(() => {
+                    const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
+                    sessionStorage.removeItem('redirectAfterLogin');
+                    window.location.replace(redirectUrl);
+                }, 1000);
                 
             } catch (error) {
                 stopLoading();
-                
-                let errorMessage = 'Error al iniciar sesión. ';
-                
-                switch (error.code) {
-                    case 'auth/popup-closed-by-user':
-                        errorMessage += 'Ventana cerrada por el usuario.';
-                        break;
-                    case 'auth/popup-blocked':
-                        errorMessage += 'Popup bloqueado por el navegador.';
-                        break;
-                    case 'auth/cancelled-popup-request':
-                        errorMessage += 'Solicitud cancelada.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessage += 'Error de conexión.';
-                        break;
-                    default:
-                        errorMessage += 'Intenta de nuevo.';
-                        console.error('Error details:', error);
-                }
-                
-                showError(errorMessage);
-                
-                // Restaurar botón
-                const btn = document.getElementById('google-btn');
-                btn.querySelector('span').textContent = 'Continuar con Google';
+                console.error('❌ Error en login Google:', error);
+                showError('Error al iniciar sesión con Google. Intenta de nuevo.');
             }
         };
+
+        // ✅ FUNCIÓN AUXILIAR PARA ESPERAR GAMEDATAMANAGER
+        async function waitForGameDataManager() {
+            return new Promise((resolve) => {
+                if (window.GameDataManager) {
+                    resolve();
+                } else {
+                    const checkInterval = setInterval(() => {
+                        if (window.GameDataManager) {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 100);
+                    
+                    // Timeout después de 5 segundos
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }, 5000);
+                }
+            });
+        }
 
         window.signInAsGuest = async function() {
             const stopLoading = showLoading('guest-btn', 'Entrando como invitado...');
             
             try {
+                console.log('👤 === INICIANDO LOGIN ANÓNIMO ===');
+                
+                // ✅ LIMPIAR TODOS LOS FLAGS DE BLOQUEO
+                sessionStorage.removeItem('LOGIN_FORCED_STAY');
+                sessionStorage.removeItem('BLOCK_AUTH_REDIRECT');
+                sessionStorage.removeItem('FORCE_LOGIN_ACTIVE');
+                sessionStorage.removeItem('CHANGING_USER_PROCESS');
+                sessionStorage.removeItem('DISABLE_AUTO_LOGIN');
+                localStorage.removeItem('USER_LOGOUT_IN_PROGRESS');
+                
                 const user = await firebaseSignInAsGuest();
+                console.log('✅ Login anónimo exitoso');
                 
-                // Log analytics event
-                logEvent(analytics, 'login', { method: 'anonymous' });
-                
-                // Migrar datos locales
-                await migrateLocalData(user);
-                
-                // Guardar info del usuario anónimo
-                await saveUserData(user.uid, {
-                    profile: {
-                        name: 'Invitado',
-                        email: null,
-                        photo: null,
-                        loginMethod: 'anonymous',
-                        lastLogin: new Date(),
-                        createdAt: new Date()
-                    }
-                });
-                
-                localStorage.setItem('currentUser', JSON.stringify({
+                // ✅ CREAR DATOS DE USUARIO LOCALES SIN FIRESTORE
+                const userData = {
                     uid: user.uid,
                     name: 'Invitado',
                     email: null,
                     photo: null,
-                    loginMethod: 'anonymous'
-                }));
+                    loginMethod: 'anonymous',
+                    isAnonymous: true
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                
+                // ✅ NO INTENTAR GUARDAR EN FIRESTORE PARA INVITADOS
+                console.log('👤 Usuario invitado configurado, usando solo localStorage');
+                
+                // Log analytics event
+                if (window.logEvent && window.analytics) {
+                    logEvent(analytics, 'login', { method: 'anonymous' });
+                }
                 
                 console.log('🎉 Login anónimo completado, redirigiendo...');
-                // Verificar si hay una página de redirect guardada
-                const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
-                sessionStorage.removeItem('redirectAfterLogin');
-                window.location.replace(redirectUrl); // Cambiado de href a replace
+                
+                setTimeout(() => {
+                    const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
+                    sessionStorage.removeItem('redirectAfterLogin');
+                    window.location.replace(redirectUrl);
+                }, 1000);
                 
             } catch (error) {
                 stopLoading();
-                console.error('Error en login anónimo:', error);
+                console.error('❌ Error en login anónimo:', error);
                 showError('Error al entrar como invitado. Intenta de nuevo.');
-                
-                // Restaurar botón
-                const btn = document.getElementById('guest-btn');
-                btn.querySelector('span').textContent = 'Jugar como Invitado';
             }
         };
 
@@ -451,36 +638,165 @@
             }
         }
 
-        // Verificar si ya está logueado (MEJORADO)
-        onAuthStateChanged(auth, (user) => {
-            console.log('🔄 Estado de auth en login:', user ? 'autenticado' : 'no autenticado');
-            
-            if (user) {
-                console.log('👤 Usuario ya logueado, redirigiendo...');
-                
-                // Guardar datos del usuario
-                localStorage.setItem('currentUser', JSON.stringify({
-                    uid: user.uid,
-                    name: user.displayName || 'Invitado',
-                    email: user.email,
-                    photo: user.photoURL,
-                    loginMethod: user.isAnonymous ? 'anonymous' : 'google'
-                }));
-                
-                // Remover flag de skip si existe
-                localStorage.removeItem('skipLogin');
-                
-                // Pequeño delay para evitar bucles
-                setTimeout(() => {
-                    const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
-                    sessionStorage.removeItem('redirectAfterLogin');
-                    window.location.replace(redirectUrl); // usar replace en lugar de href
-                }, 500);
-            }
-        });
-
         // Log page view
         logEvent(analytics, 'page_view', { page_title: 'Login' });
+
+
+
+// ============================================
+// FUNCIONES DEBUG PARA LOGIN.HTML
+// ============================================
+
+// ✅ DEBUG FUNCIONES EN LOGIN
+window.debugAuth = function() {
+    console.log('🔍 Estado actual de autenticación en LOGIN:');
+    console.log('localStorage.currentUser:', localStorage.getItem('currentUser'));
+    console.log('localStorage.skipLogin:', localStorage.getItem('skipLogin'));
+    console.log('sessionStorage.forceLogin:', sessionStorage.getItem('forceLogin'));
+    console.log('sessionStorage.changingUser:', sessionStorage.getItem('changingUser'));
+    
+    // Mostrar datos parseados
+    try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            const user = JSON.parse(currentUser);
+            console.log('Datos del usuario:', user);
+        } else {
+            console.log('No hay datos de usuario');
+        }
+    } catch (e) {
+        console.log('Error parseando usuario:', e);
+    }
+    
+    // Verificar estado de Firebase Auth
+    if (auth && auth.currentUser) {
+        console.log('Firebase user:', {
+            uid: auth.currentUser.uid,
+            email: auth.currentUser.email,
+            displayName: auth.currentUser.displayName,
+            isAnonymous: auth.currentUser.isAnonymous
+        });
+    } else {
+        console.log('Firebase user: No autenticado');
+    }
+    
+    // Estado de la página
+    console.log('URL actual:', window.location.href);
+    console.log('Timestamp:', new Date().toLocaleTimeString());
+};
+
+window.resetAuth = function() {
+    console.log('🗑️ Limpiando todo desde login...');
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Cerrar sesión de Firebase si existe
+    if (auth && auth.currentUser) {
+        signOut(auth).then(() => {
+            console.log('🔓 Sesión Firebase cerrada');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }).catch((error) => {
+            console.error('Error cerrando Firebase:', error);
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        });
+    } else {
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
+};
+
+window.forceLogout = async function() {
+    console.log('🔄 Forzando logout completo desde login...');
+    
+    try {
+        // Cerrar sesión de Firebase
+        if (auth && auth.currentUser) {
+            await signOut(auth);
+            console.log('🔥 Firebase logout exitoso');
+        }
+    } catch (e) {
+        console.warn('Error cerrando Firebase:', e);
+    }
+    
+    // Limpiar todo
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Recargar página
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+};
+
+// ✅ FUNCIÓN PARA SIMULAR CAMBIO DE USUARIO DESDE LOGIN
+window.simulateUserChange = function() {
+    console.log('🧪 Simulando cambio de usuario...');
+    
+    // Marcar flags
+    sessionStorage.setItem('forceLogin', 'true');
+    sessionStorage.setItem('changingUser', 'true');
+    
+    // Limpiar datos de usuario
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('skipLogin');
+    
+    // Cerrar Firebase si está abierto
+    if (auth && auth.currentUser) {
+        signOut(auth).then(() => {
+            console.log('✅ Simulación completada, recargar para probar');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        });
+    } else {
+        console.log('✅ Simulación completada, recargar para probar');
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
+};
+
+console.log('🛠️ Debug funciones disponibles en LOGIN:');
+console.log('- debugAuth() : Mostrar estado actual');
+console.log('- resetAuth() : Limpiar todo y recargar');
+console.log('- forceLogout() : Logout completo');
+console.log('- simulateUserChange() : Simular cambio de usuario');
+
+// ✅ EJECUTAR DEBUG AUTOMÁTICO AL CARGAR
+console.log('📱 Login page cargada, ejecutando debug automático...');
+setTimeout(() => {
+    debugAuth();
+}, 1000);
+
+        // ✅ VERIFICACIÓN INMEDIATA AL CARGAR LOGIN
+        (function() {
+            console.log('🔍 Login page cargando - Verificando estado...');
+            
+            // Verificar si venimos de un cambio de usuario
+            const urlParams = new URLSearchParams(window.location.search);
+            const forceLogin = urlParams.get('forceLogin');
+            
+            if (forceLogin) {
+                console.log('🏁 ForceLogin detectado en URL - Limpiando todo...');
+                
+                // Limpiar todo el storage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Establecer flags de control
+                sessionStorage.setItem('FORCE_LOGIN_OVERRIDE', 'true');
+                
+                // Limpiar la URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            console.log('✅ Verificación inicial completada');
+        })();
     </script>
 </body>
 </html>

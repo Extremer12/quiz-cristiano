@@ -1,24 +1,30 @@
-const CACHE_NAME = 'quiz-cristiano-v1.2';
-const STATIC_CACHE = 'quiz-cristiano-static-v1.2';
-const DYNAMIC_CACHE = 'quiz-cristiano-dynamic-v1.2';
+const VERSION = '1.3.0'; // ✅ INCREMENTAR CUANDO HAGAS CAMBIOS
+const CACHE_NAME = `quiz-cristiano-v${VERSION}`;
+const STATIC_CACHE = `quiz-cristiano-static-v${VERSION}`;
+const DYNAMIC_CACHE = `quiz-cristiano-dynamic-v${VERSION}`;
+
+// ✅ CONFIGURACIÓN DE ACTUALIZACIÓN AGRESIVA
+const FORCE_UPDATE_INTERVAL = 60000; // 1 minuto para desarrollo, 1 hora para producción
+const SKIP_WAITING_ON_UPDATE = true;
 
 // Archivos críticos para cache inmediato
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/single-player.html',
+  '/single-player-new.html',
   '/store.html',
   '/logros.html',
+  '/ranking.html',
+  '/perfil.html',
   '/login.html',
   
   // CSS crítico
-  '/css/pages/store.css',
-  '/css/pages/logros.css',
+  '/css/pages/dark-mode.css',
+  '/css/pages/safari-fixes.css',
   
-  // JavaScript crítico
-  '/js/pages/single-player.js',
-  '/js/pages/store.js',
-  '/js/pages/logros.js',
+  // JavaScript crítico  
+  '/js/modules/gamedatamanager.js',
+  '/js/modules/dark-mode.js',
   '/js/config/firebase-config.js',
   
   // Datos críticos
@@ -26,28 +32,22 @@ const STATIC_ASSETS = [
   
   // Assets principales
   '/assets/images/mascota.png',
+  '/assets/images/joy-trofeo.png',
   '/assets/images/fondo.png',
+  '/assets/images/fondo-black.png',
   '/assets/icons/icon-192.png',
   '/assets/icons/icon-512.png',
   
-  // CDN críticos
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap'
-];
-
-// URLs que se cachean dinámicamente
-const DYNAMIC_ASSETS = [
-  'https://www.gstatic.com/firebasejs/',
-  'https://fonts.gstatic.com/',
-  'https://cdnjs.cloudflare.com/'
+  // Manifest
+  '/manifest.json'
 ];
 
 // ============================================
-// INSTALACIÓN
+// INSTALACIÓN CON ACTUALIZACIÓN FORZADA
 // ============================================
 
 self.addEventListener('install', event => {
-  console.log('🔧 SW: Installing...');
+  console.log(`🔧 SW v${VERSION}: Installing...`);
   
   event.waitUntil(
     Promise.all([
@@ -57,29 +57,28 @@ self.addEventListener('install', event => {
         return cache.addAll(STATIC_ASSETS);
       }),
       
-      // Skip waiting para activar inmediatamente
-      self.skipWaiting()
+      // ✅ SKIP WAITING INMEDIATO PARA DESARROLLO
+      SKIP_WAITING_ON_UPDATE ? self.skipWaiting() : Promise.resolve()
     ])
   );
 });
 
 // ============================================
-// ACTIVACIÓN
+// ACTIVACIÓN CON LIMPIEZA AGRESIVA
 // ============================================
 
 self.addEventListener('activate', event => {
-  console.log('✅ SW: Activating...');
+  console.log(`✅ SW v${VERSION}: Activating...`);
   
   event.waitUntil(
     Promise.all([
-      // Limpiar caches antiguos
+      // ✅ LIMPIAR TODOS LOS CACHES ANTIGUOS
       caches.keys().then(cacheNames => {
         return Promise.all(
           cacheNames
             .filter(cacheName => 
               cacheName.startsWith('quiz-cristiano-') && 
-              cacheName !== STATIC_CACHE && 
-              cacheName !== DYNAMIC_CACHE
+              !cacheName.includes(VERSION) // Eliminar cualquier versión diferente
             )
             .map(cacheName => {
               console.log('🗑️ SW: Deleting old cache:', cacheName);
@@ -88,14 +87,17 @@ self.addEventListener('activate', event => {
         );
       }),
       
-      // Tomar control de todas las pestañas
-      self.clients.claim()
+      // ✅ TOMAR CONTROL INMEDIATO
+      self.clients.claim(),
+      
+      // ✅ NOTIFICAR A LOS CLIENTES SOBRE LA ACTUALIZACIÓN
+      notifyClientsOfUpdate()
     ])
   );
 });
 
 // ============================================
-// FETCH - ESTRATEGIAS DE CACHE
+// FETCH CON ESTRATEGIA DE ACTUALIZACIÓN
 // ============================================
 
 self.addEventListener('fetch', event => {
@@ -105,10 +107,11 @@ self.addEventListener('fetch', event => {
   // Solo manejar requests GET
   if (request.method !== 'GET') return;
   
-  // Ignorar requests de Firebase Auth/Analytics
+  // Ignorar requests de Firebase
   if (url.hostname.includes('firebase') || 
       url.hostname.includes('google-analytics') ||
-      url.hostname.includes('googletagmanager')) {
+      url.hostname.includes('googletagmanager') ||
+      url.hostname.includes('gstatic')) {
     return;
   }
   
@@ -117,28 +120,28 @@ self.addEventListener('fetch', event => {
 
 async function handleRequest(request, url) {
   try {
-    // 1. ARCHIVOS ESTÁTICOS - Cache First
-    if (isStaticAsset(url)) {
-      return await cacheFirst(request, STATIC_CACHE);
-    }
-    
-    // 2. CDN ASSETS - Stale While Revalidate
-    if (isCDNAsset(url)) {
-      return await staleWhileRevalidate(request, DYNAMIC_CACHE);
-    }
-    
-    // 3. PÁGINAS HTML - Network First
+    // ✅ PÁGINAS HTML - NETWORK FIRST CON TIMEOUT
     if (isHTMLRequest(request)) {
-      return await networkFirst(request, DYNAMIC_CACHE);
+      return await networkFirstWithTimeout(request, DYNAMIC_CACHE, 3000);
     }
     
-    // 4. DATOS JSON - Network First con fallback
+    // ✅ ARCHIVOS ESTÁTICOS - STALE WHILE REVALIDATE
+    if (isStaticAsset(url)) {
+      return await staleWhileRevalidate(request, STATIC_CACHE);
+    }
+    
+    // ✅ CDN ASSETS - Cache First con revalidación
+    if (isCDNAsset(url)) {
+      return await cacheFirstWithRevalidate(request, DYNAMIC_CACHE);
+    }
+    
+    // ✅ DATOS JSON - Network First
     if (isDataRequest(url)) {
-      return await networkFirst(request, DYNAMIC_CACHE);
+      return await networkFirstWithTimeout(request, DYNAMIC_CACHE, 2000);
     }
     
-    // 5. OTROS - Network First
-    return await networkFirst(request, DYNAMIC_CACHE);
+    // ✅ OTROS - Network First
+    return await networkFirstWithTimeout(request, DYNAMIC_CACHE, 5000);
     
   } catch (error) {
     console.error('❌ SW: Error handling request:', error);
@@ -147,37 +150,27 @@ async function handleRequest(request, url) {
 }
 
 // ============================================
-// ESTRATEGIAS DE CACHE
+// ESTRATEGIAS DE CACHE MEJORADAS
 // ============================================
 
-async function cacheFirst(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
-  
-  if (cached) {
-    console.log('💾 SW: Cache hit:', request.url);
-    return cached;
-  }
-  
-  console.log('🌐 SW: Cache miss, fetching:', request.url);
-  const response = await fetch(request);
-  
-  if (response.ok) {
-    cache.put(request, response.clone());
-  }
-  
-  return response;
-}
-
-async function networkFirst(request, cacheName) {
+async function networkFirstWithTimeout(request, cacheName, timeout = 3000) {
   const cache = await caches.open(cacheName);
   
   try {
-    console.log('🌐 SW: Network first:', request.url);
-    const response = await fetch(request);
+    // ✅ USAR TIMEOUT PARA EVITAR ESPERAS LARGAS
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    const response = await fetch(request, { 
+      signal: controller.signal,
+      cache: 'no-cache' // ✅ FORZAR DESCARGA FRESCA
+    });
+    
+    clearTimeout(timeoutId);
     
     if (response.ok) {
       cache.put(request, response.clone());
+      console.log('🌐 SW: Fresh content fetched:', request.url);
     }
     
     return response;
@@ -197,34 +190,113 @@ async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
   
-  const fetchPromise = fetch(request).then(response => {
+  // ✅ SIEMPRE INTENTAR REVALIDAR EN BACKGROUND
+  const fetchPromise = fetch(request, { cache: 'no-cache' }).then(response => {
     if (response.ok) {
       cache.put(request, response.clone());
+      console.log('🔄 SW: Background update completed:', request.url);
     }
     return response;
-  }).catch(() => cached);
+  }).catch(error => {
+    console.log('⚠️ SW: Background update failed:', error);
+    return cached;
+  });
   
+  // Devolver cache inmediatamente si existe, sino esperar network
   return cached || fetchPromise;
 }
+
+async function cacheFirstWithRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  
+  if (cached) {
+    // ✅ REVALIDAR EN BACKGROUND DESPUÉS DE 5 MINUTOS
+    const cacheDate = new Date(cached.headers.get('date') || 0);
+    const isStale = Date.now() - cacheDate.getTime() > 300000; // 5 minutos
+    
+    if (isStale) {
+      fetch(request).then(response => {
+        if (response.ok) {
+          cache.put(request, response.clone());
+        }
+      }).catch(() => {});
+    }
+    
+    return cached;
+  }
+  
+  const response = await fetch(request);
+  if (response.ok) {
+    cache.put(request, response.clone());
+  }
+  return response;
+}
+
+// ============================================
+// SISTEMA DE NOTIFICACIÓN DE ACTUALIZACIONES
+// ============================================
+
+async function notifyClientsOfUpdate() {
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({
+      type: 'SW_UPDATED',
+      version: VERSION,
+      message: 'Nueva versión disponible'
+    });
+  });
+}
+
+// ✅ LISTENER PARA FORZAR ACTUALIZACIÓN DESDE LA APP
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('🔄 SW: Force update requested by client');
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'CHECK_UPDATE') {
+    console.log('🔍 SW: Update check requested');
+    // Responder con la versión actual
+    event.ports[0].postMessage({
+      type: 'VERSION_INFO',
+      version: VERSION
+    });
+  }
+});
 
 // ============================================
 // HELPERS
 // ============================================
 
 function isStaticAsset(url) {
-  return STATIC_ASSETS.some(asset => url.pathname === asset || url.href === asset);
+  return STATIC_ASSETS.some(asset => 
+    url.pathname === asset || 
+    url.href === asset ||
+    url.pathname.endsWith('.css') ||
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.png') ||
+    url.pathname.endsWith('.jpg') ||
+    url.pathname.endsWith('.ico')
+  );
 }
 
 function isCDNAsset(url) {
-  return DYNAMIC_ASSETS.some(pattern => url.href.includes(pattern));
+  return url.hostname.includes('cdnjs.cloudflare.com') ||
+         url.hostname.includes('fonts.googleapis.com') ||
+         url.hostname.includes('fonts.gstatic.com');
 }
 
 function isHTMLRequest(request) {
-  return request.headers.get('accept')?.includes('text/html');
+  return request.headers.get('accept')?.includes('text/html') ||
+         request.url.endsWith('.html') ||
+         (!request.url.includes('.') && !request.url.includes('api'));
 }
 
 function isDataRequest(url) {
-  return url.pathname.endsWith('.json') || url.pathname.includes('/data/');
+  return url.pathname.endsWith('.json') || 
+         url.pathname.includes('/data/') ||
+         url.pathname.includes('/api/');
 }
 
 async function getOfflineFallback(request) {
@@ -241,50 +313,20 @@ async function getOfflineFallback(request) {
 }
 
 // ============================================
-// BACKGROUND SYNC (para futuro)
+// VERIFICACIÓN PERIÓDICA DE ACTUALIZACIONES
 // ============================================
 
-self.addEventListener('sync', event => {
-  console.log('🔄 SW: Background sync:', event.tag);
-  
-  if (event.tag === 'sync-game-data') {
-    event.waitUntil(syncGameData());
-  }
-});
+setInterval(() => {
+  console.log(`🔍 SW v${VERSION}: Checking for updates...`);
+  // Notificar a los clientes que verifiquen actualizaciones
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'CHECK_FOR_UPDATES',
+        version: VERSION
+      });
+    });
+  });
+}, FORCE_UPDATE_INTERVAL);
 
-async function syncGameData() {
-  // Implementar sincronización de datos de juego
-  console.log('📊 SW: Syncing game data...');
-}
-
-// ============================================
-// NOTIFICACIONES PUSH (para futuro)
-// ============================================
-
-self.addEventListener('push', event => {
-  console.log('🔔 SW: Push notification received');
-  
-  const options = {
-    body: event.data?.text() || 'Nueva notificación de Quiz Cristiano',
-    icon: '/assets/icons/icon-192.png',
-    badge: '/assets/icons/icon-192.png',
-    vibrate: [200, 100, 200],
-    data: {
-      url: '/'
-    }
-  };
-  
-  event.waitUntil(
-    self.registration.showNotification('Quiz Cristiano', options)
-  );
-});
-
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
-  );
-});
-
-console.log('✅ SW: Service Worker loaded');
+console.log(`✅ SW v${VERSION} loaded with aggressive update strategy`);

@@ -681,13 +681,33 @@ user-select: none;
 <body>
     <!-- Verificar autenticación al cargar -->
     <script>
-        // Redirigir a login si no hay usuario autenticado
-        const currentUser = localStorage.getItem('currentUser');
-        const skipLogin = localStorage.getItem('skipLogin');
-        
-        if (!currentUser && !skipLogin) {
-            window.location.href = 'login.html';
-        }
+        // ✅ VERIFICACIÓN MEJORADA DE AUTENTICACIÓN AL CARGAR INDEX
+(function() {
+    const currentUser = localStorage.getItem('currentUser');
+    const skipLogin = localStorage.getItem('skipLogin');
+    const forceLogin = sessionStorage.getItem('forceLogin');
+    const changingUser = sessionStorage.getItem('changingUser');
+
+    console.log('🔍 Debug auth estado en index:');
+    console.log('- currentUser:', !!currentUser);
+    console.log('- skipLogin:', !!skipLogin);
+    console.log('- forceLogin:', !!forceLogin);
+    console.log('- changingUser:', !!changingUser);
+
+    // ✅ SOLO REDIRIGIR SI NO HAY DATOS Y NO HAY FLAGS DE CONTROL
+    if (!currentUser && !skipLogin && !forceLogin && !changingUser) {
+        console.log('🔄 Sin usuario válido, redirigiendo a login...');
+        // Limpiar cualquier flag residual
+        sessionStorage.removeItem('forceLogin');
+        sessionStorage.removeItem('changingUser');
+        window.location.replace('login.html');
+    } else {
+        console.log('✅ Usuario válido detectado o flags de control activos, cargando app...');
+        // Limpiar flags si están presentes
+        sessionStorage.removeItem('forceLogin');
+        sessionStorage.removeItem('changingUser');
+    }
+})();
     </script>
 
     <!-- Pantalla Principal -->
@@ -867,12 +887,80 @@ window.toggleDarkMode = function() {
     }
 };
 
-window.changeUser = function() {
+// ============================================
+// FUNCIÓN CHANGEUSER COMPLETAMENTE CORREGIDA
+// ============================================
+
+window.changeUser = async function() {
     if (confirm('¿Estás seguro de que quieres cambiar de usuario? Se perderán los datos no guardados.')) {
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('skipLogin');
-        window.location.href = 'login.html';
-        console.log('👤 Cambiando usuario');
+        console.log('👤 === INICIANDO CAMBIO DE USUARIO ===');
+        
+        try {
+            // ✅ 1. ESTABLECER FLAGS DE CONTROL ANTES DE CUALQUIER COSA
+            console.log('🏁 Estableciendo flags de control...');
+            sessionStorage.setItem('FORCE_LOGIN_ACTIVE', 'true');
+            sessionStorage.setItem('CHANGING_USER_PROCESS', 'true');
+            sessionStorage.setItem('DISABLE_AUTO_LOGIN', 'true');
+            localStorage.setItem('USER_LOGOUT_IN_PROGRESS', 'true');
+            
+            // ✅ 2. LIMPIAR TODOS LOS DATOS LOCALES INMEDIATAMENTE
+            console.log('🗑️ Limpiando localStorage...');
+            const keysToRemove = [
+                'currentUser',
+                'skipLogin', 
+                'quizCristianoData',
+                'quizCristianoInventory',
+                'quiz-cristiano-profile',
+                'quiz-cristiano-achievements'
+            ];
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+                console.log(`🗑️ Removido: ${key}`);
+            });
+            
+            // ✅ 3. INTENTAR CERRAR SESIÓN DE FIREBASE (SIN ESPERAR)
+            console.log('🔥 Intentando cerrar sesión de Firebase...');
+            
+            // Importar y cerrar sesión sin esperar
+            import('./js/config/firebase-config.js')
+                .then(({ signOutUser }) => {
+                    return signOutUser();
+                })
+                .then(() => {
+                    console.log('✅ Firebase signOut exitoso');
+                })
+                .catch((error) => {
+                    console.warn('⚠️ Error cerrando Firebase (continuando):', error);
+                });
+            
+            // ✅ 4. REDIRIGIR INMEDIATAMENTE SIN ESPERAR FIREBASE
+            console.log('🔄 Redirigiendo inmediatamente...');
+            
+            // Usar replace para evitar historial
+            window.location.replace('login.html?forceLogout=true&t=' + Date.now());
+            
+        } catch (error) {
+            console.error('❌ Error durante cambio de usuario:', error);
+            
+            // ✅ FALLBACK EXTREMO: Limpiar todo y redirigir
+            console.log('🆘 Ejecutando fallback extremo...');
+            
+            // Limpiar absolutamente todo
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch (e) {
+                console.error('Error limpiando storage:', e);
+            }
+            
+            // Establecer flags nuevamente
+            sessionStorage.setItem('FORCE_LOGIN_ACTIVE', 'true');
+            sessionStorage.setItem('EMERGENCY_LOGOUT', 'true');
+            
+            // Redirigir con parámetros especiales
+            window.location.replace('login.html?emergency=true&t=' + Date.now());
+        }
     }
 };
 
@@ -1027,8 +1115,245 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(loadUserStats, 3000);
 });
 
+// ✅ AGREGAR DESPUÉS DE CARGAR APP.JS
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🏠 Index cargado, verificando datos del usuario...');
+    
+    // Esperar a que GameDataManager esté disponible
+    if (window.GameDataManager) {
+        try {
+            // Intentar cargar datos desde Firebase
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (currentUser.uid) {
+                console.log('👤 Usuario detectado, cargando datos...');
+                const dataLoaded = await window.GameDataManager.loadFromFirebase();
+                
+                if (dataLoaded) {
+                    console.log('✅ Datos restaurados desde Firebase');
+                    // Actualizar UI si es necesario
+                    if (typeof loadUserStats === 'function') {
+                        loadUserStats();
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('⚠️ Error cargando datos del usuario:', error);
+        }
+    }
+});
+
 // Debug información
 console.log('✅ Scripts del index cargados correctamente');
+    </script>
+
+    <!-- ✅ DEBUG PARA DESARROLLO -->
+    <script>
+// ✅ DEBUG PARA DESARROLLO
+window.debugAuth = function() {
+    console.log('🔍 Estado actual de autenticación:');
+    console.log('localStorage.currentUser:', localStorage.getItem('currentUser'));
+    console.log('localStorage.skipLogin:', localStorage.getItem('skipLogin'));
+    console.log('sessionStorage.forceLogin:', sessionStorage.getItem('forceLogin'));
+    console.log('sessionStorage.changingUser:', sessionStorage.getItem('changingUser'));
+    
+    // Mostrar datos parseados
+    try {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            const user = JSON.parse(currentUser);
+            console.log('Datos del usuario:', user);
+        } else {
+            console.log('No hay datos de usuario');
+        }
+    } catch (e) {
+        console.log('Error parseando usuario:', e);
+    }
+    
+    // Verificar estado de Firebase
+    if (window.firebase && window.firebase.auth) {
+        const firebaseUser = window.firebase.auth().currentUser;
+        console.log('Firebase user:', firebaseUser ? firebaseUser.uid : 'No autenticado');
+    }
+};
+
+window.resetAuth = function() {
+    localStorage.clear();
+    sessionStorage.clear();
+    console.log('🗑️ Todo limpiado, recarga la página');
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+};
+
+// ✅ FUNCIÓN PARA FORZAR LOGOUT COMPLETO
+window.forceLogout = async function() {
+    console.log('🔄 Forzando logout completo...');
+    
+    try {
+        // Cerrar sesión de Firebase
+        if (window.firebase && window.firebase.auth) {
+            await window.firebase.auth().signOut();
+        }
+    } catch (e) {
+        console.warn('Error cerrando Firebase:', e);
+    }
+    
+    // Limpiar todo
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Redirigir
+    window.location.replace('login.html');
+};
+
+console.log('🛠️ Debug funciones disponibles: debugAuth(), resetAuth(), forceLogout()');
+    </script>
+
+    <!-- ✅ AGREGAR AL FINAL DE INDEX.HTML
+
+// ============================================
+// SISTEMA DE DETECCIÓN DE ACTUALIZACIONES PWA
+// ============================================
+
+(function() {
+    let swRegistration = null;
+    let isUpdateAvailable = false;
+    
+    // ✅ REGISTRAR SERVICE WORKER CON VERIFICACIÓN AGRESIVA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+            try {
+                swRegistration = await navigator.serviceWorker.register('/sw.js', {
+                    updateViaCache: 'none' // ✅ NUNCA CACHEAR EL SW
+                });
+                
+                console.log('✅ SW registrado:', swRegistration.scope);
+                
+                // ✅ VERIFICAR ACTUALIZACIONES INMEDIATAMENTE
+                await checkForUpdates();
+                
+                // ✅ VERIFICAR CADA 30 SEGUNDOS (PARA DESARROLLO)
+                setInterval(checkForUpdates, 30000);
+                
+            } catch (error) {
+                console.error('❌ Error registrando SW:', error);
+            }
+        });
+        
+        // ✅ LISTENER PARA MENSAJES DEL SERVICE WORKER
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data && event.data.type === 'SW_UPDATED') {
+                console.log('🔄 Nueva versión disponible:', event.data.version);
+                showUpdateNotification();
+            }
+            
+            if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
+                checkForUpdates();
+            }
+        });
+    }
+    
+    // ✅ FUNCIÓN PARA VERIFICAR ACTUALIZACIONES
+    async function checkForUpdates() {
+        if (!swRegistration) return;
+        
+        try {
+            console.log('🔍 Verificando actualizaciones...');
+            
+            // ✅ FORZAR VERIFICACIÓN DE ACTUALIZACIONES
+            await swRegistration.update();
+            
+            // ✅ VERIFICAR SI HAY SW EN ESPERA
+            if (swRegistration.waiting) {
+                console.log('🔄 Actualización en espera');
+                showUpdateNotification();
+            }
+            
+        } catch (error) {
+            console.error('❌ Error verificando actualizaciones:', error);
+        }
+    }
+    
+    // ✅ MOSTRAR NOTIFICACIÓN DE ACTUALIZACIÓN
+    function showUpdateNotification() {
+        if (isUpdateAvailable) return; // Evitar spam
+        isUpdateAvailable = true;
+        
+        const notification = document.createElement('div');
+        notification.id = 'update-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-family: 'Lato', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-download" style="font-size: 1.2rem;"></i>
+                <div>
+                    <div>¡Nueva versión disponible!</div>
+                    <div style="font-size: 0.8rem; opacity: 0.9;">Toca para actualizar</div>
+                </div>
+            </div>
+        `;
+        
+        // ✅ AGREGAR ESTILOS DE ANIMACIÓN
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        notification.addEventListener('click', () => {
+            applyUpdate();
+            notification.remove();
+        });
+        
+        document.body.appendChild(notification);
+        
+        // ✅ AUTO-ACTUALIZAR DESPUÉS DE 5 SEGUNDOS
+        setTimeout(() => {
+            if (document.getElementById('update-notification')) {
+                applyUpdate();
+                notification.remove();
+            }
+        }, 5000);
+    }
+    
+    // ✅ APLICAR ACTUALIZACIÓN
+    function applyUpdate() {
+        console.log('🔄 Aplicando actualización...');
+        
+        if (swRegistration && swRegistration.waiting) {
+            // ✅ DECIR AL SW QUE TOME CONTROL
+            swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            
+            // ✅ RECARGAR PÁGINA CUANDO EL SW TOME CONTROL
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('✅ SW actualizado, recargando página...');
+                window.location.reload();
+            });
+        } else {
+            // ✅ FALLBACK: RECARGAR DIRECTAMENTE
+            window.location.reload(true);
+        }
+    }
+    
+    console.log('✅ Sistema de actualizaciones PWA inicializado');
+})();
     </script>
 </body>
 </html>
