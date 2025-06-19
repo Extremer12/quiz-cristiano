@@ -5,6 +5,8 @@
  * ================================================
  */
 
+import { ADSENSE_CONFIG } from './config/adsense-config.js';
+
 class QuizCristianoApp {
     constructor() {
         this.version = '1.0.0';
@@ -142,3 +144,36 @@ if (document.readyState === 'loading') {
 export default window.QuizApp;
 
 console.log('✅ App.js Simplificado cargado');
+
+// Agregar después de la inicialización existente
+async function initializeApp() {
+    try {
+        console.log('🚀 Inicializando Quiz Cristiano...');
+        
+        // Inicializar módulos existentes
+        await initializeFirebase();
+        await initializeDarkMode();
+        await initializeGameDataManager();
+        
+        // ✅ INICIALIZAR ADSENSE
+        if (ADSENSE_CONFIG.enabled) {
+            console.log('💰 Inicializando sistema de anuncios...');
+            
+            // Esperar a que se cargue el AdsManager
+            if (window.AdsManager) {
+                await window.AdsManager.init();
+                console.log('✅ Sistema de anuncios listo');
+            } else {
+                console.warn('⚠️ AdsManager no encontrado');
+            }
+        }
+        
+        console.log('✅ Aplicación inicializada correctamente');
+        
+    } catch (error) {
+        console.error('❌ Error inicializando aplicación:', error);
+    }
+}
+
+// Llamar la función de inicialización
+document.addEventListener('DOMContentLoaded', initializeApp);

@@ -25,6 +25,11 @@
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
     <link rel="stylesheet" href="css/pages/dark-mode.css">
     <link rel="stylesheet" href="css/pages/single-player-new.css">
+
+<!-- ADSENSE-->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
+        crossorigin="anonymous"></script>
+
 </head>
 <body>
     <div class="game-container">
@@ -193,29 +198,30 @@
                 </div>
             </div>
 
-            <!-- Pantalla de Game Over -->
-            <div class="game-screen" id="gameover-screen">
-                <div class="gameover-content">
-                    <div class="joy-consoling">
-                        <img src="assets/images/joy-consolando.png" alt="Joy consolando" class="joy-gameover-image">
-                    </div>
-                    <div class="gameover-message">
-                        <h2 class="gameover-title">Game Over</h2>
-                        <p class="gameover-subtitle">¡No te desanimes!</p>
-                        <div class="gameover-description">
-                            <p>Cada intento te acerca más a la maestría bíblica</p>
-                        </div>
-                    </div>
-                    <div class="gameover-actions">
-                        <button class="gameover-btn primary" onclick="restartGame()">
-                            <i class="fas fa-redo"></i> Intentar de Nuevo
-                        </button>
-                        <button class="gameover-btn secondary" onclick="window.location.href='index.html'">
-                            <i class="fas fa-home"></i> Volver al Inicio
-                        </button>
-                    </div>
-                </div>
+
+
+<!-- Pantalla de Game Over MEJORADA -->
+<div class="game-screen" id="gameover-screen">
+    <div class="gameover-content">
+        <div class="joy-consoling">
+            <img src="assets/images/joy-consolando.png" alt="Joy consolando" class="joy-gameover-image">
+        </div>
+        <div class="gameover-message">
+            <h2 class="gameover-title">Game Over</h2>
+            <p class="gameover-subtitle">¡No te desanimes!</p>
+            <div class="gameover-description">
+                <p>Cada intento te acerca más a la maestría bíblica</p>
             </div>
+        </div>
+        <div class="gameover-actions">
+            <button class="gameover-btn primary" onclick="restartGame()">
+                <i class="fas fa-redo"></i> Intentar de Nuevo
+            </button>
+            <button class="gameover-btn secondary" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+        </div>
+</div>
         </main>
 
         <!-- Bottom Navigation -->
@@ -247,7 +253,7 @@
     <script src="js/modules/gamedatamanager.js"></script>
     <script src="js/modules/dark-mode.js"></script>
     <script src="js/pages/single-player-new.js"></script>
-
+    <script src="js/modules/ads-manager.js" type="module"></script>
     <!-- Script específico del HTML -->
     <script>
         let speechVisible = false;
@@ -280,5 +286,26 @@
             });
         });
     </script>
+
+<script>
+// ✅ DEBUG: Forzar recarga de preguntas
+window.debugQuestions = function() {
+    console.log('🔍 === DEBUG PREGUNTAS ===');
+    fetch('./data/questions.json?' + Date.now())
+        .then(response => response.json())
+        .then(data => {
+            console.log('📚 Total preguntas cargadas:', data.length);
+            console.log('📝 Primera pregunta:', data[0]);
+            console.log('🔤 Categorías encontradas:', [...new Set(data.map(q => q.category))]);
+        })
+        .catch(error => console.error('❌ Error:', error));
+};
+
+// Ejecutar automáticamente
+setTimeout(() => {
+    debugQuestions();
+}, 2000);
+</script>
+
 </body>
 </html>

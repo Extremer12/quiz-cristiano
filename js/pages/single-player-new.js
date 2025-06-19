@@ -1,7 +1,7 @@
 /**
  * ================================================
- * SINGLE PLAYER GAME - VERSIÓN COMPLETA Y FUNCIONAL
- * Quiz Cristiano - Código completo con todas las funciones
+ * SINGLE PLAYER GAME - NUEVA LÓGICA DE CATEGORÍAS
+ * Quiz Cristiano - Sistema corregido: 3 preguntas + repechaje
  * ================================================
  */
 
@@ -16,67 +16,24 @@ const CATEGORIES = [
     { id: 'doctrina-cristiana', name: 'Doctrina Cristiana', icon: 'fa-pray', color: '#9B59B6' }
 ];
 
-const COIN_REWARDS = {
-    categoryCorrect: 8,
-    categoryComplete: 25,
-    rescueSuccess: 15,
-    gameComplete: 100,
-    perfectGame: 150,
-    speedBonus: 10,
-    wrongAnswer: -2,
-    timeoutPenalty: -1
+// ✅ NUEVA CONFIGURACIÓN PARA CATEGORÍAS (3 PREGUNTAS)
+const CATEGORY_CONFIG = {
+    questionsPerCategory: 3,        // ✅ CAMBIADO DE 5 A 3
+    minCorrectToWin: 3,            // 3 correctas = victoria inmediata
+    correctForRepechage: 2,        // 2 correctas = repechaje
+    maxIncorrectBeforeGameOver: 2   // 2 incorrectas = game over
 };
 
-const INITIAL_QUESTIONS = [
-    {
-        text: "¿Cuántos días estuvo Jesús en el desierto siendo tentado?",
-        options: ["30 días", "40 días", "50 días", "60 días"],
-        correctIndex: 1,
-        reference: "Mateo 4:2"
-    },
-    {
-        text: "¿Quién escribió el libro de Apocalipsis?",
-        options: ["Pedro", "Pablo", "Juan", "Lucas"],
-        correctIndex: 2,
-        reference: "Apocalipsis 1:1"
-    },
-    {
-        text: "¿Cuál fue el primer milagro de Jesús?",
-        options: ["Multiplicar panes", "Caminar sobre agua", "Convertir agua en vino", "Sanar un ciego"],
-        correctIndex: 2,
-        reference: "Juan 2:11"
-    },
-    {
-        text: "¿Cuántos apóstoles eligió Jesús?",
-        options: ["10", "12", "14", "16"],
-        correctIndex: 1,
-        reference: "Mateo 10:1-4"
-    },
-    {
-        text: "¿En qué ciudad nació Jesús?",
-        options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
-        correctIndex: 2,
-        reference: "Lucas 2:4"
-    },
-    {
-        text: "¿Quién construyó el arca?",
-        options: ["Noé", "Abraham", "Moisés", "David"],
-        correctIndex: 0,
-        reference: "Génesis 6:14"
-    },
-    {
-        text: "¿Cuántos libros tiene el Nuevo Testamento?",
-        options: ["25", "27", "29", "31"],
-        correctIndex: 1,
-        reference: "Canon bíblico"
-    },
-    {
-        text: "¿Quién fue vendido por sus hermanos como esclavo?",
-        options: ["José", "Benjamín", "Judá", "Rubén"],
-        correctIndex: 0,
-        reference: "Génesis 37:28"
-    }
-];
+const COIN_REWARDS = {
+    categoryCorrect: 4,
+    categoryComplete: 15,
+    rescueSuccess: 8,
+    gameComplete: 70,
+    perfectGame: 100,
+    speedBonus: 8,
+    wrongAnswer: -8,
+    timeoutPenalty: -4
+};
 
 // ============================================
 // VARIABLES GLOBALES DEL JUEGO
@@ -92,7 +49,8 @@ let gameState = {
     categoryQuestions: [],
     categoryQuestionIndex: 0,
     categoryCorrectAnswers: 0,
-    needsRescueQuestion: false,
+    categoryIncorrectAnswers: 0,           // ✅ CONTADOR DE INCORRECTAS
+    needsRepechageQuestion: false,         // ✅ RENOMBRADO
     currentQuestion: null,
     isProcessingAnswer: false,
     timer: 20,
@@ -118,73 +76,47 @@ async function init() {
     console.log('🚀 Inicializando Single Player Game...');
     
     try {
-        // 1. Configurar elementos del DOM PRIMERO
+        await waitForGameDataManager();
         bindElements();
-        
-        // 2. Verificar elementos críticos
-        const criticalElements = ['timer-section', 'timer-number', 'timer-circle', 'answers-container'];
-        const missingElements = criticalElements.filter(id => !document.getElementById(id));
-        
-        if (missingElements.length > 0) {
-            console.error('❌ Elementos críticos faltantes:', missingElements);
-            showNotification('Error: Elementos de interfaz faltantes', 'error');
-        }
-        
-        // 3. Cargar preguntas
-        await loadQuestions();
-        
-        // 4. Esperar a que GameDataManager esté listo
-        if (!window.GameDataManager) {
-            console.log('⏳ Esperando GameDataManager...');
-            await waitForGameDataManager();
-        }
-        
-        // 5. Configurar listeners
         setupGameDataListeners();
-        
-        // 6. Actualizar UI inicial
-        updatePowerups();
-        updateCoinsDisplay();
+        await loadQuestions();
+        updateAllDisplays();
         
         console.log('✅ Single Player Game inicializado correctamente');
-        
     } catch (error) {
-        console.error('❌ Error inicializando Single Player Game:', error);
-        showNotification('Error inicializando el juego', 'error');
+        console.error('❌ Error durante la inicialización:', error);
+        showNotification('Error al inicializar el juego', 'error');
     }
 }
 
 async function waitForGameDataManager() {
     return new Promise((resolve) => {
-        const checkGameDataManager = () => {
-            if (window.GameDataManager && window.GameDataManager.gameData) {
-                console.log('✅ GameDataManager encontrado');
-                resolve();
-            } else {
-                console.log('⏳ Esperando GameDataManager...');
-                setTimeout(checkGameDataManager, 100);
-            }
-        };
-        checkGameDataManager();
+        if (window.GameDataManager) {
+            resolve();
+        } else {
+            const checkInterval = setInterval(() => {
+                if (window.GameDataManager) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 100);
+        }
     });
 }
 
 function setupGameDataListeners() {
     console.log('🔗 Configurando listeners de GameDataManager...');
     
-    // Listener para cambios de monedas
     window.GameDataManager.onCoinsChanged((data) => {
-        console.log('💰 Monedas cambiaron:', data);
         updateCoinsDisplay();
-        
-        if (data.difference !== 0) {
-            showCoinAnimation(data.difference, data.difference > 0);
+        if (data.difference > 0) {
+            showCoinAnimation(data.difference, true);
+        } else if (data.difference < 0) {
+            showCoinAnimation(Math.abs(data.difference), false);
         }
     });
     
-    // Listener para cambios de inventario
     window.GameDataManager.onInventoryChanged((data) => {
-        console.log('🎒 Inventario cambió:', data);
         updatePowerups();
     });
 }
@@ -216,23 +148,66 @@ function bindElements() {
 
 async function loadQuestions() {
     try {
-        console.log('📚 Cargando preguntas...');
+        console.log('📚 === CARGANDO PREGUNTAS ===');
         
-        const response = await fetch('./data/questions.json');
+        const response = await fetch('./data/questions.json?' + Date.now());
         
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
         
-        allQuestions = await response.json();
-        console.log(`✅ ${allQuestions.length} preguntas cargadas desde JSON`);
+        const data = await response.json();
+        
+        if (!Array.isArray(data)) {
+            throw new Error('El JSON no contiene un array válido');
+        }
+        
+        console.log(`📊 JSON cargado: ${data.length} elementos encontrados`);
+        
+        const validQuestions = data.filter(item => {
+            const isValid = item && 
+                           typeof item.text === 'string' && 
+                           Array.isArray(item.options) && 
+                           item.options.length === 4 &&
+                           typeof item.correctIndex === 'number' &&
+                           item.correctIndex >= 0 && 
+                           item.correctIndex < 4 &&
+                           typeof item.category === 'string';
+            
+            if (!isValid) {
+                console.warn('❌ Pregunta inválida encontrada:', item);
+            }
+            
+            return isValid;
+        });
+        
+        console.log(`✅ Preguntas válidas: ${validQuestions.length} de ${data.length}`);
+        
+        const categoryCount = {};
+        validQuestions.forEach(q => {
+            categoryCount[q.category] = (categoryCount[q.category] || 0) + 1;
+        });
+        
+        console.log('📋 Distribución por categorías:');
+        Object.entries(categoryCount).forEach(([category, count]) => {
+            console.log(`  - ${category}: ${count} preguntas`);
+        });
+        
+        if (validQuestions.length < 20) {
+            console.warn('⚠️ Muy pocas preguntas válidas, usando fallback');
+            allQuestions = getFallbackQuestions();
+        } else {
+            allQuestions = validQuestions;
+        }
+        
+        console.log(`📚 Total preguntas cargadas: ${allQuestions.length}`);
         
     } catch (error) {
-        console.warn('⚠️ Error cargando questions.json, usando preguntas de fallback:', error);
+        console.error('❌ Error cargando preguntas:', error);
+        console.log('🆘 Usando preguntas de emergencia');
         allQuestions = getFallbackQuestions();
     }
     
-    // Generar preguntas iniciales
     initialQuestions = getRandomInitialQuestions();
     console.log('📝 Preguntas iniciales preparadas:', initialQuestions.length);
 }
@@ -240,68 +215,157 @@ async function loadQuestions() {
 function getFallbackQuestions() {
     return [
         {
+            id: "fallback_at001",
             category: "antiguo-testamento",
-            text: "¿Quién construyó el arca según el mandato de Dios?",
-            options: ["Noé", "Abraham", "Moisés", "David"],
+            text: "¿Quién construyó el arca según el relato bíblico?",
+            options: ["Noé", "Moisés", "Abraham", "David"],
             correctIndex: 0,
+            difficulty: "fácil",
             reference: "Génesis 6:14"
         },
         {
+            id: "fallback_nt001",
             category: "nuevo-testamento",
-            text: "¿En qué ciudad nació Jesús?",
-            options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
-            correctIndex: 2,
-            reference: "Lucas 2:4"
-        },
-        {
-            category: "personajes-biblicos",
-            text: "¿Quién fue vendido por sus hermanos como esclavo?",
-            options: ["José", "Benjamín", "Judá", "Rubén"],
-            correctIndex: 0,
-            reference: "Génesis 37:28"
-        },
-        {
-            category: "doctrina-cristiana",
-            text: "¿Cuál es el primer mandamiento?",
-            options: ["No matarás", "Amarás a Dios sobre todas las cosas", "No robarás", "Honrarás padre y madre"],
+            text: "¿Cuántos apóstoles eligió Jesús?",
+            options: ["10", "12", "14", "16"],
             correctIndex: 1,
-            reference: "Mateo 22:37-38"
+            difficulty: "fácil",
+            reference: "Mateo 10:1-4"
+        },
+        {
+            id: "fallback_pb001",
+            category: "personajes-biblicos",
+            text: "¿Quién fue conocido como 'el padre de la fe'?",
+            options: ["Noé", "Abraham", "Isaac", "Jacob"],
+            correctIndex: 1,
+            difficulty: "fácil",
+            reference: "Romanos 4:16"
+        },
+        {
+            id: "fallback_dc001",
+            category: "doctrina-cristiana",
+            text: "¿Cuáles son los dos grandes mandamientos según Jesús?",
+            options: ["Amar a Dios y al prójimo", "No matar y no robar", "Orar y ayunar", "Bautizarse y comulgar"],
+            correctIndex: 0,
+            difficulty: "fácil",
+            reference: "Mateo 22:37-39"
         }
     ];
 }
 
+// ✅ FUNCIÓN CORREGIDA PARA PREGUNTAS INICIALES ALEATORIAS
 function getRandomInitialQuestions() {
-    // Verificar que INITIAL_QUESTIONS exista
-    if (!INITIAL_QUESTIONS || INITIAL_QUESTIONS.length === 0) {
-        console.warn('⚠️ INITIAL_QUESTIONS no está definido, usando fallback');
-        return [
-            {
-                text: "¿Cuántos días estuvo Jesús en el desierto?",
-                options: ["30 días", "40 días", "50 días", "60 días"],
-                correctIndex: 1,
-                reference: "Mateo 4:2"
-            },
-            {
-                text: "¿Quién escribió el libro de Apocalipsis?",
-                options: ["Pedro", "Pablo", "Juan", "Lucas"],
-                correctIndex: 2,
-                reference: "Apocalipsis 1:1"
-            },
-            {
-                text: "¿En qué ciudad nació Jesús?",
-                options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
-                correctIndex: 2,
-                reference: "Lucas 2:4"
+    console.log('🎲 Generando preguntas iniciales aleatorias...');
+    
+    if (allQuestions && allQuestions.length >= 8) {
+        console.log(`📚 Usando preguntas del JSON (${allQuestions.length} disponibles)`);
+        
+        const randomQuestions = [];
+        const availableQuestions = [...allQuestions];
+        
+        for (let i = 0; i < 8 && availableQuestions.length > 0; i++) {
+            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            const selectedQuestion = availableQuestions[randomIndex];
+            
+            if (selectedQuestion && 
+                selectedQuestion.text && 
+                selectedQuestion.options && 
+                Array.isArray(selectedQuestion.options) && 
+                selectedQuestion.options.length === 4 &&
+                typeof selectedQuestion.correctIndex === 'number') {
+                
+                randomQuestions.push({
+                    ...selectedQuestion,
+                    id: selectedQuestion.id || `initial_${i + 1}`,
+                    reference: selectedQuestion.reference || 'Escrituras'
+                });
+                
+                availableQuestions.splice(randomIndex, 1);
+                console.log(`✅ Pregunta inicial ${i + 1}: "${selectedQuestion.text}" (Categoría: ${selectedQuestion.category})`);
             }
-        ];
+        }
+        
+        if (randomQuestions.length >= 8) {
+            console.log(`🎯 Se generaron ${randomQuestions.length} preguntas iniciales aleatorias`);
+            return randomQuestions;
+        }
     }
     
-    const shuffled = [...INITIAL_QUESTIONS];
-    for (let i = shuffled.length - 1; i > 0; i--) {
+    console.log('⚠️ Usando preguntas de fallback aleatorias');
+    
+    const fallbackQuestions = [
+        {
+            text: "¿Cuántos días estuvo Jesús en el desierto siendo tentado?",
+            options: ["30 días", "40 días", "50 días", "60 días"],
+            correctIndex: 1,
+            reference: "Mateo 4:2",
+            category: "nuevo-testamento"
+        },
+        {
+            text: "¿Quién construyó el arca según el relato bíblico?",
+            options: ["Noé", "Moisés", "Abraham", "David"],
+            correctIndex: 0,
+            reference: "Génesis 6:14",
+            category: "antiguo-testamento"
+        },
+        {
+            text: "¿Quién fue el hombre más fuerte de la Biblia?",
+            options: ["Sansón", "David", "Goliat", "Saúl"],
+            correctIndex: 0,
+            reference: "Jueces 13-16",
+            category: "personajes-biblicos"
+        },
+        {
+            text: "¿Cuáles son los dos grandes mandamientos según Jesús?",
+            options: ["Amar a Dios y al prójimo", "No matar y no robar", "Orar y ayunar", "Bautizarse y comulgar"],
+            correctIndex: 0,
+            reference: "Mateo 22:37-39",
+            category: "doctrina-cristiana"
+        },
+        {
+            text: "¿Cuántos apóstoles eligió Jesús?",
+            options: ["10", "12", "14", "16"],
+            correctIndex: 1,
+            reference: "Mateo 10:1-4",
+            category: "nuevo-testamento"
+        },
+        {
+            text: "¿En qué ciudad nació Jesús?",
+            options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
+            correctIndex: 2,
+            reference: "Lucas 2:4",
+            category: "nuevo-testamento"
+        },
+        {
+            text: "¿Quién interpretó los sueños del Faraón?",
+            options: ["Moisés", "José", "Daniel", "Salomón"],
+            correctIndex: 1,
+            reference: "Génesis 41:25-32",
+            category: "antiguo-testamento"
+        },
+        {
+            text: "¿Quién fue conocido como 'el padre de la fe'?",
+            options: ["Noé", "Abraham", "Isaac", "Jacob"],
+            correctIndex: 1,
+            reference: "Romanos 4:16",
+            category: "personajes-biblicos"
+        }
+    ];
+    
+    const shuffledQuestions = [...fallbackQuestions];
+    for (let i = shuffledQuestions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        [shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
     }
-    return shuffled.slice(0, 3);
+    
+    const selectedQuestions = shuffledQuestions.slice(0, 8);
+    
+    selectedQuestions.forEach((q, index) => {
+        q.id = `fallback_initial_${index + 1}`;
+    });
+    
+    console.log('🎲 Preguntas iniciales aleatorias generadas de fallback');
+    return selectedQuestions;
 }
 
 // ============================================
@@ -309,26 +373,25 @@ function getRandomInitialQuestions() {
 // ============================================
 
 function showScreen(screenId) {
-    console.log(`🖥️ Mostrando pantalla: ${screenId}`);
+    const screens = ['welcome-screen', 'question-screen', 'categories-screen', 'victory-screen', 'gameover-screen'];
     
-    document.querySelectorAll('.game-screen').forEach(screen => {
-        screen.classList.remove('active');
+    screens.forEach(id => {
+        const screen = document.getElementById(id);
+        if (screen) {
+            screen.classList.remove('active');
+        }
     });
     
     const targetScreen = document.getElementById(screenId);
     if (targetScreen) {
         targetScreen.classList.add('active');
-    } else {
-        console.error(`❌ Pantalla no encontrada: ${screenId}`);
+        console.log(`📺 Pantalla cambiada a: ${screenId}`);
     }
 }
 
 function updatePhaseIndicator(text) {
     if (elements.phaseIndicator) {
-        const span = elements.phaseIndicator.querySelector('span');
-        if (span) {
-            span.textContent = text;
-        }
+        elements.phaseIndicator.innerHTML = `<span>${text}</span>`;
     }
 }
 
@@ -337,29 +400,28 @@ function updatePhaseIndicator(text) {
 // ============================================
 
 function startTimer(duration, callback) {
-    stopTimer();
+    if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+    }
+    
     gameState.timer = duration;
     gameState.questionStartTime = Date.now();
     
-    // ✅ MOSTRAR EL TIMER CORRECTAMENTE
+    updateTimerDisplay(gameState.timer);
+    
     if (elements.timerSection) {
-        elements.timerSection.style.display = 'flex';
         elements.timerSection.classList.add('show');
     }
-    
-    updateTimerDisplay(gameState.timer);
     
     gameState.timerInterval = setInterval(() => {
         gameState.timer--;
         updateTimerDisplay(gameState.timer);
         
         if (gameState.timer <= 0) {
-            stopTimer();
+            clearInterval(gameState.timerInterval);
             if (callback) callback();
         }
     }, 1000);
-    
-    console.log(`⏰ Timer iniciado: ${duration} segundos`);
 }
 
 function updateTimerDisplay(time) {
@@ -369,14 +431,13 @@ function updateTimerDisplay(time) {
     
     if (elements.timerCircle) {
         elements.timerCircle.classList.remove('warning', 'danger');
+        
         if (time <= 5) {
             elements.timerCircle.classList.add('danger');
         } else if (time <= 10) {
             elements.timerCircle.classList.add('warning');
         }
     }
-    
-    console.log(`⏰ Timer actualizado: ${time} segundos`);
 }
 
 function stopTimer() {
@@ -386,14 +447,33 @@ function stopTimer() {
     }
     
     if (elements.timerSection) {
-        elements.timerSection.style.display = 'none';
         elements.timerSection.classList.remove('show');
     }
 }
 
+// ✅ FUNCIÓN TIMER PHASE TEXT ACTUALIZADA PARA REPECHAJE
 function updateTimerPhaseText(phase, questionInfo) {
-    if (elements.timerPhase) elements.timerPhase.textContent = phase;
-    if (elements.timerQuestion) elements.timerQuestion.textContent = questionInfo;
+    const phaseTexts = {
+        initial: 'Preguntas Iniciales',
+        category: `Categoría: ${questionInfo}`,
+        repechage: 'Pregunta de Repechaje'  // ✅ NUEVA FASE
+    };
+    
+    if (elements.timerPhase) {
+        elements.timerPhase.textContent = phaseTexts[phase] || phase;
+    }
+    
+    if (elements.timerQuestion) {
+        let questionNum;
+        if (phase === 'repechage') {
+            questionNum = 'Repechaje';  // ✅ MOSTRAR "REPECHAJE"
+        } else if (phase === 'category') {
+            questionNum = gameState.categoryQuestionIndex + 1;
+        } else {
+            questionNum = gameState.currentQuestionIndex + 1;
+        }
+        elements.timerQuestion.textContent = `Pregunta ${questionNum}`;
+    }
 }
 
 // ============================================
@@ -401,678 +481,11 @@ function updateTimerPhaseText(phase, questionInfo) {
 // ============================================
 
 window.startGame = function() {
-    console.log('🎮 Iniciando juego...');
+    console.log('🎮 Iniciando nuevo juego...');
     
-    // Reset game state
-    Object.assign(gameState, {
+    // Reiniciar estado del juego
+    gameState = {
         phase: 'initial',
-        currentQuestionIndex: 0,
-        initialCorrectAnswers: 0,
-        completedCategories: [],
-        pendingCategories: [...CATEGORIES],
-        perfectGame: true,
-        hintsUsed: 0,
-        totalCorrectAnswers: 0,
-        totalQuestions: 0,
-        isProcessingAnswer: false,
-        selectedRandomCategory: null,
-        hasSecondChance: false
-    });
-    
-    updatePhaseIndicator('Preguntas Iniciales');
-    showScreen('question-screen');
-    loadInitialQuestion(0);
-};
-
-function loadInitialQuestion(index) {
-    console.log(`📝 Cargando pregunta inicial ${index + 1}/3`);
-    
-    // ✅ VERIFICACIÓN MEJORADA
-    if (!initialQuestions || initialQuestions.length === 0) {
-        console.error('❌ No hay preguntas iniciales disponibles');
-        showNotification('Error: No hay preguntas disponibles', 'error');
-        return;
-    }
-    
-    if (!initialQuestions[index]) {
-        console.error(`❌ Pregunta inicial ${index} no encontrada. Total: ${initialQuestions.length}`);
-        showNotification('Error cargando pregunta', 'error');
-        return;
-    }
-    
-    const question = initialQuestions[index];
-    gameState.currentQuestion = question;
-    gameState.currentQuestionIndex = index;
-    
-    updateQuestionDisplay(question);
-    updateTimerPhaseText('Preguntas Iniciales', `Pregunta ${index + 1} de 3`);
-    startTimer(20, () => selectAnswer(-1));
-    
-    gameState.isProcessingAnswer = false;
-}
-
-function updateQuestionDisplay(question) {
-    console.log('🔄 Actualizando display de pregunta:', question.text);
-    
-    // Actualizar referencia bíblica
-    if (elements.bibleReference) {
-        if (question.reference) {
-            elements.bibleReference.textContent = question.reference;
-            elements.bibleReference.style.display = 'block';
-        } else {
-            elements.bibleReference.style.display = 'none';
-        }
-    }
-    
-    // Actualizar texto de pregunta
-    if (elements.questionText) {
-        elements.questionText.textContent = question.text;
-    }
-    
-    // Actualizar opciones de respuesta
-    if (elements.answersContainer && question.options) {
-        elements.answersContainer.innerHTML = question.options.map((option, index) => `
-            <button class="answer-btn" onclick="selectAnswer(${index})" data-index="${index}">
-                <span class="answer-letter">${String.fromCharCode(65 + index)}</span>
-                <span class="answer-text">${option}</span>
-            </button>
-        `).join('');
-        
-        console.log(`✅ ${question.options.length} opciones de respuesta creadas`);
-    }
-    
-    // Mostrar power-ups
-    if (elements.powerupsSection) {
-        elements.powerupsSection.style.display = 'flex';
-    }
-}
-
-window.selectAnswer = function(selectedIndex) {
-    if (gameState.isProcessingAnswer) {
-        console.log('⏳ Ya se está procesando una respuesta');
-        return;
-    }
-    
-    console.log(`👆 Respuesta seleccionada: ${selectedIndex}`);
-    
-    gameState.isProcessingAnswer = true;
-    stopTimer();
-    
-    const question = gameState.currentQuestion;
-    const isCorrect = selectedIndex === question.correctIndex;
-    const isTimeout = selectedIndex === -1;
-    
-    markAnswers(selectedIndex, question.correctIndex);
-    
-    // Calcular bonus de velocidad
-    let speedBonus = 0;
-    if (isCorrect && !isTimeout) {
-        const responseTime = Date.now() - gameState.questionStartTime;
-        if (responseTime <= 5000) speedBonus = COIN_REWARDS.speedBonus;
-    }
-    
-    // Procesar respuesta según la fase
-    if (gameState.phase === 'initial') {
-        handleInitialAnswer(isCorrect, selectedIndex, speedBonus);
-    } else if (gameState.phase === 'category' && gameState.needsRescueQuestion) {
-        handleRescueAnswer(isCorrect, selectedIndex, speedBonus);
-    } else if (gameState.phase === 'category') {
-        handleCategoryAnswer(isCorrect, selectedIndex, speedBonus);
-    }
-};
-
-// ============================================
-// MANEJO DE RESPUESTAS POR FASE
-// ============================================
-
-function handleInitialAnswer(isCorrect, selectedIndex, speedBonus) {
-    console.log(`📊 Procesando respuesta inicial: ${isCorrect ? 'Correcta' : 'Incorrecta'}`);
-    
-    if (isCorrect) {
-        gameState.initialCorrectAnswers++;
-        gameState.totalCorrectAnswers++;
-        
-        if (speedBonus > 0 && window.GameDataManager) {
-            window.GameDataManager.addCoins(speedBonus, 'speed_bonus');
-            showCoinAnimation(speedBonus, true);
-        }
-    } else {
-        gameState.perfectGame = false;
-        
-        // Aplicar penalizaciones
-        if (window.GameDataManager) {
-            const penalty = selectedIndex === -1 ? 
-                Math.abs(COIN_REWARDS.timeoutPenalty) : 
-                Math.abs(COIN_REWARDS.wrongAnswer);
-            
-            window.GameDataManager.spendCoins(penalty, 'penalty');
-            showCoinAnimation(-penalty, false);
-        }
-    }
-    
-    gameState.totalQuestions++;
-    
-    setTimeout(() => {
-        gameState.currentQuestionIndex++;
-        gameState.isProcessingAnswer = false;
-        
-        if (gameState.currentQuestionIndex < 3) {
-            loadInitialQuestion(gameState.currentQuestionIndex);
-        } else {
-            evaluateInitialPhase();
-        }
-    }, 2000);
-}
-
-function evaluateInitialPhase() {
-    const correct = gameState.initialCorrectAnswers;
-    console.log(`🎯 Evaluando fase inicial: ${correct}/3 correctas`);
-    
-    if (correct <= 1) {
-        // Game over - eliminado
-        if (window.GameDataManager) {
-            window.GameDataManager.spendCoins(50, 'elimination');
-            showCoinAnimation(-50, false);
-        }
-        setTimeout(() => showGameOver(`Eliminado: Solo ${correct} de 3 correctas`), 2000);
-    } else if (correct === 2) {
-        // Categoría aleatoria
-        setTimeout(() => showRandomCategoryModal(), 2000);
-    } else {
-        // Selección libre de categoría
-        setTimeout(() => showCategorySelection(), 2000);
-    }
-}
-
-function showRandomCategoryModal() {
-    const randomCategory = gameState.pendingCategories[
-        Math.floor(Math.random() * gameState.pendingCategories.length)
-    ];
-    
-    gameState.selectedRandomCategory = randomCategory;
-    
-    const modalHTML = `
-        <div id="random-category-modal" style="
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); display: flex; align-items: center;
-            justify-content: center; z-index: 2000;
-        ">
-            <div style="
-                background: rgba(30, 60, 138, 0.95); backdrop-filter: blur(25px);
-                border-radius: 25px; padding: 50px; text-align: center;
-                border: 2px solid rgba(255, 255, 255, 0.3); max-width: 500px;
-                width: 90%; color: white;
-            ">
-                <h2 style="color: #ffd700; margin-bottom: 20px;">¡Categoría Aleatoria!</h2>
-                <p style="margin-bottom: 30px;">
-                    Respondiste 2 de 3 preguntas correctamente.<br>
-                    La categoría será elegida automáticamente.
-                </p>
-                <div style="
-                    background: rgba(255, 255, 255, 0.15); padding: 30px;
-                    border-radius: 20px; margin: 30px 0;
-                ">
-                    <div style="font-size: 3rem; color: ${randomCategory.color}; margin-bottom: 20px;">
-                        <i class="fas ${randomCategory.icon}"></i>
-                    </div>
-                    <h3 style="color: #ffd700; font-size: 1.6rem; margin-bottom: 12px;">
-                        ${randomCategory.name}
-                    </h3>
-                </div>
-                <button onclick="acceptRandomCategory()" style="
-                    background: linear-gradient(135deg, #3a86ff, #2563eb);
-                    color: white; border: none; padding: 18px 40px;
-                    border-radius: 30px; font-size: 1.2rem; font-weight: 700;
-                    cursor: pointer;
-                ">Continuar</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-}
-
-window.acceptRandomCategory = function() {
-    const modal = document.getElementById('random-category-modal');
-    if (modal) modal.remove();
-    
-    if (gameState.selectedRandomCategory) {
-        startCategoryGame(gameState.selectedRandomCategory.id);
-    }
-};
-
-function showCategorySelection() {
-    gameState.phase = 'categories';
-    showScreen('categories-screen');
-    updatePhaseIndicator('Selección de Categoría');
-    updateCategoriesSection();
-}
-
-function updateCategoriesSection() {
-    const categoriesScreen = document.getElementById('categories-screen');
-    if (!categoriesScreen) return;
-    
-    categoriesScreen.innerHTML = `
-        <div class="categories-content">
-            <div class="categories-header">
-                <div class="mascot-celebration">
-                    <img src="assets/images/mascota.png" alt="Joy celebrando" class="mascot-small">
-                </div>
-                <h2>¡Excelente! Selecciona una Categoría</h2>
-                <p class="categories-subtitle">
-                    Has superado las preguntas iniciales. Ahora elige tu categoría favorita 
-                    para continuar tu aventura bíblica.
-                </p>
-                
-                <div class="categories-progress">
-                    <div class="category-progress-item">
-                        <i class="fas fa-check-circle" style="color: #27ae60;"></i>
-                        <span>Preguntas Iniciales Completadas</span>
-                    </div>
-                    <div class="category-progress-item">
-                        <i class="fas fa-arrow-right" style="color: #3498db;"></i>
-                        <span>Selecciona tu Categoría</span>
-                    </div>
-                    <div class="category-progress-item">
-                        <i class="fas fa-trophy" style="color: #f39c12;"></i>
-                        <span>Completa para Ganar</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="categories-grid">
-                ${gameState.pendingCategories.map(category => {
-                    const isCompleted = gameState.completedCategories.includes(category.id);
-                    return `
-                        <div class="category-card ${isCompleted ? 'completed' : ''}" 
-                             onclick="${isCompleted ? '' : `selectCategory('${category.id}')`}"
-                             style="${isCompleted ? 'opacity: 0.6; cursor: not-allowed;' : 'cursor: pointer;'}">
-                            <div class="category-icon">
-                                <i class="fas ${category.icon}" style="color: ${category.color}"></i>
-                            </div>
-                            <div class="category-info">
-                                <h3>${category.name}</h3>
-                                <p class="category-description">
-                                    2 preguntas principales + 1 pregunta de rescate
-                                </p>
-                                
-                                <div class="category-stats">
-                                    <span><i class="fas fa-question-circle"></i> 2-3 preguntas</span>
-                                    <span><i class="fas fa-coins"></i> 8-40 monedas</span>
-                                </div>
-                                
-                                ${isCompleted ? 
-                                    '<div class="category-completed"><i class="fas fa-check"></i> Completada</div>' : 
-                                    '<div class="category-select">Seleccionar</div>'
-                                }
-                            </div>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-        </div>
-    `;
-}
-
-window.selectCategory = function(categoryId) {
-    console.log(`📂 Categoría seleccionada: ${categoryId}`);
-    startCategoryGame(categoryId);
-};
-
-function startCategoryGame(categoryId) {
-    gameState.currentCategory = categoryId;
-    gameState.phase = 'category';
-    gameState.categoryQuestionIndex = 0;
-    gameState.categoryCorrectAnswers = 0;
-    gameState.needsRescueQuestion = false;
-    
-    loadCategoryQuestions(categoryId);
-    showScreen('question-screen');
-    loadCategoryQuestion(0);
-}
-
-function loadCategoryQuestions(categoryId) {
-    const categoryQuestions = allQuestions.filter(q => q.category === categoryId);
-    
-    if (categoryQuestions.length === 0) {
-        console.error(`❌ No hay preguntas para la categoría: ${categoryId}`);
-        
-        // Usar preguntas de fallback específicas de la categoría
-        const fallbackQuestions = getFallbackQuestionsByCategory(categoryId);
-        gameState.categoryQuestions = fallbackQuestions.slice(0, 2);
-        return;
-    }
-    
-    // Mezclar y seleccionar 2 preguntas aleatorias
-    const shuffled = [...categoryQuestions].sort(() => 0.5 - Math.random());
-    gameState.categoryQuestions = shuffled.slice(0, 2);
-    
-    console.log(`✅ Cargadas ${gameState.categoryQuestions.length} preguntas para ${categoryId}`);
-}
-
-function getFallbackQuestionsByCategory(categoryId) {
-    const fallbackMap = {
-        'antiguo-testamento': [
-            {
-                text: "¿Quién construyó el arca?",
-                options: ["Noé", "Abraham", "Moisés", "David"],
-                correctIndex: 0,
-                reference: "Génesis 6:14"
-            },
-            {
-                text: "¿Cuántos días llovió durante el diluvio?",
-                options: ["30 días", "40 días", "50 días", "60 días"],
-                correctIndex: 1,
-                reference: "Génesis 7:12"
-            }
-        ],
-        'nuevo-testamento': [
-            {
-                text: "¿En qué ciudad nació Jesús?",
-                options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
-                correctIndex: 2,
-                reference: "Lucas 2:4"
-            },
-            {
-                text: "¿Cuántos apóstoles eligió Jesús?",
-                options: ["10", "12", "14", "16"],
-                correctIndex: 1,
-                reference: "Mateo 10:1-4"
-            }
-        ],
-        'personajes-biblicos': [
-            {
-                text: "¿Quién fue vendido por sus hermanos?",
-                options: ["José", "Benjamín", "Judá", "Rubén"],
-                correctIndex: 0,
-                reference: "Génesis 37:28"
-            },
-            {
-                text: "¿Quién derrotó al gigante Goliat?",
-                options: ["Saúl", "David", "Sansón", "Josué"],
-                correctIndex: 1,
-                reference: "1 Samuel 17:49-50"
-            }
-        ],
-        'doctrina-cristiana': [
-            {
-                text: "¿Cuál es el primer mandamiento?",
-                options: ["No matarás", "Amarás a Dios sobre todas las cosas", "No robarás", "Honrarás padre y madre"],
-                correctIndex: 1,
-                reference: "Mateo 22:37-38"
-            },
-            {
-                text: "¿Qué significa 'Emanuel'?",
-                options: ["Rey de reyes", "Dios con nosotros", "Príncipe de paz", "Salvador"],
-                correctIndex: 1,
-                reference: "Mateo 1:23"
-            }
-        ]
-    };
-    
-    return fallbackMap[categoryId] || [
-        {
-            text: "Pregunta de fallback",
-            options: ["Opción A", "Opción B", "Opción C", "Opción D"],
-            correctIndex: 0,
-            reference: "Referencia bíblica"
-        }
-    ];
-}
-
-function loadCategoryQuestion(index) {
-    if (!gameState.categoryQuestions[index]) {
-        console.error('❌ Pregunta de categoría no encontrada');
-        return;
-    }
-    
-    const question = gameState.categoryQuestions[index];
-    gameState.currentQuestion = question;
-    gameState.categoryQuestionIndex = index;
-    
-    updateQuestionDisplay(question);
-    
-    const categoryName = CATEGORIES.find(c => c.id === gameState.currentCategory)?.name;
-    updateTimerPhaseText(`Categoría: ${categoryName}`, `Pregunta ${index + 1} de 2`);
-    
-    startTimer(25, () => selectAnswer(-1));
-    gameState.isProcessingAnswer = false;
-}
-
-function handleCategoryAnswer(isCorrect, selectedIndex, speedBonus) {
-    console.log(`📊 Procesando respuesta de categoría: ${isCorrect ? 'Correcta' : 'Incorrecta'}`);
-    
-    if (isCorrect) {
-        gameState.categoryCorrectAnswers++;
-        gameState.totalCorrectAnswers++;
-        
-        // Recompensa con GameDataManager
-        let totalReward = COIN_REWARDS.categoryCorrect + speedBonus;
-        if (window.GameDataManager) {
-            window.GameDataManager.addCoins(totalReward, 'category_correct');
-            showCoinAnimation(totalReward, true);
-        }
-    } else {
-        gameState.perfectGame = false;
-        
-        // Aplicar penalizaciones
-        if (window.GameDataManager) {
-            const penalty = selectedIndex === -1 ? 
-                Math.abs(COIN_REWARDS.timeoutPenalty) : 
-                Math.abs(COIN_REWARDS.wrongAnswer);
-            
-            window.GameDataManager.spendCoins(penalty, 'penalty');
-            showCoinAnimation(-penalty, false);
-        }
-    }
-    
-    gameState.totalQuestions++;
-    
-    setTimeout(() => {
-        gameState.categoryQuestionIndex++;
-        gameState.isProcessingAnswer = false;
-        
-        if (gameState.categoryQuestionIndex < gameState.categoryQuestions.length) {
-            loadCategoryQuestion(gameState.categoryQuestionIndex);
-        } else {
-            evaluateCategoryPhase();
-        }
-    }, 2000);
-}
-
-function evaluateCategoryPhase() {
-    const correct = gameState.categoryCorrectAnswers;
-    console.log(`🎯 Evaluando fase de categoría: ${correct}/2 correctas`);
-    
-    if (correct === 2) {
-        // Categoría completada exitosamente
-        completeCategory();
-    } else if (correct === 1) {
-        // Necesita pregunta de rescate
-        gameState.needsRescueQuestion = true;
-        loadRescueQuestion();
-    } else {
-        // Game over - 0 correctas
-        showGameOver('No lograste responder correctamente las preguntas de la categoría');
-    }
-}
-
-function loadRescueQuestion() {
-    console.log('🆘 Cargando pregunta de rescate...');
-    
-    // Buscar una pregunta diferente de la misma categoría
-    const usedQuestions = gameState.categoryQuestions.map(q => q.text);
-    const categoryQuestions = allQuestions.filter(q => 
-        q.category === gameState.currentCategory &&
-        !usedQuestions.includes(q.text)
-    );
-    
-    let rescueQuestion;
-    if (categoryQuestions.length > 0) {
-        rescueQuestion = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
-    } else {
-        // Usar pregunta de fallback para rescate
-        const fallbackQuestions = getFallbackQuestionsByCategory(gameState.currentCategory);
-        rescueQuestion = fallbackQuestions.find(q => !usedQuestions.includes(q.text)) || {
-            text: "¿Cuál es el libro más corto del Nuevo Testamento?",
-            options: ["Filemón", "2 Juan", "3 Juan", "Judas"],
-            correctIndex: 1,
-            reference: "2 Juan"
-        };
-    }
-    
-    gameState.currentQuestion = rescueQuestion;
-    
-    updateQuestionDisplay(rescueQuestion);
-    showScreen('question-screen');
-    updatePhaseIndicator('¡Pregunta de Rescate!');
-    updateTimerPhaseText('¡Pregunta de Rescate!', 'Tu última oportunidad');
-    
-    startTimer(30, () => selectAnswer(-1));
-    gameState.isProcessingAnswer = false;
-}
-
-function handleRescueAnswer(isCorrect, selectedIndex, speedBonus) {
-    console.log(`🆘 Procesando respuesta de rescate: ${isCorrect ? 'Correcta' : 'Incorrecta'}`);
-    
-    if (isCorrect) {
-        gameState.totalCorrectAnswers++;
-        
-        // Recompensa especial por rescate
-        let totalReward = COIN_REWARDS.rescueSuccess + speedBonus;
-        if (window.GameDataManager) {
-            window.GameDataManager.addCoins(totalReward, 'rescue_success');
-            showCoinAnimation(totalReward, true);
-        }
-    } else {
-        gameState.perfectGame = false;
-        
-        // Penalizaciones
-        if (window.GameDataManager) {
-            const penalty = selectedIndex === -1 ? 
-                Math.abs(COIN_REWARDS.timeoutPenalty) : 
-                Math.abs(COIN_REWARDS.wrongAnswer);
-            
-            window.GameDataManager.spendCoins(penalty, 'penalty');
-            showCoinAnimation(-penalty, false);
-        }
-    }
-    
-    gameState.totalQuestions++;
-    
-    setTimeout(() => {
-        gameState.isProcessingAnswer = false;
-        gameState.needsRescueQuestion = false;
-        
-        if (isCorrect) {
-            completeCategory();
-        } else {
-            showGameOver('No lograste superar la pregunta de rescate');
-        }
-    }, 2000);
-}
-
-function completeCategory() {
-    console.log(`🎉 Categoría completada: ${gameState.currentCategory}`);
-    
-    // Agregar categoría a completadas
-    if (!gameState.completedCategories.includes(gameState.currentCategory)) {
-        gameState.completedCategories.push(gameState.currentCategory);
-    }
-    
-    // Remover de pendientes
-    gameState.pendingCategories = gameState.pendingCategories.filter(
-        category => category.id !== gameState.currentCategory
-    );
-    
-    // Bonificación por completar categoría
-    if (window.GameDataManager) {
-        window.GameDataManager.addCoins(COIN_REWARDS.categoryComplete, 'category_complete');
-        showCoinAnimation(COIN_REWARDS.categoryComplete, true);
-    }
-    
-    // Verificar si se completaron todas las categorías
-    if (gameState.completedCategories.length >= CATEGORIES.length) {
-        // Juego completado
-        let finalBonus = COIN_REWARDS.gameComplete;
-        
-        if (gameState.perfectGame) {
-            finalBonus += COIN_REWARDS.perfectGame;
-        }
-        
-        if (gameState.hintsUsed === 0) {
-            finalBonus += 30; // Bonus sin usar power-ups
-        }
-        
-        if (window.GameDataManager) {
-            window.GameDataManager.addCoins(finalBonus, 'game_complete');
-            window.GameDataManager.updateGameStats({
-                victory: true,
-                perfect: gameState.perfectGame,
-                totalQuestions: gameState.totalQuestions,
-                totalCorrectAnswers: gameState.totalCorrectAnswers,
-                hintsUsed: gameState.hintsUsed
-            });
-            showCoinAnimation(finalBonus, true);
-        }
-        
-        setTimeout(() => showVictory(), 3000);
-    } else {
-        // Continuar con siguiente categoría
-        setTimeout(() => {
-            updateCategoriesSection();
-            showCategorySelection();
-        }, 3000);
-    }
-}
-
-// ============================================
-// PANTALLAS DE FINALIZACIÓN
-// ============================================
-
-function showVictory() {
-    gameState.phase = 'victory';
-    showScreen('victory-screen');
-    updatePhaseIndicator('¡Victoria!');
-    
-    console.log('🏆 Juego completado exitosamente');
-    
-    // Mostrar estadísticas finales
-    const finalStats = {
-        totalQuestions: gameState.totalQuestions,
-        correctAnswers: gameState.totalCorrectAnswers,
-        perfectGame: gameState.perfectGame,
-        hintsUsed: gameState.hintsUsed,
-        categoriesCompleted: gameState.completedCategories.length
-    };
-    
-    console.log('📊 Estadísticas finales:', finalStats);
-}
-
-function showGameOver(reason = 'Juego terminado') {
-    gameState.phase = 'gameover';
-    showScreen('gameover-screen');
-    updatePhaseIndicator('Game Over');
-    
-    console.log('💀 Game Over:', reason);
-    
-    if (window.GameDataManager) {
-        window.GameDataManager.updateGameStats({
-            victory: false,
-            perfect: false,
-            totalQuestions: gameState.totalQuestions,
-            totalCorrectAnswers: gameState.totalCorrectAnswers,
-            hintsUsed: gameState.hintsUsed
-        });
-    }
-}
-
-window.restartGame = function() {
-    console.log('🔄 Reiniciando juego...');
-    
-    // Reset completo del gameState
-    Object.assign(gameState, {
-        phase: 'welcome',
         currentQuestionIndex: 0,
         initialCorrectAnswers: 0,
         completedCategories: [],
@@ -1081,23 +494,783 @@ window.restartGame = function() {
         categoryQuestions: [],
         categoryQuestionIndex: 0,
         categoryCorrectAnswers: 0,
-        needsRescueQuestion: false,
+        categoryIncorrectAnswers: 0,       // ✅ REINICIAR CONTADOR
+        needsRepechageQuestion: false,
         currentQuestion: null,
         isProcessingAnswer: false,
+        timer: 20,
+        timerInterval: null,
+        questionStartTime: 0,
         perfectGame: true,
         hintsUsed: 0,
         totalCorrectAnswers: 0,
         totalQuestions: 0,
         selectedRandomCategory: null,
         hasSecondChance: false
+    };
+    
+    updatePhaseIndicator('Preguntas Iniciales');
+    updateAllDisplays();
+    
+    showScreen('question-screen');
+    loadInitialQuestion(0);
+};
+
+function loadInitialQuestion(index) {
+    if (index >= initialQuestions.length) {
+        console.log('📊 Todas las preguntas iniciales completadas');
+        evaluateInitialPhase();
+        return;
+    }
+    
+    gameState.currentQuestionIndex = index;
+    gameState.currentQuestion = initialQuestions[index];
+    gameState.isProcessingAnswer = false;
+    
+    console.log(`📝 Cargando pregunta inicial ${index + 1}/3: "${gameState.currentQuestion.text}"`);
+    
+    updateQuestionDisplay(gameState.currentQuestion);
+    updateTimerPhaseText('initial', '');
+    
+    startTimer(20, () => {
+        console.log('⏰ Tiempo agotado en pregunta inicial');
+        handleInitialAnswer(false, -1, false);
     });
+}
+
+function updateQuestionDisplay(question) {
+    if (!question) {
+        console.error('❌ No hay pregunta para mostrar');
+        return;
+    }
+    
+    if (elements.questionText) {
+        elements.questionText.textContent = question.text;
+    }
+    
+    if (elements.bibleReference) {
+        elements.bibleReference.textContent = question.reference || '';
+        elements.bibleReference.style.display = question.reference ? 'block' : 'none';
+    }
+    
+    if (elements.answersContainer) {
+        elements.answersContainer.innerHTML = '';
+        
+        question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'answer-btn';
+            button.innerHTML = `
+                <span class="answer-letter">${String.fromCharCode(65 + index)}</span>
+                <span class="answer-text">${option}</span>
+            `;
+            button.onclick = () => selectAnswer(index);
+            elements.answersContainer.appendChild(button);
+        });
+    }
+    
+    updatePowerups();
+}
+
+// ✅ FUNCIÓN SELECTANSWER CORREGIDA PARA REPECHAJE
+window.selectAnswer = function(selectedIndex) {
+    if (gameState.isProcessingAnswer) {
+        console.log('⏸️ Ya se está procesando una respuesta');
+        return;
+    }
+    
+    if (!gameState.currentQuestion) {
+        console.error('❌ No hay pregunta actual');
+        return;
+    }
+    
+    console.log(`👆 Respuesta seleccionada: ${selectedIndex} para pregunta "${gameState.currentQuestion.text}"`);
+    
+    gameState.isProcessingAnswer = true;
+    stopTimer();
+    
+    const correctIndex = gameState.currentQuestion.correctIndex;
+    const isCorrect = selectedIndex === correctIndex;
+    
+    // Calcular bonus de velocidad
+    const timeElapsed = (Date.now() - gameState.questionStartTime) / 1000;
+    const speedBonus = timeElapsed < 10;
+    
+    console.log(`✅ Respuesta ${isCorrect ? 'CORRECTA' : 'INCORRECTA'}. Tiempo: ${timeElapsed.toFixed(1)}s`);
+    
+    // Marcar respuestas visualmente
+    markAnswers(selectedIndex, correctIndex);
+    
+    // ✅ PROCESAR SEGÚN LA FASE (INCLUYENDO REPECHAJE)
+    setTimeout(() => {
+        if (gameState.phase === 'initial') {
+            handleInitialAnswer(isCorrect, selectedIndex, speedBonus);
+        } else if (gameState.phase === 'category') {
+            handleCategoryAnswer(isCorrect, selectedIndex, speedBonus);
+        } else if (gameState.phase === 'repechage') {  // ✅ NUEVA FASE
+            handleRepechageAnswer(isCorrect, selectedIndex, speedBonus);
+        }
+    }, 1500);
+};
+
+// ============================================
+// MANEJO DE RESPUESTAS POR FASE
+// ============================================
+
+function handleInitialAnswer(isCorrect, selectedIndex, speedBonus) {
+    console.log(`🎯 Procesando respuesta inicial: ${isCorrect ? 'CORRECTA' : 'INCORRECTA'}`);
+    
+    if (isCorrect) {
+        gameState.initialCorrectAnswers++;
+        gameState.totalCorrectAnswers++;
+        
+        const coinsEarned = COIN_REWARDS.categoryCorrect + (speedBonus ? COIN_REWARDS.speedBonus : 0);
+        window.GameDataManager.addCoins(coinsEarned, 'initial_correct');
+        
+        showNotification(`¡Correcto! +${coinsEarned} monedas`, 'success');
+    } else {
+        gameState.perfectGame = false;
+        
+        const coinsPenalty = Math.abs(COIN_REWARDS.wrongAnswer);
+        window.GameDataManager.spendCoins(coinsPenalty, 'initial_wrong');
+        
+        showNotification(`Incorrecto. -${coinsPenalty} monedas`, 'error');
+    }
+    
+    gameState.totalQuestions++;
+    
+    // Verificar si perdió el juego (2 respuestas incorrectas)
+    const incorrectAnswers = gameState.totalQuestions - gameState.initialCorrectAnswers;
+    
+    if (incorrectAnswers >= 2) {
+        console.log('💀 Juego perdido: 2 respuestas incorrectas en fase inicial');
+        showGameOver('Has fallado 2 preguntas iniciales');
+        return;
+    }
+    
+    // Continuar con la siguiente pregunta inicial
+    const nextIndex = gameState.currentQuestionIndex + 1;
+    
+    if (nextIndex < 3) {
+        setTimeout(() => {
+            loadInitialQuestion(nextIndex);
+        }, 1000);
+    } else {
+        setTimeout(() => {
+            evaluateInitialPhase();
+        }, 1000);
+    }
+}
+
+function evaluateInitialPhase() {
+    console.log(`📊 Evaluando fase inicial: ${gameState.initialCorrectAnswers}/3 correctas`);
+    
+    if (gameState.initialCorrectAnswers >= 3) {
+        console.log('🎉 Fase inicial perfecta - puede elegir categorías');
+        showCategorySelection();
+    } else if (gameState.initialCorrectAnswers === 2) {
+        console.log('🎲 2 correctas - categoría aleatoria');
+        showRandomCategoryModal();
+    } else {
+        console.log('💀 Muy pocas respuestas correctas - Game Over');
+        showGameOver('Necesitas al menos 2 respuestas correctas');
+    }
+}
+
+function showRandomCategoryModal() {
+    console.log('🎲 Mostrando modal de categoría aleatoria...');
+    
+    const availableCategories = gameState.pendingCategories.filter(cat => 
+        !gameState.completedCategories.includes(cat.id)
+    );
+    
+    if (availableCategories.length === 0) {
+        console.error('❌ No hay categorías disponibles');
+        showGameOver('No hay categorías disponibles');
+        return;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * availableCategories.length);
+    const selectedCategory = availableCategories[randomIndex];
+    
+    gameState.selectedRandomCategory = selectedCategory;
+    
+    console.log(`🎯 Categoría seleccionada aleatoriamente: ${selectedCategory.name}`);
+    
+    const modalHTML = `
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        " id="random-category-modal">
+            <div style="
+                background: var(--surface-primary);
+                backdrop-filter: var(--backdrop-blur);
+                border: 1px solid var(--border-primary);
+                border-radius: 20px;
+                padding: 30px;
+                text-align: center;
+                max-width: 400px;
+                margin: 20px;
+                box-shadow: var(--shadow-primary);
+            ">
+                <h2 style="color: var(--text-accent); margin-bottom: 15px;">
+                    <i class="fas fa-dice"></i> Categoría Asignada
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Has respondido 2 preguntas correctas. Se te ha asignado aleatoriamente:
+                </p>
+                <div style="
+                    background: var(--surface-secondary);
+                    border: 1px solid var(--border-secondary);
+                    border-radius: 15px;
+                    padding: 20px;
+                    margin: 20px 0;
+                ">
+                    <i class="fas ${selectedCategory.icon}" style="
+                        font-size: 3rem;
+                        color: ${selectedCategory.color};
+                        margin-bottom: 10px;
+                    "></i>
+                    <h3 style="color: var(--text-primary); margin: 10px 0;">
+                        ${selectedCategory.name}
+                    </h3>
+                </div>
+                <button onclick="acceptRandomCategory()" style="
+                    background: linear-gradient(135deg, var(--text-accent), #e6c200);
+                    color: #000;
+                    border: none;
+                    padding: 15px 30px;
+                    border-radius: 25px;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                ">
+                    <i class="fas fa-play"></i> Continuar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+window.acceptRandomCategory = function() {
+    console.log('✅ Aceptando categoría aleatoria...');
+    
+    const modal = document.getElementById('random-category-modal');
+    if (modal) {
+        modal.remove();
+    }
+    
+    if (gameState.selectedRandomCategory) {
+        startCategoryGame(gameState.selectedRandomCategory.id);
+    } else {
+        console.error('❌ No hay categoría seleccionada');
+        showGameOver('Error al seleccionar categoría');
+    }
+};
+
+function showCategorySelection() {
+    console.log('📋 Mostrando selección de categorías...');
+    
+    updatePhaseIndicator('Selección de Categoría');
+    showScreen('categories-screen');
+    updateCategoriesSection();
+}
+
+function updateCategoriesSection() {
+    const categoriesContent = document.querySelector('.categories-content');
+    if (!categoriesContent) {
+        console.error('❌ No se encontró el contenedor de categorías');
+        return;
+    }
+    
+    const availableCategories = CATEGORIES.filter(cat => 
+        !gameState.completedCategories.includes(cat.id)
+    );
+    
+    categoriesContent.innerHTML = `
+        <div class="categories-header">
+            <div class="mascot-celebration">
+                <img src="assets/images/joy-festejo.png" alt="Joy celebrando" class="mascot-small">
+            </div>
+            <h2>¡Excelente trabajo!</h2>
+            <p class="categories-subtitle">Elige tu próxima categoría</p>
+            <div class="categories-progress">
+                ${gameState.completedCategories.map(catId => {
+                    const cat = CATEGORIES.find(c => c.id === catId);
+                    return `<div class="category-progress-item completed">
+                        <i class="fas ${cat.icon}"></i>
+                    </div>`;
+                }).join('')}
+                ${availableCategories.map(() => 
+                    '<div class="category-progress-item"><i class="fas fa-circle"></i></div>'
+                ).join('')}
+            </div>
+        </div>
+        
+        <div class="categories-grid">
+            ${availableCategories.map(category => `
+                <div class="category-card" data-category="${category.id}" onclick="selectCategory('${category.id}')">
+                    <div class="category-icon">
+                        <i class="fas ${category.icon}"></i>
+                    </div>
+                    <div class="category-info">
+                        <h3>${category.name}</h3>
+                        <p class="category-description">Preguntas sobre ${category.name.toLowerCase()}</p>
+                        <div class="category-stats">
+                            <span><i class="fas fa-trophy"></i> +15 monedas</span>
+                        </div>
+                    </div>
+                    <div class="category-select">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+window.selectCategory = function(categoryId) {
+    console.log(`🎯 Categoría seleccionada: ${categoryId}`);
+    startCategoryGame(categoryId);
+};
+
+// ✅ FUNCIÓN START CATEGORY GAME CORREGIDA
+function startCategoryGame(categoryId) {
+    console.log(`🎮 Iniciando juego de categoría: ${categoryId}`);
+    
+    gameState.phase = 'category';
+    gameState.currentCategory = categoryId;
+    gameState.categoryQuestionIndex = 0;
+    gameState.categoryCorrectAnswers = 0;
+    gameState.categoryIncorrectAnswers = 0;    // ✅ REINICIAR CONTADOR
+    gameState.needsRepechageQuestion = false;
+    
+    const category = CATEGORIES.find(cat => cat.id === categoryId);
+    updatePhaseIndicator(`Categoría: ${category ? category.name : categoryId}`);
+    
+    loadCategoryQuestions(categoryId);
+    showScreen('question-screen');
+    loadCategoryQuestion(0);
+}
+
+// ✅ FUNCIÓN LOAD CATEGORY QUESTIONS CORREGIDA (3 PREGUNTAS)
+function loadCategoryQuestions(categoryId) {
+    console.log(`📚 Cargando preguntas para categoría: ${categoryId}`);
+    
+    const categoryQuestions = allQuestions.filter(q => q.category === categoryId);
+    
+    if (categoryQuestions.length === 0) {
+        console.warn(`⚠️ No hay preguntas para la categoría ${categoryId}, usando fallback`);
+        gameState.categoryQuestions = getFallbackQuestionsByCategory(categoryId);
+    } else {
+        // ✅ MEZCLAR Y TOMAR SOLO 3 PREGUNTAS
+        const shuffled = [...categoryQuestions];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        gameState.categoryQuestions = shuffled.slice(0, CATEGORY_CONFIG.questionsPerCategory);
+    }
+    
+    console.log(`✅ ${gameState.categoryQuestions.length} preguntas cargadas para ${categoryId}`);
+}
+
+function getFallbackQuestionsByCategory(categoryId) {
+    const fallbackQuestions = {
+        'antiguo-testamento': [
+            {
+                text: "¿Quién construyó el arca según el relato bíblico?",
+                options: ["Noé", "Moisés", "Abraham", "David"],
+                correctIndex: 0,
+                reference: "Génesis 6:14"
+            },
+            {
+                text: "¿Cuántos días y noches llovió durante el diluvio?",
+                options: ["30", "40", "7", "100"],
+                correctIndex: 1,
+                reference: "Génesis 7:12"
+            },
+            {
+                text: "¿Quién recibió los Diez Mandamientos?",
+                options: ["Abraham", "Moisés", "Josué", "David"],
+                correctIndex: 1,
+                reference: "Éxodo 31:18"
+            }
+        ],
+        'nuevo-testamento': [
+            {
+                text: "¿Cuántos apóstoles eligió Jesús?",
+                options: ["10", "12", "14", "16"],
+                correctIndex: 1,
+                reference: "Mateo 10:1-4"
+            },
+            {
+                text: "¿En qué ciudad nació Jesús?",
+                options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
+                correctIndex: 2,
+                reference: "Lucas 2:4"
+            },
+            {
+                text: "¿Cuál fue el primer milagro de Jesús?",
+                options: ["Multiplicar panes", "Caminar sobre agua", "Convertir agua en vino", "Sanar un ciego"],
+                correctIndex: 2,
+                reference: "Juan 2:11"
+            }
+        ],
+        'personajes-biblicos': [
+            {
+                text: "¿Quién fue el hombre más fuerte de la Biblia?",
+                options: ["Sansón", "David", "Goliat", "Saúl"],
+                correctIndex: 0,
+                reference: "Jueces 13-16"
+            },
+            {
+                text: "¿Quién fue vendido por sus hermanos?",
+                options: ["José", "Benjamín", "Judá", "Rubén"],
+                correctIndex: 0,
+                reference: "Génesis 37:28"
+            },
+            {
+                text: "¿Quién fue conocido como 'el padre de la fe'?",
+                options: ["Noé", "Abraham", "Isaac", "Jacob"],
+                correctIndex: 1,
+                reference: "Romanos 4:16"
+            }
+        ],
+        'doctrina-cristiana': [
+            {
+                text: "¿Cuáles son los dos grandes mandamientos según Jesús?",
+                options: ["Amar a Dios y al prójimo", "No matar y no robar", "Orar y ayunar", "Bautizarse y comulgar"],
+                correctIndex: 0,
+                reference: "Mateo 22:37-39"
+            },
+            {
+                text: "¿Cuál es el versículo más corto de la Biblia?",
+                options: ["Jesús lloró", "Dios es amor", "Orad sin cesar", "Regocijaos siempre"],
+                correctIndex: 0,
+                reference: "Juan 11:35"
+            },
+            {
+                text: "¿Cuántos frutos del Espíritu hay?",
+                options: ["7", "9", "12", "10"],
+                correctIndex: 1,
+                reference: "Gálatas 5:22-23"
+            }
+        ]
+    };
+    
+    return fallbackQuestions[categoryId] || fallbackQuestions['nuevo-testamento'];
+}
+
+// ✅ FUNCIÓN LOAD CATEGORY QUESTION CORREGIDA
+function loadCategoryQuestion(index) {
+    // ✅ VERIFICAR SI YA COMPLETAMOS LAS 3 PREGUNTAS PRINCIPALES
+    if (index >= CATEGORY_CONFIG.questionsPerCategory) {
+        console.log('📊 Completadas las 3 preguntas principales de categoría');
+        evaluateCategoryPhase();
+        return;
+    }
+    
+    gameState.categoryQuestionIndex = index;
+    gameState.currentQuestion = gameState.categoryQuestions[index];
+    gameState.isProcessingAnswer = false;
+    
+    console.log(`📝 Cargando pregunta ${index + 1}/${CATEGORY_CONFIG.questionsPerCategory} de categoría`);
+    
+    updateQuestionDisplay(gameState.currentQuestion);
+    
+    const category = CATEGORIES.find(cat => cat.id === gameState.currentCategory);
+    updateTimerPhaseText('category', category ? category.name : gameState.currentCategory);
+    
+    startTimer(20, () => {
+        console.log('⏰ Tiempo agotado en pregunta de categoría');
+        handleCategoryAnswer(false, -1, false);
+    });
+}
+
+// ✅ FUNCIÓN HANDLE CATEGORY ANSWER COMPLETAMENTE CORREGIDA
+function handleCategoryAnswer(isCorrect, selectedIndex, speedBonus) {
+    console.log(`🎯 Procesando respuesta de categoría: ${isCorrect ? 'CORRECTA' : 'INCORRECTA'}`);
+    
+    if (isCorrect) {
+        gameState.categoryCorrectAnswers++;
+        gameState.totalCorrectAnswers++;
+        
+        const coinsEarned = COIN_REWARDS.categoryCorrect + (speedBonus ? COIN_REWARDS.speedBonus : 0);
+        window.GameDataManager.addCoins(coinsEarned, 'category_correct');
+        
+        showNotification(`¡Correcto! +${coinsEarned} monedas`, 'success');
+    } else {
+        gameState.categoryIncorrectAnswers++;  // ✅ INCREMENTAR CONTADOR DE INCORRECTAS
+        gameState.perfectGame = false;
+        
+        const coinsPenalty = Math.abs(COIN_REWARDS.wrongAnswer);
+        window.GameDataManager.spendCoins(coinsPenalty, 'category_wrong');
+        
+        showNotification(`Incorrecto. -${coinsPenalty} monedas`, 'error');
+        
+        // ✅ VERIFICAR SI PERDIÓ EL JUEGO (2 INCORRECTAS)
+        if (gameState.categoryIncorrectAnswers >= CATEGORY_CONFIG.maxIncorrectBeforeGameOver) {
+            console.log('💀 Perdió el juego: 2 respuestas incorrectas en categoría');
+            setTimeout(() => {
+                showGameOver('Has fallado 2 preguntas en la categoría');
+            }, 1500);
+            return;
+        }
+    }
+    
+    gameState.totalQuestions++;
+    
+    const nextIndex = gameState.categoryQuestionIndex + 1;
+    
+    // ✅ CONTINUAR CON LA SIGUIENTE PREGUNTA SI NO COMPLETAMOS LAS 3
+    if (nextIndex < CATEGORY_CONFIG.questionsPerCategory) {
+        setTimeout(() => {
+            loadCategoryQuestion(nextIndex);
+        }, 1000);
+    } else {
+        // ✅ EVALUAR DESPUÉS DE LAS 3 PREGUNTAS
+        setTimeout(() => {
+            evaluateCategoryPhase();
+        }, 1000);
+    }
+}
+
+// ✅ FUNCIÓN EVALUATE CATEGORY PHASE COMPLETAMENTE CORREGIDA
+function evaluateCategoryPhase() {
+    const correctas = gameState.categoryCorrectAnswers;
+    const incorrectas = gameState.categoryIncorrectAnswers;
+    
+    console.log(`📊 Evaluando categoría: ${correctas} correctas, ${incorrectas} incorrectas`);
+    
+    // ✅ APLICAR NUEVA LÓGICA
+    if (correctas === 3) {
+        // 3 correctas = Victoria directa
+        console.log('🎉 3 respuestas correctas - Categoría ganada');
+        setTimeout(() => {
+            completeCategory();
+        }, 1000);
+    } else if (correctas === 2 && incorrectas === 1) {
+        // 2 correctas + 1 incorrecta = Pregunta de repechaje
+        console.log('🆘 2 correctas, 1 incorrecta - Activando pregunta de repechaje');
+        gameState.needsRepechageQuestion = true;
+        setTimeout(() => {
+            loadRepechageQuestion();
+        }, 1000);
+    } else if (correctas === 1) {
+        // Solo 1 correcta = Pierde categoría
+        console.log('💀 Solo 1 respuesta correcta - Categoría perdida');
+        setTimeout(() => {
+            showGameOver('Necesitas al menos 2 respuestas correctas para continuar');
+        }, 1000);
+    } else {
+        // 0 correctas = Pierde categoría y juego
+        console.log('💀 0 respuestas correctas - Juego perdido');
+        setTimeout(() => {
+            showGameOver('No lograste responder correctamente ninguna pregunta');
+        }, 1000);
+    }
+}
+
+// ✅ FUNCIÓN LOAD REPECHAGE QUESTION CORREGIDA
+function loadRepechageQuestion() {
+    console.log('🆘 Cargando pregunta de repechaje...');
+    
+    gameState.phase = 'repechage';  // ✅ CAMBIAR FASE A REPECHAJE
+    gameState.isProcessingAnswer = false;
+    
+    // Buscar una pregunta de repechaje de la misma categoría
+    const repechageQuestions = allQuestions.filter(q => 
+        q.category === gameState.currentCategory &&
+        !gameState.categoryQuestions.some(cq => cq.id === q.id)
+    );
+    
+    if (repechageQuestions.length > 0) {
+        const randomIndex = Math.floor(Math.random() * repechageQuestions.length);
+        gameState.currentQuestion = repechageQuestions[randomIndex];
+    } else {
+        // Usar una pregunta de fallback
+        const fallbackQuestions = getFallbackQuestionsByCategory(gameState.currentCategory);
+        gameState.currentQuestion = fallbackQuestions[0];
+    }
+    
+    updateQuestionDisplay(gameState.currentQuestion);
+    updateTimerPhaseText('repechage', 'Pregunta de Repechaje');  // ✅ MOSTRAR "REPECHAJE"
+    
+    // ✅ MÁS TIEMPO PARA PREGUNTA DE REPECHAJE (30 SEGUNDOS)
+    startTimer(30, () => {
+        console.log('⏰ Tiempo agotado en pregunta de repechaje');
+        handleRepechageAnswer(false, -1, false);
+    });
+}
+
+// ✅ FUNCIÓN HANDLE REPECHAGE ANSWER CORREGIDA
+function handleRepechageAnswer(isCorrect, selectedIndex, speedBonus) {
+    console.log(`🆘 Procesando respuesta de repechaje: ${isCorrect ? 'CORRECTA' : 'INCORRECTA'}`);
+    
+    if (isCorrect) {
+        gameState.categoryCorrectAnswers++;  // ✅ CONTAR COMO CORRECTA ADICIONAL
+        gameState.totalCorrectAnswers++;
+        
+        const coinsEarned = COIN_REWARDS.rescueSuccess + (speedBonus ? COIN_REWARDS.speedBonus : 0);
+        window.GameDataManager.addCoins(coinsEarned, 'repechage_success');
+        
+        showNotification(`¡Repechaje exitoso! +${coinsEarned} monedas`, 'success');
+        
+        setTimeout(() => {
+            completeCategory();
+        }, 1500);
+    } else {
+        gameState.perfectGame = false;
+        
+        const coinsPenalty = Math.abs(COIN_REWARDS.wrongAnswer);
+        window.GameDataManager.spendCoins(coinsPenalty, 'repechage_failed');
+        
+        showNotification(`Repechaje fallido. -${coinsPenalty} monedas`, 'error');
+        
+        setTimeout(() => {
+            showGameOver('No lograste aprobar el repechaje de la categoría');
+        }, 1500);
+    }
+    
+    gameState.totalQuestions++;
+}
+
+function completeCategory() {
+    console.log(`✅ Categoría ${gameState.currentCategory} completada`);
+    
+    // Agregar categoría a completadas
+    gameState.completedCategories.push(gameState.currentCategory);
+    
+    // Remover de pendientes
+    gameState.pendingCategories = gameState.pendingCategories.filter(cat => 
+        cat.id !== gameState.currentCategory
+    );
+    
+    // Recompensa por completar categoría
+    const categoryBonus = COIN_REWARDS.categoryComplete;
+    window.GameDataManager.addCoins(categoryBonus, 'category_complete');
+    
+    showNotification(`¡Categoría completada! +${categoryBonus} monedas`, 'success');
+    
+    // Verificar si completó todas las categorías
+    if (gameState.completedCategories.length >= CATEGORIES.length) {
+        setTimeout(() => {
+            showVictory();
+        }, 2000);
+    } else {
+        // Volver a selección de categorías
+        setTimeout(() => {
+            showCategorySelection();
+        }, 2000);
+    }
+}
+
+// ============================================
+// PANTALLAS DE FINALIZACIÓN
+// ============================================
+
+function showVictory() {
+    console.log('🎉 ¡VICTORIA! Todas las categorías completadas');
     
     stopTimer();
-    showScreen('welcome-screen');
-    updatePhaseIndicator('Bienvenido');
+    updatePhaseIndicator('¡Victoria!');
     
-    // Recargar preguntas iniciales
-    initialQuestions = getRandomInitialQuestions();
+    // Recompensas finales
+    const gameCompleteBonus = COIN_REWARDS.gameComplete;
+    const perfectBonus = gameState.perfectGame ? COIN_REWARDS.perfectGame : 0;
+    const totalBonus = gameCompleteBonus + perfectBonus;
+    
+    window.GameDataManager.addCoins(totalBonus, 'game_complete');
+    
+    // Actualizar estadísticas
+    const gameResult = {
+        victory: true,
+        perfect: gameState.perfectGame,
+        coinsEarned: totalBonus,
+        totalCorrectAnswers: gameState.totalCorrectAnswers,
+        totalQuestions: gameState.totalQuestions,
+        categoriesCompleted: gameState.completedCategories.length
+    };
+    
+    window.GameDataManager.updateGameStats(gameResult);
+    
+    showScreen('victory-screen');
+    
+    // Actualizar contenido de victoria
+    const victoryDescription = document.querySelector('.victory-description');
+    if (victoryDescription) {
+        victoryDescription.innerHTML = `
+            <p><strong>¡Felicitaciones!</strong> Has completado todas las categorías del Quiz Cristiano.</p>
+            <div style="margin: 20px 0;">
+                <p><i class="fas fa-coins"></i> Monedas ganadas: +${totalBonus}</p>
+                <p><i class="fas fa-check-circle"></i> Respuestas correctas: ${gameState.totalCorrectAnswers}/${gameState.totalQuestions}</p>
+                <p><i class="fas fa-trophy"></i> Categorías completadas: ${gameState.completedCategories.length}/4</p>
+                ${gameState.perfectGame ? '<p><i class="fas fa-star"></i> ¡Juego perfecto!</p>' : ''}
+            </div>
+        `;
+    }
+    
+    const victoryActions = document.querySelector('.victory-actions');
+    if (victoryActions) {
+        victoryActions.innerHTML = `
+            <button class="victory-btn primary" onclick="restartGame()">
+                <i class="fas fa-redo"></i> Jugar de Nuevo
+            </button>
+            <button class="victory-btn secondary" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Volver al Inicio
+            </button>
+        `;
+    }
+}
+
+function showGameOver(reason = 'Juego terminado') {
+    console.log(`💀 Game Over: ${reason}`);
+    
+    stopTimer();
+    updatePhaseIndicator('Game Over');
+    
+    // Actualizar estadísticas
+    const gameResult = {
+        victory: false,
+        perfect: false,
+        coinsEarned: 0,
+        totalCorrectAnswers: gameState.totalCorrectAnswers,
+        totalQuestions: gameState.totalQuestions,
+        categoriesCompleted: gameState.completedCategories.length
+    };
+    
+    window.GameDataManager.updateGameStats(gameResult);
+    
+    showScreen('gameover-screen');
+    
+    // Actualizar contenido de game over
+    const gameoverDescription = document.querySelector('.gameover-description');
+    if (gameoverDescription) {
+        gameoverDescription.innerHTML = `
+            <p>${reason}</p>
+            <div style="margin: 20px 0;">
+                <p><i class="fas fa-check-circle"></i> Respuestas correctas: ${gameState.totalCorrectAnswers}/${gameState.totalQuestions}</p>
+                <p><i class="fas fa-trophy"></i> Categorías completadas: ${gameState.completedCategories.length}/4</p>
+            </div>
+            <p>¡No te desanimes! Cada intento te acerca más a la maestría bíblica.</p>
+        `;
+    }
+}
+
+window.restartGame = function() {
+    console.log('🔄 Reiniciando juego...');
+    window.startGame();
 };
 
 // ============================================
@@ -1105,102 +1278,102 @@ window.restartGame = function() {
 // ============================================
 
 function updatePowerups() {
-    if (!window.GameDataManager) return;
+    if (!elements.powerupsSection || !window.GameDataManager) return;
     
-    const powerups = ['eliminate', 'timeExtender', 'secondChance'];
-    const buttons = [elements.eliminateBtn, elements.timeBtn, elements.rescueBtn];
+    const inventory = window.GameDataManager.getInventory();
     
-    powerups.forEach((powerupId, index) => {
-        const btn = buttons[index];
-        if (!btn) return;
-        
-        const count = window.GameDataManager.getPowerupCount(powerupId);
-        const countElement = btn.querySelector('.powerup-count');
-        
-        if (countElement) countElement.textContent = count;
-        
-        if (count <= 0) {
-            btn.classList.add('disabled');
-        } else {
-            btn.classList.remove('disabled');
-        }
-    });
+    elements.powerupsSection.innerHTML = `
+        <button class="powerup-btn ${inventory.eliminate > 0 ? '' : 'disabled'}" 
+                onclick="usePowerup('eliminate')" 
+                title="Eliminar opciones (${inventory.eliminate})">
+            <i class="fas fa-eraser"></i>
+            <span class="powerup-count">${inventory.eliminate}</span>
+        </button>
+        <button class="powerup-btn ${inventory.timeExtender > 0 ? '' : 'disabled'}" 
+                onclick="usePowerup('timeExtender')" 
+                title="Tiempo extra (${inventory.timeExtender})">
+            <i class="fas fa-clock"></i>
+            <span class="powerup-count">${inventory.timeExtender}</span>
+        </button>
+        <button class="powerup-btn ${inventory.secondChance > 0 ? '' : 'disabled'}" 
+                onclick="usePowerup('secondChance')" 
+                title="Segunda oportunidad (${inventory.secondChance})">
+            <i class="fas fa-heart"></i>
+            <span class="powerup-count">${inventory.secondChance}</span>
+        </button>
+    `;
 }
 
 window.usePowerup = function(powerupType) {
-    console.log(`🎯 Intentando usar power-up: ${powerupType}`);
-    
-    if (!window.GameDataManager) {
-        console.error('❌ GameDataManager no disponible');
-        return false;
+    if (gameState.isProcessingAnswer) {
+        console.log('⏸️ No se pueden usar power-ups mientras se procesa una respuesta');
+        return;
     }
     
-    // Verificar disponibilidad
-    const currentCount = window.GameDataManager.getPowerupCount(powerupType);
-    if (currentCount <= 0) {
-        showNotification(`No tienes ${powerupType} disponibles`, 'error');
-        return false;
+    if (!window.GameDataManager.getPowerupCount(powerupType)) {
+        showNotification('No tienes este power-up', 'error');
+        return;
     }
     
-    // Usar power-up según el tipo
-    let success = false;
     switch (powerupType) {
         case 'eliminate':
-            success = eliminateOptions();
+            eliminateOptions();
             break;
         case 'timeExtender':
-            success = extendTime();
+            extendTime();
             break;
         case 'secondChance':
-            success = activateSecondChance();
+            activateSecondChance();
             break;
         default:
-            console.error('❌ Tipo de power-up desconocido:', powerupType);
-            return false;
+            console.error('Power-up desconocido:', powerupType);
     }
-    
-    if (success) {
-        // Consumir power-up
-        window.GameDataManager.usePowerup(powerupType, 1, 'game');
-        updatePowerups();
-        showNotification(`${powerupType} activado!`, 'success');
-        gameState.hintsUsed++;
-        return true;
-    }
-    
-    return false;
 };
 
 function eliminateOptions() {
-    const answerButtons = document.querySelectorAll('.answer-btn:not(.eliminated):not(.correct):not(.incorrect)');
-    if (answerButtons.length <= 2) return false;
+    if (!gameState.currentQuestion) return;
     
+    const buttons = elements.answersContainer.querySelectorAll('.answer-btn:not(.eliminated)');
     const correctIndex = gameState.currentQuestion.correctIndex;
-    const incorrectButtons = Array.from(answerButtons).filter((btn, index) => index !== correctIndex);
+    
+    // Encontrar opciones incorrectas
+    const incorrectButtons = Array.from(buttons).filter((button, index) => 
+        index !== correctIndex
+    );
     
     // Eliminar 2 opciones incorrectas aleatoriamente
     for (let i = 0; i < 2 && incorrectButtons.length > 0; i++) {
         const randomIndex = Math.floor(Math.random() * incorrectButtons.length);
-        const buttonToEliminate = incorrectButtons.splice(randomIndex, 1)[0];
-        buttonToEliminate.classList.add('eliminated');
-        buttonToEliminate.disabled = true;
+        const button = incorrectButtons[randomIndex];
+        button.classList.add('eliminated');
+        button.disabled = true;
+        incorrectButtons.splice(randomIndex, 1);
     }
     
-    return true;
+    window.GameDataManager.usePowerup('eliminate', 1, 'game_use');
+    gameState.hintsUsed++;
+    updatePowerups();
+    
+    showNotification('2 opciones eliminadas', 'info');
 }
 
 function extendTime() {
-    if (gameState.timerInterval) {
-        gameState.timer += 15;
-        updateTimerDisplay(gameState.timer);
-        return true;
-    }
-    return false;
+    gameState.timer += 15;
+    updateTimerDisplay(gameState.timer);
+    
+    window.GameDataManager.usePowerup('timeExtender', 1, 'game_use');
+    updatePowerups();
+    
+    showNotification('+15 segundos', 'info');
 }
 
 function activateSecondChance() {
     gameState.hasSecondChance = true;
-    return true;
+    
+    window.GameDataManager.usePowerup('secondChance', 1, 'game_use');
+    updatePowerups();
+    
+    showNotification('Segunda oportunidad activada', 'info');
 }
 
 // ============================================
@@ -1208,87 +1381,85 @@ function activateSecondChance() {
 // ============================================
 
 function markAnswers(selectedIndex, correctIndex) {
-    const answerButtons = document.querySelectorAll('.answer-btn');
+    const buttons = elements.answersContainer.querySelectorAll('.answer-btn');
     
-    answerButtons.forEach((button, index) => {
+    buttons.forEach((button, index) => {
         button.disabled = true;
         
         if (index === correctIndex) {
             button.classList.add('correct');
-        } else if (index === selectedIndex && selectedIndex !== correctIndex) {
+        } else if (index === selectedIndex) {
             button.classList.add('incorrect');
         }
     });
 }
 
 function showCoinAnimation(amount, isPositive) {
-    if (amount === 0) return;
-    
-    const coinElement = document.createElement('div');
-    coinElement.style.cssText = `
-        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        font-size: 1.5rem; font-weight: bold; z-index: 2000; pointer-events: none;
-        color: ${isPositive ? '#ffd700' : '#e74c3c'};
-        animation: coinFloat 2s ease-out forwards;
+    const animation = document.createElement('div');
+    animation.className = `coin-animation ${isPositive ? 'positive' : 'negative'}`;
+    animation.innerHTML = `
+        <i class="fas fa-coins"></i>
+        <span>${isPositive ? '+' : '-'}${amount}</span>
     `;
     
-    coinElement.innerHTML = `<i class="fas fa-coins"></i> ${amount > 0 ? '+' : ''}${amount}`;
-    document.body.appendChild(coinElement);
-    
-    // Agregar estilos CSS para la animación
-    if (!document.getElementById('coin-animation-styles')) {
-        const style = document.createElement('style');
-        style.id = 'coin-animation-styles';
-        style.textContent = `
-            @keyframes coinFloat {
-                0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
-                50% { opacity: 1; transform: translate(-50%, -70px) scale(1.2); }
-                100% { opacity: 0; transform: translate(-50%, -100px) scale(1); }
-            }
-        `;
-        document.head.appendChild(style);
-    }
+    document.body.appendChild(animation);
     
     setTimeout(() => {
-        coinElement.remove();
+        if (animation.parentNode) {
+            animation.parentNode.removeChild(animation);
+        }
     }, 2000);
 }
 
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
     notification.innerHTML = `
-        <div style="
-            position: fixed; top: 90px; right: 25px; z-index: 2000;
-            background: rgba(30, 60, 138, 0.95); border-radius: 15px;
-            padding: 15px 20px; color: white; font-weight: 600;
-            transform: translateX(100%); transition: transform 0.3s ease;
-        ">
-            <i class="fas ${type === 'success' ? 'fa-check' : type === 'error' ? 'fa-times' : 'fa-info'}"></i>
-            <span style="margin-left: 10px;">${message}</span>
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 
+                        'fa-info-circle'}"></i>
+            <span>${message}</span>
         </div>
+    `;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 2000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
     `;
     
     document.body.appendChild(notification);
     
     setTimeout(() => {
-        notification.firstElementChild.style.transform = 'translateX(0)';
+        notification.style.transform = 'translateX(0)';
     }, 100);
     
     setTimeout(() => {
-        notification.firstElementChild.style.transform = 'translateX(100%)';
-        setTimeout(() => notification.remove(), 300);
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
     }, 3000);
 }
 
 function updateCoinsDisplay() {
-    if (!window.GameDataManager) return;
-    
-    const coinsElements = document.querySelectorAll('#player-coins');
-    const currentCoins = window.GameDataManager.getCoins();
-    
+    const coinsElements = document.querySelectorAll('#player-coins, .coins-display span');
     coinsElements.forEach(element => {
-        if (element) element.textContent = currentCoins;
+        if (element && window.GameDataManager) {
+            element.textContent = window.GameDataManager.getCoins();
+        }
     });
+}
+
+function updateAllDisplays() {
+    updateCoinsDisplay();
+    updatePowerups();
 }
 
 // ============================================
@@ -1296,29 +1467,20 @@ function updateCoinsDisplay() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🌟 DOM cargado, inicializando...');
-    
-    // Verificar que estamos en la página correcta
-    if (document.getElementById('welcome-screen')) {
-        init();
-    } else {
-        console.warn('⚠️ Esta página no parece ser single-player-new.html');
-    }
+    console.log('📱 DOM cargado, inicializando juego...');
+    init();
 });
 
 // Funciones globales adicionales para debugging
 window.debugGame = function() {
-    console.log('🔧 DEBUG MANUAL DEL JUEGO:');
-    console.log('GameDataManager:', window.GameDataManager ? 'Disponible' : 'No disponible');
-    console.log('GameState:', gameState);
-    console.log('Elements:', Object.keys(elements).length, 'elementos vinculados');
-    console.log('InitialQuestions:', initialQuestions.length);
-    console.log('AllQuestions:', allQuestions.length);
+    console.log('🔍 Estado actual del juego:', gameState);
+    console.log('📚 Preguntas cargadas:', allQuestions.length);
+    console.log('💰 Monedas:', window.GameDataManager ? window.GameDataManager.getCoins() : 'N/A');
 };
 
 window.forceStartGame = function() {
-    console.log('🚀 Forzando inicio de juego para debugging...');
-    startGame();
+    console.log('🔧 Forzando inicio del juego...');
+    window.startGame();
 };
 
-console.log('✅ Single-Player-New.js COMPLETO cargado');
+console.log('✅ Single-Player-New.js CORREGIDO CON NUEVA LÓGICA cargado');

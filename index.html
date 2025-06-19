@@ -677,6 +677,11 @@ user-select: none;
     background: rgba(255, 255, 255, 0.2);
 }
     </style>
+
+<!-- ADSENSE-->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
+        crossorigin="anonymous"></script>
+
 </head>
 <body>
     <!-- Verificar autenticación al cargar -->
@@ -741,32 +746,48 @@ user-select: none;
             </div>
 
             <div class="dropdown-content">
-                <a href="perfil.html" class="dropdown-item" onclick="showProfile()">
-                    <i class="fas fa-user"></i>
-                    <span>Perfil</span>
-                </a>
-                <a href="#" class="dropdown-item" onclick="showSettings()">
-                    <i class="fas fa-cog"></i>
-                    <span>Configuración</span>
-                </a>
-                <a href="#" class="dropdown-item" onclick="showHelp()">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Ayuda</span>
-                </a>
-                <a href="#" class="dropdown-item" onclick="toggleDarkMode()">
-                    <i class="fas fa-moon" id="theme-icon"></i>
-                    <span id="theme-text">Modo Oscuro</span>
-                </a>
-                <a href="#" class="dropdown-item" onclick="installApp()">
-                    <i class="fas fa-download"></i>
-                    <span>Instalar App</span>
-                </a>
-                <a href="login.html" class="dropdown-item">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Cambiar Usuario</span>
-                </a>
-            </div>
-        </div>
+    <a href="perfil.html" class="dropdown-item">
+        <i class="fas fa-user"></i>
+        <span>Mi Perfil</span>
+    </a>
+    <a href="ajustes.html" class="dropdown-item">
+        <i class="fas fa-cog"></i>
+        <span>Configuración</span>
+    </a>
+    <a href="ayuda-soporte.html" class="dropdown-item">
+        <i class="fas fa-question-circle"></i>
+        <span>Ayuda y Soporte</span>
+    </a>
+    <a href="sobre-nosotros.html" class="dropdown-item">
+        <i class="fas fa-info-circle"></i>
+        <span>Sobre Nosotros</span>
+    </a>
+    <a href="contacto.html" class="dropdown-item">
+        <i class="fas fa-envelope"></i>
+        <span>Contacto</span>
+    </a>
+    <a href="politicas-privacidad.html" class="dropdown-item">
+        <i class="fas fa-shield-alt"></i>
+        <span>Privacidad</span>
+    </a>
+    <a href="terminos-servicio.html" class="dropdown-item">
+        <i class="fas fa-file-contract"></i>
+        <span>Términos</span>
+    </a>
+    <a href="#" class="dropdown-item" onclick="toggleDarkMode()">
+        <i class="fas fa-moon" id="theme-icon"></i>
+        <span id="theme-text">Modo Oscuro</span>
+    </a>
+    <a href="#" class="dropdown-item" onclick="installApp()">
+        <i class="fas fa-download"></i>
+        <span>Instalar App</span>
+    </a>
+    <a href="#" class="dropdown-item" onclick="changeUser()">
+        <i class="fas fa-user-cog"></i>
+        <span>Cambiar Usuario</span>
+    </a>
+</div>
+</div>
 
         <!-- Mascota con click para mostrar diálogo -->
         <section class="mascot-section">
@@ -843,7 +864,7 @@ user-select: none;
     <!-- Scripts simplificados -->
     <script src="js/modules/dark-mode.js"></script>
     <script type="module" src="js/app.js"></script>
-
+    <script src="js/modules/ads-manager.js" type="module"></script>
     <script>
 // ============================================
 // FUNCIONES PARA EL MENÚ DROPDOWN - CORREGIDAS
@@ -1026,9 +1047,7 @@ function updateThemeMenuIcon() {
     }
 }
 
-// ============================================
-// EVENT LISTENERS PWA
-// ============================================
+
 
 window.addEventListener('beforeinstallprompt', (e) => {
     console.log('📱 PWA install prompt disponible');
@@ -1145,8 +1164,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Debug información
 console.log('✅ Scripts del index cargados correctamente');
     </script>
-
-    <!-- ✅ DEBUG PARA DESARROLLO -->
+    
     <script>
 // ✅ DEBUG PARA DESARROLLO
 window.debugAuth = function() {
@@ -1209,151 +1227,5 @@ window.forceLogout = async function() {
 console.log('🛠️ Debug funciones disponibles: debugAuth(), resetAuth(), forceLogout()');
     </script>
 
-    <!-- ✅ AGREGAR AL FINAL DE INDEX.HTML
-
-// ============================================
-// SISTEMA DE DETECCIÓN DE ACTUALIZACIONES PWA
-// ============================================
-
-(function() {
-    let swRegistration = null;
-    let isUpdateAvailable = false;
-    
-    // ✅ REGISTRAR SERVICE WORKER CON VERIFICACIÓN AGRESIVA
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', async () => {
-            try {
-                swRegistration = await navigator.serviceWorker.register('/sw.js', {
-                    updateViaCache: 'none' // ✅ NUNCA CACHEAR EL SW
-                });
-                
-                console.log('✅ SW registrado:', swRegistration.scope);
-                
-                // ✅ VERIFICAR ACTUALIZACIONES INMEDIATAMENTE
-                await checkForUpdates();
-                
-                // ✅ VERIFICAR CADA 30 SEGUNDOS (PARA DESARROLLO)
-                setInterval(checkForUpdates, 30000);
-                
-            } catch (error) {
-                console.error('❌ Error registrando SW:', error);
-            }
-        });
-        
-        // ✅ LISTENER PARA MENSAJES DEL SERVICE WORKER
-        navigator.serviceWorker.addEventListener('message', event => {
-            if (event.data && event.data.type === 'SW_UPDATED') {
-                console.log('🔄 Nueva versión disponible:', event.data.version);
-                showUpdateNotification();
-            }
-            
-            if (event.data && event.data.type === 'CHECK_FOR_UPDATES') {
-                checkForUpdates();
-            }
-        });
-    }
-    
-    // ✅ FUNCIÓN PARA VERIFICAR ACTUALIZACIONES
-    async function checkForUpdates() {
-        if (!swRegistration) return;
-        
-        try {
-            console.log('🔍 Verificando actualizaciones...');
-            
-            // ✅ FORZAR VERIFICACIÓN DE ACTUALIZACIONES
-            await swRegistration.update();
-            
-            // ✅ VERIFICAR SI HAY SW EN ESPERA
-            if (swRegistration.waiting) {
-                console.log('🔄 Actualización en espera');
-                showUpdateNotification();
-            }
-            
-        } catch (error) {
-            console.error('❌ Error verificando actualizaciones:', error);
-        }
-    }
-    
-    // ✅ MOSTRAR NOTIFICACIÓN DE ACTUALIZACIÓN
-    function showUpdateNotification() {
-        if (isUpdateAvailable) return; // Evitar spam
-        isUpdateAvailable = true;
-        
-        const notification = document.createElement('div');
-        notification.id = 'update-notification';
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #27ae60;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 10000;
-            font-family: 'Lato', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            animation: slideIn 0.3s ease;
-        `;
-        
-        notification.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-download" style="font-size: 1.2rem;"></i>
-                <div>
-                    <div>¡Nueva versión disponible!</div>
-                    <div style="font-size: 0.8rem; opacity: 0.9;">Toca para actualizar</div>
-                </div>
-            </div>
-        `;
-        
-        // ✅ AGREGAR ESTILOS DE ANIMACIÓN
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        notification.addEventListener('click', () => {
-            applyUpdate();
-            notification.remove();
-        });
-        
-        document.body.appendChild(notification);
-        
-        // ✅ AUTO-ACTUALIZAR DESPUÉS DE 5 SEGUNDOS
-        setTimeout(() => {
-            if (document.getElementById('update-notification')) {
-                applyUpdate();
-                notification.remove();
-            }
-        }, 5000);
-    }
-    
-    // ✅ APLICAR ACTUALIZACIÓN
-    function applyUpdate() {
-        console.log('🔄 Aplicando actualización...');
-        
-        if (swRegistration && swRegistration.waiting) {
-            // ✅ DECIR AL SW QUE TOME CONTROL
-            swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
-            
-            // ✅ RECARGAR PÁGINA CUANDO EL SW TOME CONTROL
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                console.log('✅ SW actualizado, recargando página...');
-                window.location.reload();
-            });
-        } else {
-            // ✅ FALLBACK: RECARGAR DIRECTAMENTE
-            window.location.reload(true);
-        }
-    }
-    
-    console.log('✅ Sistema de actualizaciones PWA inicializado');
-})();
-    </script>
 </body>
 </html>
