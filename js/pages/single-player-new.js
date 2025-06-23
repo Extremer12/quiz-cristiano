@@ -9,11 +9,12 @@
 // CONFIGURACIÓN Y CONSTANTES
 // ============================================
 
+// ✅ CATEGORÍAS CORREGIDAS PARA COINCIDIR CON CSS
 const CATEGORIES = [
-    { id: 'antiguo-testamento', name: 'Antiguo Testamento', icon: 'fa-book', color: '#8E44AD' },
-    { id: 'nuevo-testamento', name: 'Nuevo Testamento', icon: 'fa-cross', color: '#3498DB' },
-    { id: 'personajes-biblicos', name: 'Personajes Bíblicos', icon: 'fa-user', color: '#E67E22' },
-    { id: 'doctrina-cristiana', name: 'Doctrina Cristiana', icon: 'fa-pray', color: '#9B59B6' }
+    { id: 'antiguo-testamento', name: 'Antiguo Testamento', icon: 'fa-book-open', color: '#8B4513' },
+    { id: 'nuevo-testamento', name: 'Nuevo Testamento', icon: 'fa-cross', color: '#4169E1' },
+    { id: 'personajes', name: 'Personajes Bíblicos', icon: 'fa-users', color: '#32CD32' },
+    { id: 'geografia', name: 'Geografía Bíblica', icon: 'fa-map', color: '#FF6347' }
 ];
 
 // ✅ NUEVA CONFIGURACIÓN PARA CATEGORÍAS (3 PREGUNTAS)
@@ -166,13 +167,13 @@ async function loadQuestions() {
         
         const validQuestions = data.filter(item => {
             const isValid = item && 
-                           typeof item.text === 'string' && 
-                           Array.isArray(item.options) && 
-                           item.options.length === 4 &&
-                           typeof item.correctIndex === 'number' &&
-                           item.correctIndex >= 0 && 
-                           item.correctIndex < 4 &&
-                           typeof item.category === 'string';
+                        typeof item.text === 'string' && 
+                        Array.isArray(item.options) && 
+                        item.options.length === 4 &&
+                        typeof item.correctIndex === 'number' &&
+                        item.correctIndex >= 0 && 
+                        item.correctIndex < 4 &&
+                        typeof item.category === 'string';
             
             if (!isValid) {
                 console.warn('❌ Pregunta inválida encontrada:', item);
@@ -234,7 +235,7 @@ function getFallbackQuestions() {
         },
         {
             id: "fallback_pb001",
-            category: "personajes-biblicos",
+            category: "personajes",
             text: "¿Quién fue conocido como 'el padre de la fe'?",
             options: ["Noé", "Abraham", "Isaac", "Jacob"],
             correctIndex: 1,
@@ -242,13 +243,13 @@ function getFallbackQuestions() {
             reference: "Romanos 4:16"
         },
         {
-            id: "fallback_dc001",
-            category: "doctrina-cristiana",
-            text: "¿Cuáles son los dos grandes mandamientos según Jesús?",
-            options: ["Amar a Dios y al prójimo", "No matar y no robar", "Orar y ayunar", "Bautizarse y comulgar"],
-            correctIndex: 0,
+            id: "fallback_gb001",
+            category: "geografia",
+            text: "¿En qué ciudad nació Jesús?",
+            options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
+            correctIndex: 2,
             difficulty: "fácil",
-            reference: "Mateo 22:37-39"
+            reference: "Lucas 2:4"
         }
     ];
 }
@@ -313,27 +314,20 @@ function getRandomInitialQuestions() {
             options: ["Sansón", "David", "Goliat", "Saúl"],
             correctIndex: 0,
             reference: "Jueces 13-16",
-            category: "personajes-biblicos"
-        },
-        {
-            text: "¿Cuáles son los dos grandes mandamientos según Jesús?",
-            options: ["Amar a Dios y al prójimo", "No matar y no robar", "Orar y ayunar", "Bautizarse y comulgar"],
-            correctIndex: 0,
-            reference: "Mateo 22:37-39",
-            category: "doctrina-cristiana"
-        },
-        {
-            text: "¿Cuántos apóstoles eligió Jesús?",
-            options: ["10", "12", "14", "16"],
-            correctIndex: 1,
-            reference: "Mateo 10:1-4",
-            category: "nuevo-testamento"
+            category: "personajes"
         },
         {
             text: "¿En qué ciudad nació Jesús?",
             options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
             correctIndex: 2,
             reference: "Lucas 2:4",
+            category: "geografia"
+        },
+        {
+            text: "¿Cuántos apóstoles eligió Jesús?",
+            options: ["10", "12", "14", "16"],
+            correctIndex: 1,
+            reference: "Mateo 10:1-4",
             category: "nuevo-testamento"
         },
         {
@@ -348,7 +342,14 @@ function getRandomInitialQuestions() {
             options: ["Noé", "Abraham", "Isaac", "Jacob"],
             correctIndex: 1,
             reference: "Romanos 4:16",
-            category: "personajes-biblicos"
+            category: "personajes"
+        },
+        {
+            text: "¿En qué monte recibió Moisés los Diez Mandamientos?",
+            options: ["Monte Sinaí", "Monte Carmelo", "Monte Nebo", "Monte Horeb"],
+            correctIndex: 0,
+            reference: "Éxodo 31:18",
+            category: "geografia"
         }
     ];
     
@@ -786,6 +787,7 @@ function showCategorySelection() {
     updateCategoriesSection();
 }
 
+// ✅ FUNCIÓN UPDATECATEGORIESSECTION CORREGIDA
 function updateCategoriesSection() {
     const categoriesContent = document.querySelector('.categories-content');
     if (!categoriesContent) {
@@ -797,42 +799,67 @@ function updateCategoriesSection() {
         !gameState.completedCategories.includes(cat.id)
     );
     
+    const completedCount = gameState.completedCategories.length;
+    const totalCategories = CATEGORIES.length;
+    const progressPercentage = (completedCount / totalCategories) * 100;
+    
     categoriesContent.innerHTML = `
+        <!-- ✅ HEADER ELEGANTE -->
         <div class="categories-header">
-            <div class="mascot-celebration">
-                <img src="assets/images/joy-festejo.png" alt="Joy celebrando" class="mascot-small">
+            <h2 class="categories-title">Categorías Bíblicas</h2>
+            <p class="categories-subtitle">Elige tu próximo desafío</p>
+        </div>
+        
+        <!-- ✅ PROGRESO GENERAL -->
+        <div class="categories-progress">
+            <div class="progress-info">
+                <div class="progress-left">
+                    <div class="progress-icon">
+                        <i class="fas fa-bible"></i>
+                    </div>
+                    <div class="progress-text">
+                        <h4>Progreso General</h4>
+                        <p>${completedCount} de ${totalCategories} categorías completadas</p>
+                    </div>
+                </div>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-trophy"></i>
+                        <span>${completedCount}</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-star"></i>
+                        <span>${Math.round(progressPercentage)}%</span>
+                    </div>
+                </div>
             </div>
-            <h2>¡Excelente trabajo!</h2>
-            <p class="categories-subtitle">Elige tu próxima categoría</p>
-            <div class="categories-progress">
-                ${gameState.completedCategories.map(catId => {
-                    const cat = CATEGORIES.find(c => c.id === catId);
-                    return `<div class="category-progress-item completed">
-                        <i class="fas ${cat.icon}"></i>
-                    </div>`;
-                }).join('')}
-                ${availableCategories.map(() => 
-                    '<div class="category-progress-item"><i class="fas fa-circle"></i></div>'
-                ).join('')}
+            <div class="global-progress">
+                <div class="global-progress-fill" style="width: ${progressPercentage}%"></div>
             </div>
         </div>
         
+        <!-- ✅ GRID 2x2 CORRECTO -->
         <div class="categories-grid">
-            ${availableCategories.map(category => `
-                <div class="category-card" data-category="${category.id}" onclick="selectCategory('${category.id}')">
-                    <div class="category-icon">
-                        <i class="fas ${category.icon}"></i>
+            ${CATEGORIES.map(category => `
+                <div class="category-card ${gameState.completedCategories.includes(category.id) ? 'completed' : ''} ${availableCategories.includes(category) ? '' : 'locked'}" 
+                     data-category="${category.id}" 
+                     ${availableCategories.includes(category) ? `onclick="selectCategory('${category.id}')"` : ''}>
+                    
+                    <div class="category-top">
+                        <i class="category-icon fas ${category.icon}"></i>
+                        <h3 class="category-name">${category.name}</h3>
+                        <p class="category-description">Explora ${category.name.toLowerCase()}</p>
                     </div>
-                    <div class="category-info">
-                        <h3>${category.name}</h3>
-                        <p class="category-description">Preguntas sobre ${category.name.toLowerCase()}</p>
-                        <div class="category-stats">
-                            <span><i class="fas fa-trophy"></i> +15 monedas</span>
-                        </div>
+                    
+                    <div class="category-bottom">
+                        <span class="category-difficulty">
+                            ${gameState.completedCategories.includes(category.id) ? 'Completada' : 'Normal'}
+                        </span>
+                        <span class="category-questions">3 preguntas</span>
                     </div>
-                    <div class="category-select">
-                        <i class="fas fa-play"></i>
-                    </div>
+                    
+                    ${!availableCategories.includes(category) && !gameState.completedCategories.includes(category.id) ? 
+                        '<div class="category-tooltip">Completa categorías anteriores para desbloquear</div>' : ''}
                 </div>
             `).join('')}
         </div>
@@ -927,7 +954,7 @@ function getFallbackQuestionsByCategory(categoryId) {
                 reference: "Juan 2:11"
             }
         ],
-        'personajes-biblicos': [
+        'personajes': [
             {
                 text: "¿Quién fue el hombre más fuerte de la Biblia?",
                 options: ["Sansón", "David", "Goliat", "Saúl"],
@@ -947,24 +974,24 @@ function getFallbackQuestionsByCategory(categoryId) {
                 reference: "Romanos 4:16"
             }
         ],
-        'doctrina-cristiana': [
+        'geografia': [
             {
-                text: "¿Cuáles son los dos grandes mandamientos según Jesús?",
-                options: ["Amar a Dios y al prójimo", "No matar y no robar", "Orar y ayunar", "Bautizarse y comulgar"],
-                correctIndex: 0,
-                reference: "Mateo 22:37-39"
+                text: "¿En qué ciudad nació Jesús?",
+                options: ["Nazaret", "Jerusalén", "Belén", "Capernaum"],
+                correctIndex: 2,
+                reference: "Lucas 2:4"
             },
             {
-                text: "¿Cuál es el versículo más corto de la Biblia?",
-                options: ["Jesús lloró", "Dios es amor", "Orad sin cesar", "Regocijaos siempre"],
+                text: "¿En qué monte recibió Moisés los Diez Mandamientos?",
+                options: ["Monte Sinaí", "Monte Carmelo", "Monte Nebo", "Monte Horeb"],
                 correctIndex: 0,
-                reference: "Juan 11:35"
+                reference: "Éxodo 31:18"
             },
             {
-                text: "¿Cuántos frutos del Espíritu hay?",
-                options: ["7", "9", "12", "10"],
+                text: "¿Cuál era la ciudad natal de David?",
+                options: ["Jerusalén", "Belén", "Hebrón", "Nazaret"],
                 correctIndex: 1,
-                reference: "Gálatas 5:22-23"
+                reference: "1 Samuel 17:12"
             }
         ]
     };
@@ -1060,31 +1087,24 @@ function evaluateCategoryPhase() {
         setTimeout(() => {
             completeCategory();
         }, 1000);
-    } else if (correctas === 2 && incorrectas === 1) {
-        // 2 correctas + 1 incorrecta = Pregunta de repechaje
-        console.log('🆘 2 correctas, 1 incorrecta - Activando pregunta de repechaje');
-        gameState.needsRepechageQuestion = true;
+    } else if (correctas === 2) {
+        // 2 correctas = Repechaje
+        console.log('🆘 2 correctas - Activando repechaje');
         setTimeout(() => {
-            loadRepechageQuestion();
-        }, 1000);
-    } else if (correctas === 1) {
-        // Solo 1 correcta = Pierde categoría
-        console.log('💀 Solo 1 respuesta correcta - Categoría perdida');
-        setTimeout(() => {
-            showGameOver('Necesitas al menos 2 respuestas correctas para continuar');
+            startRepechageQuestion();
         }, 1000);
     } else {
-        // 0 correctas = Pierde categoría y juego
-        console.log('💀 0 respuestas correctas - Juego perdido');
+        // Menos de 2 correctas = Game Over
+        console.log('💀 Muy pocas respuestas correctas - Game Over');
         setTimeout(() => {
-            showGameOver('No lograste responder correctamente ninguna pregunta');
+            showGameOver('Necesitas al menos 2 respuestas correctas en la categoría');
         }, 1000);
     }
 }
 
-// ✅ FUNCIÓN LOAD REPECHAGE QUESTION CORREGIDA
-function loadRepechageQuestion() {
-    console.log('🆘 Cargando pregunta de repechaje...');
+// ✅ FUNCIÓN START REPECHAGE QUESTION CORREGIDA
+function startRepechageQuestion() {
+    console.log('🆘 Iniciando pregunta de repechaje...');
     
     gameState.phase = 'repechage';  // ✅ CAMBIAR FASE A REPECHAJE
     gameState.isProcessingAnswer = false;

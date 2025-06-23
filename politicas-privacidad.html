@@ -9,110 +9,29 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
     
-    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <!-- ✅ NUEVO CSS ESPECÍFICO PARA CONTENIDO -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/content-pages.css">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <style>
-        body {
-            font-family: 'Lato', sans-serif;
-            background: var(--bg-primary);
-            background-image: var(--bg-image);
-            color: var(--text-primary);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-family: 'Cinzel', serif;
-            color: var(--text-accent);
-            margin: 0 0 10px 0;
-            font-size: 2rem;
-        }
-        
-        .content {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .content h2 {
-            color: var(--text-accent);
-            border-bottom: 2px solid var(--text-accent);
-            padding-bottom: 10px;
-            margin-top: 30px;
-        }
-        
-        .content h3 {
-            color: var(--text-black);
-            margin-top: 25px;
-        }
-        
-        .content p, .content li {
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-        }
-        
-        .content ul {
-            padding-left: 25px;
-        }
-        
-        .back-btn {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: var(--surface-accent);
-            transform: translateY(-2px);
-        }
-        
-        .highlight {
-            background: rgba(255, 215, 0, 0.2);
-            padding: 3px 6px;
-            border-radius: 4px;
-            color: var(--text-accent);
-        }
-        
-        .contact-info {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-secondary);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-    </style>
+    <!-- ✅ SCRIPT DE MODO OSCURO -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+        })();
+    </script>
 </head>
-<body class="text-page">
+<body>
     <div class="container">
         <div class="header">
             <h1>Política de Privacidad</h1>
@@ -148,8 +67,8 @@
                 <li><strong>Proveer el servicio:</strong> Mantener tu progreso y configuraciones</li>
                 <li><strong>Mejorar la experiencia:</strong> Personalizar contenido y funcionalidades</li>
                 <li><strong>Comunicación:</strong> Enviarte actualizaciones importantes (si nos das permiso)</li>
-                <li><strong>Análisis:</strong> Entender el uso de la app para mejoras</li>
-                <li><strong>Seguridad:</strong> Proteger contra fraude y uso indebido</li>
+                <li><strong>Análisis:</strong> Comprender cómo se usa la aplicación para mejoras</li>
+                <li><strong>Seguridad:</strong> Prevenir fraudes y actividades maliciosas</li>
             </ul>
 
             <h2>3. Almacenamiento de Datos</h2>
@@ -157,17 +76,19 @@
             <h3>3.1 Almacenamiento Local</h3>
             <p>La mayoría de tus datos se almacenan localmente en tu dispositivo usando:</p>
             <ul>
-                <li><strong>LocalStorage:</strong> Para configuraciones y progreso del juego</li>
-                <li><strong>SessionStorage:</strong> Para datos temporales de sesión</li>
-                <li><strong>Cache del navegador:</strong> Para mejorar rendimiento</li>
+                <li><strong>localStorage:</strong> Para configuraciones y progreso de juego</li>
+                <li><strong>Cache del navegador:</strong> Para mejorar el rendimiento</li>
+                <li><strong>IndexedDB:</strong> Para datos más complejos del juego</li>
+                <li><strong>Service Workers:</strong> Para funcionalidad offline</li>
             </ul>
 
             <h3>3.2 Almacenamiento en la Nube (Firebase)</h3>
             <p>Si eliges registrarte, algunos datos se sincronizan con Firebase (Google) para:</p>
             <ul>
                 <li>Sincronizar progreso entre dispositivos</li>
-                <li>Backup de seguridad de tu progreso</li>
-                <li>Funciones multijugador (cuando esté disponible)</li>
+                <li>Respaldo automático de datos importantes</li>
+                <li>Funciones sociales como rankings</li>
+                <li>Recuperación de cuenta en caso de pérdida</li>
             </ul>
 
             <h2>4. Compartir Información</h2>
@@ -176,17 +97,19 @@
             
             <h3>4.1 Proveedores de Servicios</h3>
             <ul>
-                <li><strong>Google Firebase:</strong> Para almacenamiento y autenticación</li>
-                <li><strong>Google Analytics:</strong> Para análisis de uso (datos anonimizados)</li>
+                <li><strong>Google Firebase:</strong> Para autenticación y almacenamiento en la nube</li>
+                <li><strong>Google Analytics:</strong> Para análisis de uso de la aplicación</li>
                 <li><strong>Google AdSense:</strong> Para mostrar anuncios relevantes</li>
+                <li><strong>Mercado Pago:</strong> Para procesar pagos (solo información necesaria)</li>
             </ul>
 
             <h3>4.2 Cumplimiento Legal</h3>
             <p>Podemos divulgar información si es requerido por ley o para:</p>
             <ul>
-                <li>Cumplir con procesos legales</li>
-                <li>Proteger nuestros derechos y seguridad</li>
-                <li>Investigar fraude o actividades ilegales</li>
+                <li>Cumplir con procesos legales válidos</li>
+                <li>Proteger nuestros derechos y propiedad</li>
+                <li>Garantizar la seguridad de usuarios</li>
+                <li>Investigar fraudes o actividades ilegales</li>
             </ul>
 
             <h2>5. Cookies y Tecnologías Similares</h2>
@@ -195,23 +118,23 @@
             
             <h3>5.1 Cookies Esenciales</h3>
             <ul>
-                <li>Mantener tu sesión activa</li>
-                <li>Recordar configuraciones</li>
-                <li>Funcionalidad básica de la app</li>
+                <li><strong>Preferencias de usuario:</strong> Tema, configuraciones de audio</li>
+                <li><strong>Sesión de juego:</strong> Mantener tu progreso durante la sesión</li>
+                <li><strong>Funcionalidad:</strong> Recordar tus elecciones de configuración</li>
             </ul>
 
             <h3>5.2 Cookies de Análisis</h3>
             <ul>
-                <li>Google Analytics para entender el uso</li>
-                <li>Métricas de rendimiento</li>
-                <li>Datos anonimizados de comportamiento</li>
+                <li><strong>Google Analytics:</strong> Para entender el uso de la aplicación</li>
+                <li><strong>Métricas de rendimiento:</strong> Velocidad de carga, errores</li>
+                <li><strong>Datos agregados:</strong> Estadísticas generales sin identificación personal</li>
             </ul>
 
             <h3>5.3 Cookies de Publicidad</h3>
             <ul>
-                <li>Google AdSense para anuncios relevantes</li>
-                <li>Personalización de contenido publicitario</li>
-                <li>Medición de efectividad de anuncios</li>
+                <li><strong>Google AdSense:</strong> Para mostrar anuncios relevantes</li>
+                <li><strong>Preferencias de anuncios:</strong> Puedes controlarlas en tu cuenta de Google</li>
+                <li><strong>Límites de frecuencia:</strong> Para no mostrar el mismo anuncio repetidamente</li>
             </ul>
 
             <h2>6. Tus Derechos y Controles</h2>
@@ -219,91 +142,97 @@
             <h3>6.1 Acceso y Control</h3>
             <p>Tienes derecho a:</p>
             <ul>
-                <li><strong>Acceder:</strong> Ver qué información tenemos sobre ti</li>
-                <li><strong>Corregir:</strong> Actualizar información inexacta</li>
-                <li><strong>Eliminar:</strong> Solicitar la eliminación de tus datos</li>
-                <li><strong>Exportar:</strong> Obtener una copia de tus datos</li>
-                <li><strong>Restringir:</strong> Limitar el procesamiento de tus datos</li>
+                <li><strong>Acceder:</strong> Ver toda la información que tenemos sobre ti</li>
+                <li><strong>Corregir:</strong> Actualizar información incorrecta o incompleta</li>
+                <li><strong>Eliminar:</strong> Solicitar la eliminación de tus datos personales</li>
+                <li><strong>Portabilidad:</strong> Obtener una copia de tus datos en formato estándar</li>
+                <li><strong>Restricción:</strong> Limitar el procesamiento de ciertos datos</li>
+                <li><strong>Oposición:</strong> Oponerte al procesamiento de ciertos datos</li>
             </ul>
 
             <h3>6.2 Cómo Ejercer tus Derechos</h3>
             <div class="contact-info">
-                <p><strong>Para ejercer cualquier derecho, contáctanos:</strong></p>
-                <p>📧 Email: <span class="highlight">privacidad@quizcristiano.com</span></p>
-                <p>📱 A través de la sección "Contacto" en la app</p>
-                <p>⏰ Responderemos en un máximo de 30 días</p>
+                <p><strong>Email:</strong> <a href="mailto:privacidad@quizcristiano.com">privacidad@quizcristiano.com</a></p>
+                <p><strong>Formulario:</strong> <a href="contacto.html">Página de contacto</a></p>
+                <p><strong>Tiempo de respuesta:</strong> Máximo 30 días</p>
             </div>
 
             <h2>7. Seguridad de Datos</h2>
             
             <p>Implementamos medidas de seguridad para proteger tu información:</p>
             <ul>
-                <li><strong>Encriptación:</strong> HTTPS en todas las comunicaciones</li>
-                <li><strong>Autenticación:</strong> Sistemas seguros de login</li>
-                <li><strong>Acceso limitado:</strong> Solo personal autorizado</li>
-                <li><strong>Monitoreo:</strong> Detección de actividades sospechosas</li>
-                <li><strong>Actualizaciones:</strong> Parches de seguridad regulares</li>
+                <li><strong>Encriptación:</strong> Todos los datos se transmiten con HTTPS</li>
+                <li><strong>Firebase Security:</strong> Utilizamos las medidas de seguridad de Google</li>
+                <li><strong>Acceso limitado:</strong> Solo personal autorizado puede acceder a datos</li>
+                <li><strong>Monitoreo:</strong> Supervisión continua de actividades sospechosas</li>
+                <li><strong>Auditorías:</strong> Revisiones regulares de nuestros sistemas de seguridad</li>
             </ul>
 
             <h2>8. Privacidad de Menores</h2>
             
             <p>Quiz Cristiano es <span class="highlight">apto para todas las edades</span>, incluyendo niños:</p>
             <ul>
-                <li>No recopilamos intencionalmente información de menores de 13 años sin consentimiento parental</li>
-                <li>Los padres pueden solicitar la eliminación de datos de sus hijos</li>
-                <li>Todo el contenido es apropiado y educativo</li>
-                <li>No hay chat libre o comunicación entre usuarios</li>
+                <li><strong>Sin recopilación dirigida:</strong> No recopilamos intencionalmente datos de menores de 13 años</li>
+                <li><strong>Supervisión parental:</strong> Recomendamos supervisión para menores</li>
+                <li><strong>Contenido apropiado:</strong> Todo el contenido es familiar y educativo</li>
+                <li><strong>Sin comunicación:</strong> No hay chat ni comunicación entre usuarios</li>
+                <li><strong>Eliminación inmediata:</strong> Si detectamos datos de menores, los eliminamos</li>
             </ul>
 
             <h2>9. Transferencias Internacionales</h2>
             
             <p>Algunos de nuestros proveedores de servicios pueden estar ubicados fuera de tu país:</p>
             <ul>
-                <li><strong>Google (Firebase):</strong> Cumple con estándares internacionales de protección</li>
-                <li><strong>Medidas de protección:</strong> Contratos de transferencia segura</li>
-                <li><strong>Cumplimiento:</strong> GDPR, CCPA y regulaciones locales</li>
+                <li><strong>Google/Firebase:</strong> Puede procesar datos en múltiples países</li>
+                <li><strong>Protecciones adecuadas:</strong> Solo trabajamos con proveedores que garantizan protección</li>
+                <li><strong>Marcos legales:</strong> Cumplimos con marcos como Privacy Shield cuando aplique</li>
+                <li><strong>Derechos mantenidos:</strong> Tus derechos de privacidad se mantienen independientemente de la ubicación</li>
             </ul>
 
             <h2>10. Retención de Datos</h2>
             
             <p>Conservamos tus datos por el tiempo necesario para:</p>
             <ul>
-                <li><strong>Cuenta activa:</strong> Mientras uses la aplicación</li>
-                <li><strong>Cuenta inactiva:</strong> Hasta 3 años sin actividad</li>
-                <li><strong>Datos de análisis:</strong> Máximo 26 meses (anonimizados)</li>
-                <li><strong>Requisitos legales:</strong> Según exija la ley aplicable</li>
+                <li><strong>Proporcionar el servicio:</strong> Mientras uses activamente la aplicación</li>
+                <li><strong>Cumplir obligaciones legales:</strong> Según lo requiera la ley</li>
+                <li><strong>Resolver disputas:</strong> Hasta que se resuelvan conflictos pendientes</li>
+                <li><strong>Mejorar servicios:</strong> En forma agregada y anonimizada</li>
             </ul>
+
+            <div class="info-box">
+                <h4>Política de Eliminación Automática</h4>
+                <ul>
+                    <li><strong>Cuentas inactivas:</strong> Eliminamos cuentas sin uso por más de 2 años</li>
+                    <li><strong>Datos temporales:</strong> Logs y datos temporales se eliminan automáticamente</li>
+                    <li><strong>Notificación previa:</strong> Te avisaremos antes de eliminar tu cuenta por inactividad</li>
+                </ul>
+            </div>
 
             <h2>11. Cambios a esta Política</h2>
             
             <p>Podemos actualizar esta política ocasionalmente:</p>
             <ul>
-                <li>Te notificaremos sobre cambios importantes</li>
-                <li>La fecha de "última actualización" se modificará</li>
-                <li>Continuar usando la app implica aceptar los cambios</li>
-                <li>Siempre puedes revisar la versión más reciente aquí</li>
+                <li><strong>Notificación:</strong> Te avisaremos de cambios importantes</li>
+                <li><strong>Efectividad:</strong> Los cambios entran en vigor 30 días después de la notificación</li>
+                <li><strong>Historial:</strong> Mantenemos un registro de versiones anteriores</li>
+                <li><strong>Continuidad:</strong> Si continúas usando la app, aceptas los cambios</li>
             </ul>
 
             <h2>12. Información de Contacto</h2>
             
+            <p>Para cualquier pregunta sobre esta política de privacidad:</p>
+            
             <div class="contact-info">
-                <p><strong>Para preguntas sobre esta política de privacidad:</strong></p>
-                <p>📧 <strong>Email:</strong> privacidad@quizcristiano.com</p>
-                <p>📧 <strong>Email alternativo:</strong> contacto@quizcristiano.com</p>
-                <p>🌐 <strong>Sitio web:</strong> www.quizcristiano.com</p>
-                <p>📱 <strong>A través de la app:</strong> Sección "Contacto" en el menú principal</p>
-                <p>⏰ <strong>Tiempo de respuesta:</strong> Máximo 30 días hábiles</p>
+                <p><strong>Email Principal:</strong> <a href="mailto:privacidad@quizcristiano.com">privacidad@quizcristiano.com</a></p>
+                <p><strong>Email General:</strong> <a href="mailto:hola@quizcristiano.com">hola@quizcristiano.com</a></p>
+                <p><strong>Formulario Web:</strong> <a href="contacto.html">Página de contacto</a></p>
+                <p><strong>Tiempo de respuesta:</strong> 24-48 horas para consultas generales, hasta 30 días para solicitudes formales</p>
             </div>
 
-            <h2>13. Jurisdicción y Ley Aplicable</h2>
-            
-            <p>Esta política de privacidad se rige por:</p>
-            <ul>
-                <li>Las leyes de protección de datos de tu país de residencia</li>
-                <li>Reglamento General de Protección de Datos (GDPR) para usuarios de la UE</li>
-                <li>Ley de Privacidad del Consumidor de California (CCPA) para usuarios de California</li>
-                <li>Estándares internacionales de privacidad</li>
-            </ul>
+            <div class="warning-box">
+                <h4>Importante</h4>
+                <p>Esta política de privacidad es efectiva a partir del 19 de junio de 2025. Si tienes preguntas sobre versiones anteriores o necesitas información específica sobre el tratamiento de tus datos, no dudes en contactarnos.</p>
+            </div>
         </div>
 
         <div style="text-align: center; margin: 30px 0;">

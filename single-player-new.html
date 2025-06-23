@@ -54,10 +54,10 @@
 
         <!-- Área Principal del Juego -->
         <main class="game-main">
-            <!-- Pantalla de Bienvenida -->
+            <!-- Pantalla de Bienvenida SIMPLIFICADA -->
             <div class="game-screen active" id="welcome-screen">
                 <div class="welcome-content">
-                    <!-- Mascota -->
+                    <!-- Mascota más pequeña -->
                     <div class="mascot-container">
                         <img src="assets/images/mascota.png" alt="Joy" class="mascot-image" onclick="toggleSpeech()">
                         <div class="speech-bubble" id="speech-bubble">
@@ -65,60 +65,37 @@
                         </div>
                     </div>
                     
+                    <!-- Título principal -->
+                    <div class="welcome-header">
+                        <h1 class="welcome-title">Quiz Cristiano</h1>
+                        <p class="welcome-subtitle">Pon a prueba tu conocimiento bíblico</p>
+                    </div>
+                    
+                    <!-- Información básica -->
                     <div class="welcome-info">
-                        <div class="game-rules">
-                            <h2>¿Cómo Jugar?</h2>
-                            <div class="rules-grid">
-                                <div class="rule-item">
-                                    <i class="fas fa-play-circle"></i>
-                                    <p><strong>Fase Inicial:</strong> Responde 3 preguntas para clasificar</p>
-                                </div>
-                                <div class="rule-item">
-                                    <i class="fas fa-th"></i>
-                                    <p><strong>Categorías:</strong> Elige y completa 4 categorías bíblicas</p>
-                                </div>
-                                <div class="rule-item">
-                                    <i class="fas fa-life-ring"></i>
-                                    <p><strong>Rescate:</strong> Segunda oportunidad si fallas en una categoría</p>
-                                </div>
-                                <div class="rule-item">
-                                    <i class="fas fa-trophy"></i>
-                                    <p><strong>Victoria:</strong> Completa las 4 categorías para ganar</p>
-                                </div>
-                            </div>
+                        <div class="info-card">
+                            <i class="fas fa-bible"></i>
+                            <h3>6 Categorías Bíblicas</h3>
+                            <p>Explora diferentes temas de las Escrituras</p>
                         </div>
-                        
-                        <div class="welcome-powerups">
-                            <h3>Power-ups Disponibles</h3>
-                            <div class="powerups-overview">
-                                <div class="powerup-overview-item">
-                                    <i class="fas fa-eraser"></i>
-                                    <span>Eliminador</span>
-                                </div>
-                                <div class="powerup-overview-item">
-                                    <i class="fas fa-clock"></i>
-                                    <span>Tiempo Extra</span>
-                                </div>
-                                <div class="powerup-overview-item">
-                                    <i class="fas fa-heart"></i>
-                                    <span>Segunda Oportunidad</span>
-                                </div>
-                            </div>
-                            <div class="powerups-note">
-                                <small>💡 Compra power-ups en la tienda para mejorar tu rendimiento</small>
-                            </div>
+                        <div class="info-card">
+                            <i class="fas fa-magic"></i>
+                            <h3>Power-ups Especiales</h3>
+                            <p>Usa herramientas para ayudarte en el juego</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-trophy"></i>
+                            <h3>Sistema de Progreso</h3>
+                            <p>Avanza y desbloquea nuevos desafíos</p>
                         </div>
                     </div>
                     
-                    <div class="welcome-buttons">
+                    <!-- Botón principal centrado -->
+                    <div class="welcome-actions">
                         <button class="start-game-btn" onclick="startGame()">
                             <i class="fas fa-play"></i>
-                            <span>Comenzar Juego</span>
+                            <span>Comenzar Aventura</span>
                         </button>
-                        <a href="index.html" class="back-to-home-btn">
-                            <i class="fas fa-home"></i>
-                            <span>Volver al Inicio</span>
-                        </a>
                     </div>
                 </div>
             </div>

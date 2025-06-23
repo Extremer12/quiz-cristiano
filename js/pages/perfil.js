@@ -15,23 +15,142 @@ let profileData = {
     username: '',
     displayName: '',
     favoriteVerse: '',
-    currentAvatar: 'assets/images/mascota.png',
+    currentAvatar: 'assets/images/fotos-perfil/niña.jpg', // ✅ NUEVA IMAGEN POR DEFECTO
     isValidatingUsername: false,
     hasUnsavedChanges: false,
     lastUpdated: null
 };
 
-// ✅ AVATARES DISPONIBLES (CON JOY-TROFEO)
+// ✅ CONFIGURACIÓN CORREGIDA DE AVATARES CON LAS IMÁGENES QUE TIENES
 const AVAILABLE_AVATARS = [
-    { id: 'mascota', src: 'assets/images/mascota.png', name: 'Joy Original', unlocked: true },
-    { id: 'joy-trofeo', src: 'assets/images/joy-trofeo.png', name: 'Joy Trofeo', unlocked: true },
-    { id: 'joy-corona', src: 'assets/images/joy-corona.png', name: 'Joy Corona', unlocked: false, requiredPurchase: 'joy_corona' },
-    { id: 'joy-festejo', src: 'assets/images/joy-festejo.png', name: 'Joy Festejo', unlocked: true },
-    { id: 'joy-consolando', src: 'assets/images/joy-consolando.png', name: 'Joy Consolando', unlocked: true },
-    { id: 'joy-explicando', src: 'assets/images/joy-explicando.png', name: 'Joy Explicando', unlocked: true }
+    // ✅ AVATARES GRATUITOS
+    { 
+        id: 'nina', 
+        src: 'assets/images/fotos-perfil/niña.jpg', 
+        name: 'Niña', 
+        unlocked: true,
+        category: 'free',
+        type: 'profile_photo'
+    },
+    { 
+        id: 'nino', 
+        src: 'assets/images/fotos-perfil/niño.jpg', 
+        name: 'Niño', 
+        unlocked: true,
+        category: 'free',
+        type: 'profile_photo'
+    },
+    { 
+        id: 'oveja', 
+        src: 'assets/images/fotos-perfil/oveja.jpg', 
+        name: 'Oveja', 
+        unlocked: true,
+        category: 'free',
+        type: 'profile_photo'
+    },
+    { 
+        id: 'paloma', 
+        src: 'assets/images/fotos-perfil/paloma.jpg', 
+        name: 'Paloma', 
+        unlocked: true,
+        category: 'free',
+        type: 'profile_photo'
+    },
+    
+    // ✅ AVATARES PREMIUM - CON LAS IMÁGENES QUE TIENES
+    { 
+        id: 'joy-guerrero', 
+        src: 'assets/images/fotos-perfil-premium/joy-guerrero.jpg', 
+        name: 'Joy Guerrero', 
+        unlocked: false,
+        category: 'premium',
+        type: 'profile_photo',
+        price: 0.80,
+        requiredPurchase: 'avatar_joy_guerrero'
+    },
+    { 
+        id: 'premium-1', 
+        src: 'assets/images/fotos-perfil-premium/premium-1.jpg', 
+        name: 'Avatar Premium 1', 
+        unlocked: false,
+        category: 'premium',
+        type: 'profile_photo',
+        price: 5.00,
+        requiredPurchase: 'premium_avatars_pack'
+    },
+    { 
+        id: 'premium-2', 
+        src: 'assets/images/fotos-perfil-premium/premium-2.jpg', 
+        name: 'Avatar Premium 2', 
+        unlocked: false,
+        category: 'premium',
+        type: 'profile_photo',
+        price: 5.00,
+        requiredPurchase: 'premium_avatars_pack'
+    },
+    { 
+        id: 'premium-3', 
+        src: 'assets/images/fotos-perfil-premium/premium-3.jpg', 
+        name: 'Avatar Premium 3', 
+        unlocked: false,
+        category: 'premium',
+        type: 'profile_photo',
+        price: 5.00,
+        requiredPurchase: 'premium_avatars_pack'
+    },
+    
+    // ✅ AVATARES DE JOY GRATUITOS
+    { 
+        id: 'joy-original', 
+        src: 'assets/images/mascota.png', 
+        name: 'Joy Original', 
+        unlocked: true,
+        category: 'free',
+        type: 'mascot'
+    },
+    { 
+        id: 'joy-trofeo', 
+        src: 'assets/images/joy-trofeo.png', 
+        name: 'Joy Trofeo', 
+        unlocked: true,
+        category: 'free',
+        type: 'mascot'
+    },
+    { 
+        id: 'joy-festejo', 
+        src: 'assets/images/joy-festejo.png', 
+        name: 'Joy Festejo', 
+        unlocked: true,
+        category: 'free',
+        type: 'mascot'
+    },
+    { 
+        id: 'joy-consolando', 
+        src: 'assets/images/joy-consolando.png', 
+        name: 'Joy Consolando', 
+        unlocked: true,
+        category: 'free',
+        type: 'mascot'
+    }
 ];
 
-// ✅ NIVELES DE USUARIO
+// ✅ CONFIGURACIÓN DE AVATARES PREMIUM PARA LA TIENDA
+const PREMIUM_AVATARS_CONFIG = {
+    individual: {
+        price: 0.80, // Precio individual en USD
+        currency: 'USD'
+    },
+    bundle: {
+        id: 'premium_avatars_pack',
+        name: 'Pack de Avatares Premium',
+        description: 'Todos los avatares premium actuales y futuros',
+        price: 5.00, // Precio del pack en USD
+        currency: 'USD',
+        savings: 'Ahorra más del 50%'
+    }
+};
+
+// ✅ NIVELES DE USUARIO (sin cambios)
 const USER_LEVELS = [
     { level: 1, name: 'Principiante', minExp: 0, maxExp: 100, color: '#95a5a6', icon: 'fa-seedling' },
     { level: 2, name: 'Estudiante', minExp: 100, maxExp: 300, color: '#3498db', icon: 'fa-book' },
@@ -51,28 +170,27 @@ const USER_LEVELS = [
 
 async function init() {
     try {
-        console.log('👤 Inicializando perfil...');
+        console.log('👤 Inicializando sistema de perfiles...');
         
         // Esperar a que GameDataManager esté disponible
         await waitForGameDataManager();
         
-        // Configurar listeners de GameDataManager
+        // Configurar listeners
         setupGameDataListeners();
         
-        // Cargar datos del perfil
+        // Cargar datos
         loadProfileData();
+        fillFormWithData();
         
-        // Configurar listeners del formulario
+        // Configurar formularios
         setupFormListeners();
-        
-        // Configurar validación en tiempo real
         setupRealTimeValidation();
         
-        // Actualizar todas las pantallas
+        // Actualizar displays
         updateAllDisplays();
         
         profileData.isInitialized = true;
-        console.log('✅ Perfil inicializado correctamente');
+        console.log('✅ Sistema de perfiles inicializado correctamente');
         
     } catch (error) {
         console.error('❌ Error inicializando perfil:', error);
@@ -84,6 +202,7 @@ async function waitForGameDataManager() {
         if (window.GameDataManager) {
             resolve();
         } else {
+            console.log('⏳ Esperando GameDataManager...');
             const checkInterval = setInterval(() => {
                 if (window.GameDataManager) {
                     clearInterval(checkInterval);
@@ -103,128 +222,301 @@ function setupGameDataListeners() {
     
     window.GameDataManager.onDataChanged((data) => {
         updateStatsDisplay();
-        updateLevelDisplay();
     });
 }
 
 // ============================================
-// GESTIÓN DE DATOS DEL PERFIL
+// GESTIÓN DE AVATARES PREMIUM - COMPLETAMENTE ACTUALIZADA
+// ============================================
+
+window.openAvatarSelector = function() {
+    console.log('🖼️ Abriendo selector de avatares...');
+    
+    const modal = document.getElementById('avatar-modal');
+    const avatarsGrid = document.getElementById('avatars-grid');
+    
+    if (!modal || !avatarsGrid) {
+        console.error('❌ Modal o grid de avatares no encontrado');
+        return;
+    }
+    
+    // ✅ VERIFICAR AVATARES DESBLOQUEADOS
+    const unlockedAvatars = getUnlockedAvatars();
+    console.log('🔓 Avatares desbloqueados:', unlockedAvatars);
+    
+    // ✅ ESTRUCTURA COMPLETA DEL MODAL CON TODAS LAS CATEGORÍAS
+    avatarsGrid.innerHTML = `
+        <div class="avatars-categories">
+            <!-- Avatares Gratuitos -->
+            <div class="avatar-category">
+                <h4><i class="fas fa-user-friends"></i> Avatares Gratuitos</h4>
+                <div class="avatars-grid-section">
+                    ${renderAvatarsByCategory('free', unlockedAvatars, 'profile_photo')}
+                </div>
+            </div>
+            
+            <!-- Joy Collection -->
+            <div class="avatar-category">
+                <h4><i class="fas fa-heart"></i> Joy Collection</h4>
+                <div class="avatars-grid-section">
+                    ${renderAvatarsByCategory('free', unlockedAvatars, 'mascot')}
+                </div>
+            </div>
+            
+            <!-- ✅ AVATARES PREMIUM - ESTA SECCIÓN DEBE APARECER -->
+            <div class="avatar-category">
+                <h4><i class="fas fa-crown"></i> Avatares Premium</h4>
+                <div class="avatars-grid-section">
+                    ${renderAvatarsByCategory('premium', unlockedAvatars, 'profile_photo')}
+                </div>
+                ${renderPremiumInfo()}
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'flex';
+    console.log('✅ Modal de avatares abierto con todas las categorías');
+};
+
+// 🔧 FUNCIÓN COMPLETAMENTE ACTUALIZADA PARA VERIFICAR AVATARES DESBLOQUEADOS
+function getUnlockedAvatars() {
+    console.log('🔍 Verificando avatares desbloqueados...');
+    
+    // ✅ OBTENER COMPRAS PREMIUM DE MERCADO PAGO/PAYPAL
+    const premiumPurchases = JSON.parse(localStorage.getItem('premium-purchases') || '[]');
+    console.log('💰 Compras premium encontradas:', premiumPurchases);
+    
+    // ✅ VERIFICAR CADA AVATAR
+    const unlockedAvatars = [];
+    
+    AVAILABLE_AVATARS.forEach(avatar => {
+        let isUnlocked = false;
+        
+        if (avatar.category === 'free') {
+            // ✅ AVATARES GRATUITOS SIEMPRE DESBLOQUEADOS
+            isUnlocked = true;
+        } else if (avatar.category === 'premium') {
+            // ✅ VERIFICAR SI SE COMPRÓ EL AVATAR INDIVIDUAL O EL PACK
+            if (avatar.requiredPurchase) {
+                isUnlocked = premiumPurchases.includes(avatar.requiredPurchase) || 
+                           premiumPurchases.includes('premium_avatars_pack');
+            }
+        }
+        
+        if (isUnlocked) {
+            unlockedAvatars.push(avatar.id);
+        }
+        
+        console.log(`🖼️ Avatar ${avatar.name}: ${isUnlocked ? '✅ Desbloqueado' : '🔒 Bloqueado'}`);
+    });
+    
+    console.log('📋 Avatares desbloqueados totales:', unlockedAvatars);
+    return unlockedAvatars;
+}
+
+// 🔧 FUNCIÓN COMPLETAMENTE ACTUALIZADA PARA RENDERIZAR AVATARES POR CATEGORÍA
+function renderAvatarsByCategory(category, unlockedAvatars, type = 'profile_photo') {
+    console.log(`🎨 Renderizando avatares de categoría: ${category}, tipo: ${type}`);
+    console.log(`🔓 Avatares desbloqueados: ${unlockedAvatars}`);
+    
+    const categoryAvatars = AVAILABLE_AVATARS.filter(avatar => 
+        avatar.category === category && avatar.type === type
+    );
+    
+    console.log(`📋 Avatares encontrados en ${category}:`, categoryAvatars.map(a => a.name));
+    
+    if (categoryAvatars.length === 0) {
+        return '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">No hay avatares en esta categoría</p>';
+    }
+    
+    return categoryAvatars.map(avatar => {
+        const isUnlocked = unlockedAvatars.includes(avatar.id);
+        const isSelected = profileData.currentAvatar === avatar.src;
+        
+        console.log(`🖼️ Renderizando ${avatar.name}: desbloqueado=${isUnlocked}, seleccionado=${isSelected}`);
+        
+        return `
+            <div class="avatar-option ${isSelected ? 'selected' : ''} ${!isUnlocked ? 'locked' : ''}" 
+                 onclick="selectAvatar('${avatar.id}', ${isUnlocked})"
+                 data-avatar-id="${avatar.id}">
+                <div class="avatar-preview-container">
+                    <img src="${avatar.src}" alt="${avatar.name}" class="avatar-preview" 
+                         onerror="this.src='assets/images/mascota.png'">
+                    ${!isUnlocked ? '<div class="avatar-lock"><i class="fas fa-lock"></i></div>' : ''}
+                    ${isSelected ? '<div class="avatar-selected"><i class="fas fa-check"></i></div>' : ''}
+                </div>
+                <div class="avatar-name">${avatar.name}</div>
+                ${!isUnlocked && avatar.price ? `<div class="avatar-price">$${avatar.price}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// ✅ FUNCIÓN PARA RENDERIZAR INFORMACIÓN PREMIUM
+function renderPremiumInfo() {
+    const premiumPurchases = JSON.parse(localStorage.getItem('premium-purchases') || '[]');
+    const hasAnyPremium = premiumPurchases.length > 0;
+    
+    if (hasAnyPremium) {
+        return `
+            <div class="premium-info">
+                <p><i class="fas fa-check-circle" style="color: #27ae60;"></i> ¡Tienes avatares premium desbloqueados!</p>
+            </div>
+        `;
+    } else {
+        return `
+            <div class="premium-info">
+                <p><i class="fas fa-info-circle" style="color: #3498db;"></i> Los avatares premium se desbloquean comprándolos en la tienda.</p>
+                <button class="shop-btn" onclick="goToShop()">
+                    <i class="fas fa-store"></i> Ir a la Tienda
+                </button>
+            </div>
+        `;
+    }
+}
+
+// 🔧 FUNCIÓN COMPLETAMENTE ACTUALIZADA PARA SELECCIONAR AVATAR
+function selectAvatar(avatarId, isUnlocked) {
+    console.log('🖼️ Intentando seleccionar avatar:', avatarId, 'Desbloqueado:', isUnlocked);
+    
+    if (!isUnlocked) {
+        showNotification('❌ Este avatar está bloqueado. Cómpralo en la tienda.', 'error');
+        return;
+    }
+    
+    const avatar = AVAILABLE_AVATARS.find(a => a.id === avatarId);
+    if (!avatar) {
+        console.error('❌ Avatar no encontrado:', avatarId);
+        return;
+    }
+    
+    // ✅ ACTUALIZAR AVATAR ACTUAL
+    profileData.currentAvatar = avatar.src;
+    profileData.hasUnsavedChanges = true;
+    
+    // ✅ ACTUALIZAR UI INMEDIATAMENTE
+    updateAvatarDisplay();
+    
+    // ✅ GUARDAR AUTOMÁTICAMENTE
+    saveProfileData();
+    
+    // ✅ ACTUALIZAR SELECCIÓN EN EL MODAL
+    document.querySelectorAll('.avatar-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    
+    const selectedOption = document.querySelector(`[data-avatar-id="${avatarId}"]`);
+    if (selectedOption) {
+        selectedOption.classList.add('selected');
+    }
+    
+    showNotification('✅ Avatar actualizado correctamente', 'success');
+}
+
+// 🔧 FUNCIONES DE TESTING Y DEBUG PARA AVATARES PREMIUM
+window.unlockPremiumAvatars = function() {
+    console.log('🧪 Desbloqueando avatares premium para testing...');
+    
+    // ✅ DESBLOQUEAR AVATARES PREMIUM PARA TESTING
+    const premiumPurchases = ['avatar_joy_guerrero', 'premium_avatars_pack'];
+    localStorage.setItem('premium-purchases', JSON.stringify(premiumPurchases));
+
+    console.log('✅ Avatares premium desbloqueados para testing');
+
+    // ✅ VERIFICAR LA CONFIGURACIÓN
+    console.log('📋 Avatares disponibles:');
+    AVAILABLE_AVATARS.forEach(avatar => {
+        console.log(`- ${avatar.name} (${avatar.category}) - ${avatar.type}`);
+    });
+
+    // ✅ REABRIR EL MODAL PARA VER LOS CAMBIOS
+    const modal = document.getElementById('avatar-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        setTimeout(() => {
+            openAvatarSelector();
+        }, 500);
+    }
+};
+
+window.debugAvatars = function() {
+    console.log('🔍 === DEBUG AVATARES ===');
+    console.log('Current avatar:', profileData.currentAvatar);
+    console.log('Premium purchases:', JSON.parse(localStorage.getItem('premium-purchases') || '[]'));
+    console.log('Available avatars:', AVAILABLE_AVATARS);
+    console.log('Unlocked avatars:', getUnlockedAvatars());
+    
+    // ✅ VERIFICAR ESPECÍFICAMENTE LOS AVATARES PREMIUM
+    const premiumPurchases = JSON.parse(localStorage.getItem('premium-purchases') || '[]');
+    console.log('');
+    console.log('📦 Productos comprados:');
+    premiumPurchases.forEach(purchase => {
+        console.log(`- ${purchase}`);
+    });
+    
+    console.log('');
+    console.log('🖼️ Estado de cada avatar:');
+    AVAILABLE_AVATARS.forEach(avatar => {
+        if (avatar.category === 'premium') {
+            const isUnlocked = avatar.requiredPurchase ? 
+                (premiumPurchases.includes(avatar.requiredPurchase) || 
+                 premiumPurchases.includes('premium_avatars_pack')) : false;
+            console.log(`${avatar.name} (${avatar.id}): ${isUnlocked ? '✅ Desbloqueado' : '🔒 Bloqueado'} - requiere: ${avatar.requiredPurchase}`);
+        } else {
+            console.log(`${avatar.name} (${avatar.id}): ✅ Gratuito`);
+        }
+    });
+};
+
+// ============================================
+// FUNCIONES DE PERFIL (SIN CAMBIOS PRINCIPALES)
 // ============================================
 
 function loadProfileData() {
-    console.log('📱 Cargando datos del perfil...');
-    
     try {
-        // Cargar desde localStorage
-        const savedProfile = localStorage.getItem('quiz-cristiano-profile');
-        if (savedProfile) {
-            const parsed = JSON.parse(savedProfile);
-            
-            profileData.username = parsed.username || '';
-            profileData.displayName = parsed.displayName || '';
-            profileData.favoriteVerse = parsed.favoriteVerse || '';
-            profileData.currentAvatar = parsed.currentAvatar || 'assets/images/mascota.png';
-            profileData.lastUpdated = parsed.lastUpdated || Date.now();
-            
+        const savedData = localStorage.getItem('user-profile');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            profileData = { ...profileData, ...data };
             console.log('✅ Datos del perfil cargados:', profileData);
-        } else {
-            console.log('📋 No hay datos de perfil guardados, usando valores por defecto');
         }
-        
-        // Llenar formulario con datos cargados
-        fillFormWithData();
-        
     } catch (error) {
         console.error('❌ Error cargando datos del perfil:', error);
     }
 }
 
 function fillFormWithData() {
-    console.log('📝 Llenando formulario con datos cargados...');
-    
-    // Llenar inputs
     const usernameInput = document.getElementById('username');
     const displayNameInput = document.getElementById('display-name-input');
     const favoriteVerseInput = document.getElementById('favorite-verse');
     
-    if (usernameInput) {
-        usernameInput.value = profileData.username || '';
+    if (usernameInput && profileData.username) {
+        usernameInput.value = profileData.username;
     }
     
-    if (displayNameInput) {
-        displayNameInput.value = profileData.displayName || '';
+    if (displayNameInput && profileData.displayName) {
+        displayNameInput.value = profileData.displayName;
     }
     
-    if (favoriteVerseInput) {
-        favoriteVerseInput.value = profileData.favoriteVerse || '';
-        
-        // Actualizar contador de caracteres
-        const verseCount = document.getElementById('verse-count');
-        if (verseCount) {
-            verseCount.textContent = favoriteVerseInput.value.length;
-        }
-    }
-    
-    console.log('✅ Formulario llenado con datos');
-}
-
-// ✅ FUNCIÓN SAVE PROFILE DATA CORREGIDA
-
-function saveProfileData() {
-    console.log('💾 Guardando datos del perfil en localStorage...');
-    
-    try {
-        const dataToSave = {
-            username: profileData.username || '',
-            displayName: profileData.displayName || '',
-            favoriteVerse: profileData.favoriteVerse || '',
-            currentAvatar: profileData.currentAvatar || 'assets/images/mascota.png',
-            lastUpdated: profileData.lastUpdated || Date.now(),
-            version: '1.0.0'
-        };
-        
-        localStorage.setItem('quiz-cristiano-profile', JSON.stringify(dataToSave));
-        console.log('✅ Datos del perfil guardados en localStorage');
-        
-        return true;
-    } catch (error) {
-        console.error('❌ Error guardando datos del perfil:', error);
-        return false;
+    if (favoriteVerseInput && profileData.favoriteVerse) {
+        favoriteVerseInput.value = profileData.favoriteVerse;
     }
 }
-
-// ============================================
-// VALIDACIÓN DE NOMBRE DE USUARIO
-// ============================================
 
 async function validateUsername(username) {
-    console.log(`🔍 Validando nombre de usuario: ${username}`);
-    
-    // Validaciones locales
-    if (!username || username.length < 3) {
-        return { valid: false, message: 'El nombre debe tener al menos 3 caracteres', type: 'error' };
+    // Simulación de validación
+    if (username.length < 3) {
+        return { valid: false, message: 'Debe tener al menos 3 caracteres' };
     }
     
-    if (username.length > 20) {
-        return { valid: false, message: 'El nombre no puede tener más de 20 caracteres', type: 'error' };
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+        return { valid: false, message: 'Solo letras, números, guiones y guiones bajos' };
     }
     
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        return { valid: false, message: 'Solo letras, números y guiones bajos permitidos', type: 'error' };
-    }
+    // Simular verificación en servidor
+    await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Simular verificación de disponibilidad
-    const unavailableNames = [
-        'admin', 'moderator', 'jesus', 'dios', 'god', 'cristo', 'test', 'usuario', 'player'
-    ];
-    
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay de red
-    
-    if (unavailableNames.includes(username.toLowerCase())) {
-        return { valid: false, message: 'Este nombre no está disponible', type: 'error' };
-    }
-    
-    return { valid: true, message: 'Nombre disponible', type: 'success' };
+    return { valid: true, message: 'Nombre de usuario válido' };
 }
 
 function setupRealTimeValidation() {
@@ -237,41 +529,44 @@ function setupRealTimeValidation() {
     let validationTimeout = null;
     
     usernameInput.addEventListener('input', (e) => {
-        const username = e.target.value.trim();
-        
-        // Marcar como cambios no guardados
-        profileData.hasUnsavedChanges = true;
-        updateSaveButtonState();
+        const value = e.target.value;
         
         // Limpiar timeout anterior
-        clearTimeout(validationTimeout);
+        if (validationTimeout) {
+            clearTimeout(validationTimeout);
+        }
         
-        if (username.length === 0) {
-            updateValidationStatus('', '', 'Elige un nombre único');
+        if (value.length === 0) {
+            updateValidationStatus('default', 'fa-circle', 'Solo letras, números y guiones. Mínimo 3 caracteres.');
+            return;
+        }
+        
+        if (value.length < 3) {
+            updateValidationStatus('invalid', 'fa-times', 'Debe tener al menos 3 caracteres.');
+            return;
+        }
+        
+        if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+            updateValidationStatus('invalid', 'fa-times', 'Solo se permiten letras, números, guiones y guiones bajos.');
             return;
         }
         
         // Mostrar estado de verificación
-        updateValidationStatus('checking', 'fa-circle-notch fa-spin', 'Verificando disponibilidad...');
+        updateValidationStatus('checking', 'fa-spinner fa-spin', 'Verificando disponibilidad...');
         
-        // Validar después de 800ms de inactividad
+        // Verificar después de 1 segundo sin cambios
         validationTimeout = setTimeout(async () => {
             try {
-                profileData.isValidatingUsername = true;
-                const result = await validateUsername(username);
-                
+                const result = await validateUsername(value);
                 if (result.valid) {
                     updateValidationStatus('valid', 'fa-check', result.message);
                 } else {
                     updateValidationStatus('invalid', 'fa-times', result.message);
                 }
             } catch (error) {
-                console.error('Error validando username:', error);
-                updateValidationStatus('invalid', 'fa-exclamation-triangle', 'Error verificando disponibilidad');
-            } finally {
-                profileData.isValidatingUsername = false;
+                updateValidationStatus('invalid', 'fa-times', 'Error verificando el nombre de usuario.');
             }
-        }, 800);
+        }, 1000);
     });
 }
 
@@ -281,7 +576,7 @@ function updateValidationStatus(status, icon, message) {
     
     if (usernameStatus) {
         usernameStatus.className = `validation-status ${status}`;
-        usernameStatus.innerHTML = icon ? `<i class="fas ${icon}"></i>` : '';
+        usernameStatus.innerHTML = `<i class="fas ${icon}"></i>`;
     }
     
     if (usernameHelp) {
@@ -289,101 +584,6 @@ function updateValidationStatus(status, icon, message) {
         usernameHelp.className = `input-help ${status === 'valid' ? 'success' : status === 'invalid' ? 'error' : ''}`;
     }
 }
-
-// ============================================
-// GESTIÓN DE AVATARES
-// ============================================
-
-window.openAvatarSelector = function() {
-    console.log('🖼️ Abriendo selector de avatares...');
-    
-    const modal = document.getElementById('avatar-modal');
-    const avatarsGrid = document.getElementById('avatars-grid');
-    
-    if (!modal || !avatarsGrid) return;
-    
-    // Verificar avatares desbloqueados
-    const unlockedAvatars = getUnlockedAvatars();
-    
-    // Renderizar avatares
-    avatarsGrid.innerHTML = '';
-    AVAILABLE_AVATARS.forEach(avatar => {
-        const isUnlocked = unlockedAvatars.includes(avatar.id);
-        const isSelected = avatar.src === profileData.currentAvatar;
-        
-        const avatarElement = document.createElement('div');
-        avatarElement.className = `avatar-option ${isSelected ? 'selected' : ''} ${!isUnlocked ? 'locked' : ''}`;
-        
-        avatarElement.innerHTML = `
-            <img src="${avatar.src}" alt="${avatar.name}">
-            ${!isUnlocked ? '<div class="avatar-lock"><i class="fas fa-lock"></i></div>' : ''}
-            ${isSelected ? '<div class="avatar-selected"><i class="fas fa-check"></i></div>' : ''}
-            <div class="avatar-name">${avatar.name}</div>
-        `;
-        
-        avatarElement.addEventListener('click', () => selectAvatar(avatar, isUnlocked));
-        avatarsGrid.appendChild(avatarElement);
-    });
-    
-    modal.style.display = 'flex';
-};
-
-function selectAvatar(avatar, isUnlocked) {
-    if (!isUnlocked) {
-        showNotification('Este avatar no está disponible', 'warning');
-        return;
-    }
-    
-    console.log(`🖼️ Avatar seleccionado: ${avatar.name}`);
-    
-    // Actualizar avatar actual
-    profileData.currentAvatar = avatar.src;
-    
-    // Actualizar imagen en la interfaz
-    const avatarImage = document.getElementById('avatar-image');
-    if (avatarImage) {
-        avatarImage.src = avatar.src;
-    }
-    
-    // Marcar cambios no guardados
-    profileData.hasUnsavedChanges = true;
-    updateSaveButtonState();
-    
-    // Cerrar modal
-    const modal = document.getElementById('avatar-modal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-    
-    // Actualizar selector
-    const avatarsGrid = document.getElementById('avatars-grid');
-    if (avatarsGrid) {
-        const options = avatarsGrid.querySelectorAll('.avatar-option');
-        options.forEach(option => option.classList.remove('selected'));
-        
-        const selectedOption = avatarsGrid.querySelector(`img[src="${avatar.src}"]`)?.parentElement;
-        if (selectedOption) {
-            selectedOption.classList.add('selected');
-            selectedOption.innerHTML += '<div class="avatar-selected"><i class="fas fa-check"></i></div>';
-        }
-    }
-}
-
-function getUnlockedAvatars() {
-    const unlockedAvatars = ['mascota', 'joy-trofeo', 'joy-festejo', 'joy-consolando', 'joy-explicando'];
-    
-    // Verificar si tiene la corona desbloqueada
-    const hasCorona = localStorage.getItem('joy-corona-unlocked') === 'true';
-    if (hasCorona) {
-        unlockedAvatars.push('joy-corona');
-    }
-    
-    return unlockedAvatars;
-}
-
-// ============================================
-// SISTEMA DE NIVELES Y EXPERIENCIA
-// ============================================
 
 function calculateUserLevel() {
     if (!window.GameDataManager) return USER_LEVELS[0];
@@ -416,7 +616,8 @@ function updateLevelDisplay() {
     const levelDescription = document.getElementById('level-description');
     
     if (levelBadge) {
-        levelBadge.style.background = userLevel.color;
+        levelBadge.style.backgroundColor = userLevel.color;
+        levelBadge.innerHTML = `<i class="fas ${userLevel.icon}"></i><span>${userLevel.level}</span>`;
     }
     
     if (currentLevel) {
@@ -428,13 +629,7 @@ function updateLevelDisplay() {
     }
     
     if (levelDescription) {
-        const nextLevel = USER_LEVELS.find(l => l.level === userLevel.level + 1);
-        if (nextLevel) {
-            const expNeeded = nextLevel.minExp - userLevel.currentExp;
-            levelDescription.textContent = `${expNeeded} EXP para ${nextLevel.name}`;
-        } else {
-            levelDescription.textContent = '¡Nivel máximo alcanzado!';
-        }
+        levelDescription.textContent = `Nivel ${userLevel.level} - ${userLevel.name}`;
     }
     
     // Actualizar barra de experiencia
@@ -442,36 +637,26 @@ function updateLevelDisplay() {
     const expText = document.getElementById('exp-text');
     
     if (expFill && expText) {
-        const progress = ((userLevel.currentExp - userLevel.minExp) / (userLevel.maxExp - userLevel.minExp)) * 100;
-        expFill.style.width = `${Math.min(progress, 100)}%`;
-        expText.textContent = `${userLevel.currentExp} / ${userLevel.maxExp === Infinity ? '∞' : userLevel.maxExp}`;
-    }
-    
-    // Actualizar nivel en el header del perfil
-    const userLevelElement = document.getElementById('user-level');
-    if (userLevelElement) {
-        userLevelElement.textContent = userLevel.name;
-        userLevelElement.style.color = userLevel.color;
+        const expRange = userLevel.maxExp - userLevel.minExp;
+        const currentExp = userLevel.currentExp - userLevel.minExp;
+        const percentage = Math.min((currentExp / expRange) * 100, 100);
+        
+        expFill.style.width = `${percentage}%`;
+        expText.textContent = `${userLevel.currentExp}/${userLevel.maxExp} EXP`;
     }
 }
-
-// ============================================
-// ACTUALIZACIÓN DE DISPLAYS
-// ============================================
 
 function updateAllDisplays() {
     updateCoinsDisplay();
     updateStatsDisplay();
-    updateLevelDisplay();
     updateAvatarDisplay();
     updateNameDisplay();
+    updateLevelDisplay();
 }
 
 function updateCoinsDisplay() {
-    if (!window.GameDataManager) return;
-    
     const coinsDisplay = document.getElementById('coins-display');
-    if (coinsDisplay) {
+    if (coinsDisplay && window.GameDataManager) {
         coinsDisplay.textContent = window.GameDataManager.getCoins();
     }
 }
@@ -481,255 +666,176 @@ function updateStatsDisplay() {
     
     const stats = window.GameDataManager.getStats();
     
-    // Actualizar estadísticas básicas
+    // Actualizar elementos de estadísticas
     const elements = {
-        'games-played': stats.gamesPlayed || 0,
-        'victories': stats.victories || 0,
-        'total-coins': stats.coins || 0,
-        'achievements-count': 0, // Implementar cuando esté el sistema de logros
-        'win-rate': stats.winRate || 0,
-        'current-streak': 0 // Implementar sistema de rachas
+        'games-played': stats.gamesPlayed,
+        'victories': stats.victories,
+        'total-coins': stats.coins,
+        'perfect-games': stats.perfectGames,
+        'win-rate': stats.winRate + '%',
+        'current-streak': stats.currentStreak || 0
     };
     
     Object.entries(elements).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) {
-            element.textContent = typeof value === 'number' && id === 'win-rate' ? `${value}%` : value;
+            element.textContent = value;
         }
     });
 }
 
+// 🔧 FUNCIÓN updateAvatarDisplay ACTUALIZADA PARA VERIFICAR DESBLOQUEO
 function updateAvatarDisplay() {
     const avatarImage = document.getElementById('avatar-image');
-    if (avatarImage) {
+    if (avatarImage && profileData.currentAvatar) {
+        console.log('🖼️ Actualizando avatar display a:', profileData.currentAvatar);
         avatarImage.src = profileData.currentAvatar;
+        avatarImage.alt = 'Avatar actual';
+        
+        // ✅ VERIFICAR SI EL AVATAR ACTUAL ESTÁ DESBLOQUEADO
+        const currentAvatarData = AVAILABLE_AVATARS.find(a => a.src === profileData.currentAvatar);
+        const unlockedAvatars = getUnlockedAvatars();
+        
+        if (currentAvatarData && !unlockedAvatars.includes(currentAvatarData.id)) {
+            console.warn('⚠️ Avatar actual está bloqueado, revirtiendo a avatar por defecto');
+            profileData.currentAvatar = 'assets/images/fotos-perfil/niña.jpg';
+            avatarImage.src = profileData.currentAvatar;
+            saveProfileData();
+        }
     }
 }
-
-// ✅ FUNCIÓN UPDATE NAME DISPLAY CORREGIDA
 
 function updateNameDisplay() {
     const displayNameElement = document.getElementById('display-name');
-    
     if (displayNameElement) {
-        const nameToShow = profileData.displayName || profileData.username || 'Jugador';
-        displayNameElement.textContent = nameToShow;
-        console.log(`📝 Nombre actualizado en interfaz: ${nameToShow}`);
+        displayNameElement.textContent = profileData.displayName || profileData.username || 'Jugador';
     }
     
-    // También actualizar en otras partes de la app si es necesario
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (profileData.displayName) {
-        currentUser.displayName = profileData.displayName;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    const userLevelElement = document.getElementById('user-level');
+    if (userLevelElement) {
+        const level = calculateUserLevel();
+        userLevelElement.textContent = level.name;
     }
 }
-
-// ============================================
-// FORMULARIO Y GUARDADO
-// ============================================
 
 function setupFormListeners() {
-    console.log('📝 Configurando listeners del formulario...');
-    
-    // Listener para nombre de usuario
     const usernameInput = document.getElementById('username');
-    if (usernameInput) {
-        usernameInput.addEventListener('input', (e) => {
-            const value = e.target.value;
-            
-            // Marcar cambios no guardados
-            profileData.hasUnsavedChanges = true;
-            updateSaveButtonState();
-            
-            // Validación visual básica
-            if (value.length > 0 && value.length < 3) {
-                usernameInput.style.borderColor = '#e74c3c';
-            } else if (value.length >= 3) {
-                usernameInput.style.borderColor = '#27ae60';
-            } else {
-                usernameInput.style.borderColor = '';
-            }
-        });
-    }
-    
-    // Listener para nombre a mostrar
     const displayNameInput = document.getElementById('display-name-input');
-    if (displayNameInput) {
-        displayNameInput.addEventListener('input', (e) => {
-            profileData.hasUnsavedChanges = true;
-            updateSaveButtonState();
-            
-            // Validación de longitud
-            if (e.target.value.length > 30) {
-                displayNameInput.style.borderColor = '#e74c3c';
-            } else {
-                displayNameInput.style.borderColor = '';
-            }
-        });
-    }
-    
-    // Contador de caracteres para versículo
     const favoriteVerseInput = document.getElementById('favorite-verse');
-    const verseCount = document.getElementById('verse-count');
     
-    if (favoriteVerseInput && verseCount) {
-        favoriteVerseInput.addEventListener('input', (e) => {
-            const length = e.target.value.length;
-            verseCount.textContent = length;
-            
-            profileData.hasUnsavedChanges = true;
-            updateSaveButtonState();
-            
-            // Cambiar color según longitud
-            if (length > 200) {
-                verseCount.style.color = '#e74c3c';
-                favoriteVerseInput.style.borderColor = '#e74c3c';
-            } else if (length > 180) {
-                verseCount.style.color = '#f39c12';
-                favoriteVerseInput.style.borderColor = '#f39c12';
-            } else {
-                verseCount.style.color = '';
-                favoriteVerseInput.style.borderColor = '';
-            }
-        });
+    [usernameInput, displayNameInput, favoriteVerseInput].forEach(input => {
+        if (input) {
+            input.addEventListener('input', () => {
+                profileData.hasUnsavedChanges = true;
+                updateSaveButtonState();
+            });
+        }
+    });
+    
+    // Character counter para favorite verse
+    if (favoriteVerseInput) {
+        const charCounter = document.querySelector('.character-count');
+        if (charCounter) {
+            favoriteVerseInput.addEventListener('input', (e) => {
+                const remaining = 200 - e.target.value.length;
+                charCounter.textContent = `${remaining} caracteres restantes`;
+            });
+        }
     }
 }
 
-// ✅ FUNCIÓN SAVE COMPLETAMENTE CORREGIDA
-
 window.saveUserProfile = async function() {
-    console.log('💾 === GUARDANDO PERFIL DEL USUARIO ===');
+    console.log('💾 Guardando perfil de usuario...');
     
     const saveBtn = document.getElementById('save-profile-btn');
-    const saveIndicator = document.getElementById('save-indicator');
+    if (!saveBtn) return;
     
-    // Obtener valores del formulario
-    const usernameInput = document.getElementById('username');
-    const displayNameInput = document.getElementById('display-name-input');
-    const favoriteVerseInput = document.getElementById('favorite-verse');
-    
-    const formData = {
-        username: usernameInput?.value?.trim() || '',
-        displayName: displayNameInput?.value?.trim() || '',
-        favoriteVerse: favoriteVerseInput?.value?.trim() || ''
-    };
-    
-    console.log('📝 Datos del formulario:', formData);
-    
-    // Validaciones básicas
-    if (formData.username && formData.username.length < 3) {
-        showNotification('El nombre de usuario debe tener al menos 3 caracteres', 'error');
-        return;
-    }
-    
-    if (formData.username && formData.username.length > 20) {
-        showNotification('El nombre de usuario no puede tener más de 20 caracteres', 'error');
-        return;
-    }
-    
-    if (formData.displayName && formData.displayName.length > 30) {
-        showNotification('El nombre a mostrar no puede tener más de 30 caracteres', 'error');
-        return;
-    }
-    
-    if (formData.favoriteVerse && formData.favoriteVerse.length > 200) {
-        showNotification('El versículo favorito no puede tener más de 200 caracteres', 'error');
-        return;
-    }
-    
-    // Mostrar estado de guardado
-    if (saveBtn) {
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Guardando...</span>';
-    }
+    const originalText = saveBtn.innerHTML;
     
     try {
-        // 1. Validar nombre de usuario si cambió
-        if (formData.username && formData.username !== profileData.username) {
-            console.log('🔍 Validando nombre de usuario...');
-            const validation = await validateUsername(formData.username);
+        // Mostrar estado de carga
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        saveBtn.disabled = true;
+        
+        // Obtener datos del formulario
+        const usernameInput = document.getElementById('username');
+        const displayNameInput = document.getElementById('display-name-input');
+        const favoriteVerseInput = document.getElementById('favorite-verse');
+        
+        if (usernameInput?.value) {
+            const validation = await validateUsername(usernameInput.value);
             if (!validation.valid) {
-                showNotification(validation.message, 'error');
-                return;
+                throw new Error(validation.message);
             }
+            profileData.username = usernameInput.value;
         }
         
-        // 2. Actualizar datos del perfil
-        profileData.username = formData.username;
-        profileData.displayName = formData.displayName;
-        profileData.favoriteVerse = formData.favoriteVerse;
-        profileData.lastUpdated = Date.now();
+        if (displayNameInput?.value) {
+            profileData.displayName = displayNameInput.value;
+        }
         
-        console.log('💾 Datos actualizados:', profileData);
+        if (favoriteVerseInput?.value) {
+            profileData.favoriteVerse = favoriteVerseInput.value;
+        }
         
-        // 3. Guardar en localStorage
+        // Guardar datos
         saveProfileData();
         
-        // 4. Intentar guardar en Firebase (si está disponible)
-        try {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            if (currentUser.uid && window.firebase) {
-                console.log('☁️ Guardando en Firebase...');
-                // Aquí puedes agregar la lógica de Firebase cuando esté disponible
-            }
-        } catch (firebaseError) {
-            console.warn('⚠️ Error guardando en Firebase (continuando sin sincronización):', firebaseError);
-        }
+        // Actualizar displays
+        updateAllDisplays();
         
-        // 5. Actualizar interfaz
-        updateNameDisplay();
+        // Mostrar éxito
+        profileData.hasUnsavedChanges = false;
+        updateSaveButtonState();
         
-        // 6. Mostrar éxito
-        showNotification('Perfil guardado exitosamente', 'success');
+        showNotification('Perfil guardado correctamente', 'success');
         
+        // Mostrar indicador de guardado
+        const saveIndicator = document.getElementById('save-indicator');
         if (saveIndicator) {
-            saveIndicator.style.display = 'inline-block';
+            saveIndicator.style.display = 'flex';
             setTimeout(() => {
                 saveIndicator.style.display = 'none';
             }, 3000);
         }
         
-        // 7. Marcar como guardado
-        profileData.hasUnsavedChanges = false;
-        
-        console.log('✅ Perfil guardado exitosamente');
-        
     } catch (error) {
         console.error('❌ Error guardando perfil:', error);
-        showNotification('Error al guardar el perfil', 'error');
+        showNotification(error.message || 'Error guardando perfil', 'error');
     } finally {
         // Restaurar botón
-        if (saveBtn) {
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = '<i class="fas fa-save"></i> <span>Guardar Cambios</span>';
-        }
-        
-        updateSaveButtonState();
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
     }
 };
 
 function updateSaveButtonState() {
     const saveBtn = document.getElementById('save-profile-btn');
-    if (!saveBtn) return;
-    
-    if (profileData.hasUnsavedChanges) {
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i class="fas fa-save"></i> <span>Guardar Cambios</span>';
-        saveBtn.style.opacity = '1';
-    } else {
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i class="fas fa-check"></i> <span>Todo Guardado</span>';
-        saveBtn.style.opacity = '0.6';
+    if (saveBtn) {
+        if (profileData.hasUnsavedChanges) {
+            saveBtn.disabled = false;
+            saveBtn.classList.add('has-changes');
+        } else {
+            saveBtn.disabled = true;
+            saveBtn.classList.remove('has-changes');
+        }
     }
 }
 
-// ============================================
-// NOTIFICACIONES
-// ============================================
+function saveProfileData() {
+    console.log('💾 Guardando datos del perfil en localStorage...');
+    
+    try {
+        profileData.lastUpdated = Date.now();
+        localStorage.setItem('user-profile', JSON.stringify(profileData));
+        console.log('✅ Perfil guardado exitosamente');
+    } catch (error) {
+        console.error('❌ Error guardando perfil:', error);
+        throw error;
+    }
+}
 
 function showNotification(message, type = 'info') {
-    // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     
@@ -747,7 +853,7 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    // Estilos
+    // Estilos inline para la notificación
     notification.style.cssText = `
         position: fixed;
         top: 80px;
@@ -792,11 +898,15 @@ function showNotification(message, type = 'info') {
         notification.style.transform = 'translateX(0)';
     }, 100);
     
-    // Remover después de 4 segundos
+    // Remover después de 3 segundos
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => notification.remove(), 300);
-    }, 4000);
+    }, 3000);
+}
+
+function goToShop() {
+    window.location.href = 'store.html';
 }
 
 // ============================================
@@ -810,33 +920,18 @@ window.closeAvatarModal = function() {
     }
 };
 
-// ✅ FUNCIÓN DE DEBUG ADICIONAL
-window.debugProfile = function() {
-    console.log('🔍 === DEBUG PERFIL ===');
-    console.log('profileData:', typeof profileData !== 'undefined' ? profileData : 'No definido');
-    console.log('localStorage profile:', localStorage.getItem('quiz-cristiano-profile'));
-    console.log('currentUser:', localStorage.getItem('currentUser'));
-    
-    // Verificar inputs
-    const inputs = {
-        username: document.getElementById('username')?.value,
-        displayName: document.getElementById('display-name-input')?.value,
-        favoriteVerse: document.getElementById('favorite-verse')?.value
-    };
-    console.log('Valores de inputs:', inputs);
-};
-
 // ============================================
 // INICIALIZACIÓN
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('👤 Perfil DOM cargado, inicializando...');
+    console.log('👤 Perfil DOM cargado - Iniciando...');
     
     // Verificar elementos críticos
     const criticalElements = [
-        'username', 'display-name-input', 'favorite-verse',
-        'save-profile-btn', 'avatar-image'
+        'avatar-image', 'username', 'display-name-input',
+        'games-played', 'victories', 'total-coins',
+        'save-profile-btn', 'avatar-modal'
     ];
     
     criticalElements.forEach(id => {
@@ -844,8 +939,8 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
     });
     
-    // Inicializar perfil
-    init();
+    // Inicializar sistema
+    setTimeout(init, 100);
 });
 
 // Debug para desarrollo
@@ -853,7 +948,9 @@ window.ProfileDebug = {
     data: profileData,
     avatars: AVAILABLE_AVATARS,
     levels: USER_LEVELS,
+    premiumConfig: PREMIUM_AVATARS_CONFIG,
     getGameDataManager: () => window.GameDataManager
 };
 
-console.log('✅ Perfil.js cargado completamente');
+console.log('✅ Perfil.js COMPLETO Y ACTUALIZADO cargado completamente');
+console.log('🛠️ Debug funciones disponibles: unlockPremiumAvatars(), debugAvatars()');

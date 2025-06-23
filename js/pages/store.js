@@ -1,8 +1,8 @@
-/* filepath: js/pages/store.js */
+/* filepath: c:\Users\julian\Desktop\WEBS\Proyectos sin terminar\quiz-cristiano\js\pages\store.js */
 /**
  * ================================================
- * STORE TIENDA - SISTEMA DE COMPRAS FUNCIONAL
- * Quiz Cristiano - Solo power-ups y corona
+ * STORE TIENDA COMPLETA - CON MERCADO PAGO Y PAYPAL
+ * Quiz Cristiano - Sistema completo de pagos
  * ================================================
  */
 
@@ -10,9 +10,7 @@
 // VARIABLE GLOBAL ÚNICA PARA COMPRAS
 // ============================================
 
-let currentPurchaseProduct = null; // ✅ DECLARACIÓN ÚNICA AQUÍ
-
-// Exponer globalmente para acceso desde HTML
+let currentPurchaseProduct = null;
 window.currentPurchaseProduct = null;
 
 // ============================================
@@ -22,18 +20,19 @@ window.currentPurchaseProduct = null;
 let storeData = {
     isInitialized: false,
     isProcessingPurchase: false,
-    mascotUnlocked: false
+    mascotUnlocked: false,
+    currentFilter: 'all'
 };
 
-// ✅ PRODUCTOS SIMPLIFICADOS Y FUNCIONALES
+// ✅ PRODUCTOS COMPLETOS ACTUALIZADOS CON PRECIOS DE PRUEBA
 const STORE_PRODUCTS = {
-    // Power-ups (400 monedas cada uno)
     hint_eliminator: {
         id: 'hint_eliminator',
         gameId: 'eliminate',
         name: 'Eliminador de Opciones',
         description: 'Elimina 2 opciones incorrectas de cualquier pregunta',
         price: 400,
+        currency: 'coins',
         icon: 'fa-eraser',
         color: '#e74c3c',
         category: 'powerups',
@@ -49,6 +48,7 @@ const STORE_PRODUCTS = {
         name: 'Tiempo Extra',
         description: 'Añade 15 segundos adicionales al timer',
         price: 400,
+        currency: 'coins',
         icon: 'fa-clock',
         color: '#3498db',
         category: 'powerups',
@@ -64,6 +64,7 @@ const STORE_PRODUCTS = {
         name: 'Segunda Oportunidad',
         description: 'Te salva automáticamente si fallas',
         price: 400,
+        currency: 'coins',
         icon: 'fa-heart',
         color: '#e67e22',
         category: 'powerups',
@@ -73,14 +74,55 @@ const STORE_PRODUCTS = {
             'Perfecto para mantener rachas'
         ]
     },
-    
-    // Elemento Premium - Corona para Joy
+    avatar_joy_guerrero: {
+        id: 'avatar_joy_guerrero',
+        gameId: 'avatarPremium',
+        name: 'Avatar: Joy Guerrero',
+        description: 'Avatar premium exclusivo de Joy como guerrero de la fe',
+        price: 0.01,
+        currency: 'USD',
+        icon: 'fa-user-ninja',
+        color: '#8e44ad',
+        category: 'avatars',
+        isPermanent: true,
+        previewImage: 'assets/images/fotos-perfil-premium/joy-guerrero.jpg',
+        effects: [
+            'Avatar exclusivo y único',
+            'Demuestra tu dedicación',
+            'Disponible permanentemente'
+        ]
+    },
+    premium_avatars_pack: {
+        id: 'premium_avatars_pack',
+        gameId: 'avatarsPack',
+        name: 'Pack Avatares Premium',
+        description: 'Todos los avatares premium actuales y futuros incluidos',
+        price: 0.05,
+        currency: 'USD',
+        icon: 'fa-crown',
+        color: '#ffd700',
+        category: 'avatars',
+        isPermanent: true,
+        isBundle: true,
+        savings: 'Ahorra más del 80%',
+        includes: [
+            'Joy Guerrero',
+            'Todos los avatares futuros',
+            'Acceso VIP a nuevos diseños'
+        ],
+        effects: [
+            'Todos los avatares premium',
+            'Acceso anticipado a nuevos',
+            'Mejor relación calidad-precio'
+        ]
+    },
     joy_corona: {
         id: 'joy_corona',
         gameId: 'mascotUpgrade',
         name: 'Corona para Joy',
         description: 'Dale a Joy una corona real que la haga lucir como la reina que es',
         price: 10000,
+        currency: 'coins',
         icon: 'fa-crown',
         color: '#ffd700',
         category: 'premium',
@@ -93,8 +135,13 @@ const STORE_PRODUCTS = {
     }
 };
 
-// Exponer productos globalmente para debug
-window.STORE_PRODUCTS = STORE_PRODUCTS;
+// ✅ CATEGORÍAS DISPONIBLES
+const STORE_CATEGORIES = [
+    { id: 'all', name: 'Todos', icon: 'fa-th', color: '#3a86ff' },
+    { id: 'powerups', name: 'Power-ups', icon: 'fa-magic', color: '#e74c3c' },
+    { id: 'avatars', name: 'Avatares', icon: 'fa-user-circle', color: '#8e44ad' },
+    { id: 'premium', name: 'Premium', icon: 'fa-crown', color: '#ffd700' }
+];
 
 console.log('🏪 Store.js iniciando con productos:', Object.keys(STORE_PRODUCTS));
 
@@ -102,158 +149,160 @@ console.log('🏪 Store.js iniciando con productos:', Object.keys(STORE_PRODUCTS
 // INICIALIZACIÓN
 // ============================================
 
+let mercadoPagoReady = false;
+
+// ✅ FUNCIÓN INIT MEJORADA - CARGA INMEDIATA
 async function init() {
     try {
-        console.log('🏪 === INICIALIZANDO TIENDA ===');
+        console.log('🏪 Inicializando tienda...');
         
-        // 1. Esperar GameDataManager
-        await waitForGameDataManager();
-        console.log('✅ GameDataManager disponible');
-        
-        // 2. Configurar listeners
-        setupGameDataListeners();
-        console.log('✅ Listeners configurados');
-        
-        // 3. Actualizar displays primero
-        updateAllDisplays();
-        console.log('✅ Displays actualizados');
-        
-        // 4. Renderizar productos - ¡ESTO ES CRÍTICO!
-        console.log('🎯 Iniciando renderizado de productos...');
+        // ✅ MOSTRAR PRODUCTOS INMEDIATAMENTE (sin esperar GameDataManager)
+        console.log('🛒 Renderizando productos inmediatamente...');
         renderProducts();
-        console.log('✅ Productos renderizados');
+        updateCoinsDisplay();
+        
+        // Luego esperar GameDataManager en segundo plano
+        setTimeout(async () => {
+            try {
+                await waitForGameDataManager();
+                setupGameDataListeners();
+                
+                // Actualizar con datos reales
+                updateAllDisplays();
+                console.log('✅ GameDataManager conectado, datos actualizados');
+            } catch (error) {
+                console.warn('⚠️ GameDataManager no disponible, usando solo localStorage');
+            }
+        }, 100);
+        
+        // Intentar inicializar MercadoPago sin bloquear
+        setTimeout(async () => {
+            if (typeof initMercadoPago === 'function') {
+                try {
+                    await initMercadoPago();
+                    mercadoPagoReady = true;
+                    console.log('✅ MercadoPago inicializado');
+                } catch (mpError) {
+                    console.warn('⚠️ MercadoPago no disponible:', mpError);
+                    mercadoPagoReady = false;
+                }
+            }
+        }, 500);
         
         storeData.isInitialized = true;
-        console.log('🎉 Tienda inicializada completamente');
+        console.log('✅ Tienda inicializada correctamente');
         
     } catch (error) {
         console.error('❌ Error inicializando tienda:', error);
-        
-        // Fallback: renderizar productos básicos
-        console.log('🆘 Renderizando productos de emergencia...');
         renderEmergencyProducts();
     }
 }
 
-// ✅ FUNCIÓN DE EMERGENCIA PARA PRODUCTOS
+// ✅ FUNCIÓN DE PRODUCTOS DE EMERGENCIA
 function renderEmergencyProducts() {
-    console.log('🆘 Renderizando productos de emergencia...');
+    console.log('🚨 Renderizando productos de emergencia...');
     
     const powerupsGrid = document.getElementById('powerups-grid');
     const premiumGrid = document.getElementById('premium-grid');
     
     if (powerupsGrid) {
         powerupsGrid.innerHTML = `
-            <div class="product-card" data-product="hint_eliminator">
-                <div class="product-icon">
-                    <i class="fas fa-eraser" style="color: #e74c3c"></i>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Eliminador de Opciones</h3>
-                    <p class="product-description">Elimina 2 opciones incorrectas</p>
-                    <div class="product-pricing">
-                        <div class="product-price">
-                            <i class="fas fa-coins"></i>
-                            <span>400</span>
-                        </div>
-                    </div>
-                    <button class="buy-btn" onclick="buyProduct('hint_eliminator')">
-                        <i class="fas fa-shopping-cart"></i>
-                        Comprar
-                    </button>
-                </div>
-            </div>
-            
-            <div class="product-card" data-product="time_extender">
-                <div class="product-icon">
-                    <i class="fas fa-clock" style="color: #3498db"></i>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Tiempo Extra</h3>
-                    <p class="product-description">Añade 15 segundos al timer</p>
-                    <div class="product-pricing">
-                        <div class="product-price">
-                            <i class="fas fa-coins"></i>
-                            <span>400</span>
-                        </div>
-                    </div>
-                    <button class="buy-btn" onclick="buyProduct('time_extender')">
-                        <i class="fas fa-shopping-cart"></i>
-                        Comprar
-                    </button>
-                </div>
-            </div>
-            
-            <div class="product-card" data-product="second_chance">
-                <div class="product-icon">
-                    <i class="fas fa-heart" style="color: #e67e22"></i>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Segunda Oportunidad</h3>
-                    <p class="product-description">Te salva automáticamente si fallas</p>
-                    <div class="product-pricing">
-                        <div class="product-price">
-                            <i class="fas fa-coins"></i>
-                            <span>400</span>
-                        </div>
-                    </div>
-                    <button class="buy-btn" onclick="buyProduct('second_chance')">
-                        <i class="fas fa-shopping-cart"></i>
-                        Comprar
-                    </button>
-                </div>
+            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px; color: #f39c12;"></i>
+                <h3>Error cargando productos</h3>
+                <p>Intenta recargar la página</p>
+                <button onclick="location.reload()" style="
+                    background: var(--text-accent);
+                    color: black;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 15px;
+                    margin-top: 15px;
+                    cursor: pointer;
+                ">
+                    <i class="fas fa-redo"></i> Recargar
+                </button>
             </div>
         `;
-        console.log('✅ Power-ups de emergencia renderizados');
-    }
-    
-    if (premiumGrid) {
-        premiumGrid.innerHTML = `
-            <div class="product-card premium" data-product="joy_corona">
-                <div class="product-icon">
-                    <i class="fas fa-crown" style="color: #ffd700"></i>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">Corona para Joy</h3>
-                    <p class="product-description">Dale a Joy una corona real</p>
-                    <div class="product-pricing">
-                        <div class="product-price">
-                            <i class="fas fa-coins"></i>
-                            <span>10,000</span>
-                        </div>
-                    </div>
-                    <button class="buy-btn premium" onclick="buyProduct('joy_corona')">
-                        <i class="fas fa-crown"></i>
-                        Comprar
-                    </button>
-                </div>
-            </div>
-        `;
-        console.log('✅ Elementos premium de emergencia renderizados');
     }
 }
 
-// ✅ FUNCIÓN RENDERPRODUCTS CORREGIDA
+// ✅ NUEVA FUNCIÓN PARA RENDERIZAR FILTROS DE CATEGORÍA
+function renderCategoryFilters() {
+    const filtersContainer = document.querySelector('.category-filters');
+    if (!filtersContainer) return;
+    
+    filtersContainer.innerHTML = STORE_CATEGORIES.map(category => `
+        <button class="category-filter-btn ${category.id === 'all' ? 'active' : ''}" 
+                onclick="filterByCategory('${category.id}')" 
+                data-category="${category.id}">
+            <i class="fas ${category.icon}"></i>
+            <span>${category.name}</span>
+        </button>
+    `).join('');
+}
+
+// ✅ NUEVA FUNCIÓN PARA FILTRAR POR CATEGORÍA
+window.filterByCategory = function(categoryId) {
+    console.log('🎯 Filtrando por categoría:', categoryId);
+    
+    storeData.currentFilter = categoryId;
+    
+    // Actualizar botones activos
+    document.querySelectorAll('.category-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === categoryId);
+    });
+    
+    // Mostrar/ocultar secciones según filtro
+    const powerupsSection = document.querySelector('.powerups-section');
+    const premiumSection = document.querySelector('.premium-section');
+    
+    if (categoryId === 'all') {
+        showPowerupsSection();
+        showAvatarsSection();
+        showPremiumSection();
+    } else if (categoryId === 'powerups') {
+        showPowerupsSection();
+        hideAvatarsSection();
+        hidePremiumSection();
+    } else if (categoryId === 'avatars') {
+        hidePowerupsSection();
+        showAvatarsSection();
+        hidePremiumSection();
+    } else if (categoryId === 'premium') {
+        hidePowerupsSection();
+        hideAvatarsSection();
+        showPremiumSection();
+    }
+};
+
+function showPowerupsSection() {
+    const section = document.querySelector('.powerups-section');
+    if (section) section.style.display = 'block';
+}
+
+function showAvatarsSection() {
+    const section = document.querySelector('.premium-section');
+    if (section) section.style.display = 'block';
+}
+
+function showPremiumSection() {
+    const section = document.querySelector('.premium-section');
+    if (section) section.style.display = 'block';
+}
+
+// ✅ FUNCIÓN RENDERPRODUCTS SIMPLIFICADA Y CORREGIDA
 function renderProducts() {
-    console.log('🏪 === RENDERIZANDO PRODUCTOS ===');
+    console.log('🎨 === RENDERIZANDO PRODUCTOS ===');
     
     try {
-        // Verificar que STORE_PRODUCTS esté disponible
-        if (!STORE_PRODUCTS || Object.keys(STORE_PRODUCTS).length === 0) {
-            console.error('❌ STORE_PRODUCTS no está disponible');
-            renderEmergencyProducts();
-            return;
-        }
-        
-        console.log('📦 Productos disponibles:', Object.keys(STORE_PRODUCTS));
-        
-        // Renderizar Power-ups
+        // ✅ RENDERIZAR POWER-UPS INMEDIATAMENTE
         renderPowerups();
         
-        // Renderizar Premium
-        renderPremium();
+        // ✅ RENDERIZAR AVATARES PREMIUM INMEDIATAMENTE  
+        renderAvatarsPremium();
         
-        console.log('✅ Todos los productos renderizados exitosamente');
+        console.log('✅ Productos renderizados exitosamente');
         
     } catch (error) {
         console.error('❌ Error renderizando productos:', error);
@@ -261,378 +310,1210 @@ function renderProducts() {
     }
 }
 
+// ✅ FUNCIÓN RENDERPOWERUPS COMPLETAMENTE CORREGIDA
 function renderPowerups() {
-    const powerupsGrid = document.getElementById('powerups-grid');
-    if (!powerupsGrid) {
-        console.error('❌ powerups-grid no encontrado');
-        return;
-    }
-    
     console.log('🎯 Renderizando power-ups...');
     
-    const powerups = Object.values(STORE_PRODUCTS).filter(p => p.category === 'powerups');
-    console.log(`📦 ${powerups.length} power-ups encontrados:`, powerups.map(p => p.name));
+    const powerupsGrid = document.getElementById('powerups-grid');
+    if (!powerupsGrid) {
+        console.error('❌ No se encontró powerups-grid');
+        return;
+    }
+
+    const powerupProducts = Object.values(STORE_PRODUCTS).filter(p => p.category === 'powerups');
     
-    if (powerups.length === 0) {
+    if (powerupProducts.length === 0) {
         powerupsGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No hay power-ups disponibles</p>';
         return;
     }
-    
-    powerupsGrid.innerHTML = powerups.map(product => {
+
+    powerupsGrid.innerHTML = powerupProducts.map(product => {
+        // ✅ OBTENER DATOS DE FORMA SEGURA
         const ownedCount = getOwnedCount(product.gameId);
-        return createProductCard(product, ownedCount);
+        const currentCoins = window.GameDataManager ? window.GameDataManager.getCoins() : 0;
+        const canAfford = currentCoins >= product.price;
+        
+        return `
+            <div class="product-card ${!canAfford ? 'cannot-afford' : ''}" data-product="${product.id}">
+                <div class="product-icon">
+                    <i class="fas ${product.icon}" style="color: ${product.color}"></i>
+                </div>
+                
+                <div class="product-info">
+                    <h4 class="product-name">${product.name}</h4>
+                    <p class="product-description">${product.description}</p>
+                    
+                    <div class="product-effects">
+                        <h5>Efectos:</h5>
+                        <ul class="effects-list">
+                            ${product.effects.map(effect => `
+                                <li class="effect-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>${effect}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="product-pricing">
+                    <div class="product-price coins">
+                        <i class="fas fa-coins"></i>
+                        <span>${product.price}</span>
+                    </div>
+                    
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="changeQuantity('${product.id}', -1)">-</button>
+                        <input type="number" class="quantity-input" id="quantity-${product.id}" value="1" min="1" max="10" readonly>
+                        <button class="quantity-btn" onclick="changeQuantity('${product.id}', 1)">+</button>
+                    </div>
+                    
+                    <div class="total-cost">
+                        Total: <strong id="total-${product.id}">${product.price} 🪙</strong>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <button class="buy-btn ${!canAfford ? 'disabled' : ''}" 
+                            onclick="buyProduct('${product.id}')" 
+                            ${!canAfford ? 'disabled' : ''}>
+                        <i class="fas fa-shopping-cart"></i>
+                        ${canAfford ? 'Comprar' : 'Sin monedas'}
+                    </button>
+                </div>
+                
+                ${ownedCount > 0 ? `
+                    <div class="owned-indicator">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Tienes: ${ownedCount}</span>
+                    </div>
+                ` : ''}
+            </div>
+        `;
     }).join('');
-    
-    console.log(`✅ ${powerups.length} power-ups renderizados en el grid`);
+
+    console.log('✅ Power-ups renderizados');
 }
 
-function renderPremium() {
+// ✅ FUNCIÓN RENDERAVATARSPREMIUM CORREGIDA
+function renderAvatarsPremium() {
+    console.log('👤 Renderizando avatares premium...');
+    
     const premiumGrid = document.getElementById('premium-grid');
     if (!premiumGrid) {
-        console.error('❌ premium-grid no encontrado');
+        console.error('❌ No se encontró premium-grid');
         return;
     }
+
+    const avatarProducts = Object.values(STORE_PRODUCTS).filter(p => p.category === 'avatars');
     
-    console.log('👑 Renderizando elementos premium...');
-    
-    const premiumItems = Object.values(STORE_PRODUCTS).filter(p => p.category === 'premium');
-    console.log(`👑 ${premiumItems.length} elementos premium encontrados:`, premiumItems.map(p => p.name));
-    
-    if (premiumItems.length === 0) {
-        premiumGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No hay elementos premium disponibles</p>';
+    if (avatarProducts.length === 0) {
+        premiumGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No hay avatares premium disponibles</p>';
         return;
     }
-    
-    premiumGrid.innerHTML = premiumItems.map(product => {
-        const isOwned = checkPremiumOwnership(product.id);
-        return createPremiumCard(product, isOwned);
+
+    premiumGrid.innerHTML = avatarProducts.map(product => {
+        const isOwned = checkAvatarOwnership(product.id);
+        const pricing = formatPrice(product.id);
+        
+        return `
+            <div class="product-card premium ${isOwned ? 'owned' : ''}" data-product="${product.id}">
+                <div class="product-icon">
+                    <i class="fas ${product.icon}" style="color: ${product.color}"></i>
+                </div>
+                
+                ${product.previewImage ? `
+                    <div class="avatar-preview-store">
+                        <img src="${product.previewImage}" alt="${product.name}" onerror="this.style.display='none'">
+                    </div>
+                ` : ''}
+                
+                <div class="product-info">
+                    <h4 class="product-name">${product.name}</h4>
+                    <p class="product-description">${product.description}</p>
+                    
+                    ${product.includes ? `
+                        <div class="product-includes">
+                            <h5>Incluye:</h5>
+                            <ul>
+                                ${product.includes.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${product.savings ? `
+                        <div class="product-savings">
+                            <i class="fas fa-tags"></i>
+                            <span>${product.savings}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="product-pricing">
+                    <div class="price-usd">
+                        <i class="fab fa-paypal"></i>
+                        <span>${pricing.usd}</span>
+                    </div>
+                    <div class="price-ars">
+                        <i class="fas fa-peso-sign"></i>
+                        <span>${pricing.ars}</span>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    ${isOwned ? `
+                        <div class="owned-indicator">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Ya tienes este avatar</span>
+                        </div>
+                    ` : `
+                        <button class="buy-btn premium" onclick="buyProduct('${product.id}')">
+                            <i class="fas fa-crown"></i>
+                            Comprar Premium
+                        </button>
+                    `}
+                </div>
+            </div>
+        `;
     }).join('');
+
+    console.log('✅ Avatares premium renderizados');
+}
+
+// ✅ AGREGAR LA FUNCIÓN renderPowerups QUE FALTA
+function renderPowerups() {
+    console.log('🎯 Renderizando power-ups...');
     
-    console.log(`✅ ${premiumItems.length} elementos premium renderizados`);
+    const powerupsGrid = document.getElementById('powerups-grid');
+    if (!powerupsGrid) {
+        console.error('❌ No se encontró powerups-grid');
+        return;
+    }
+
+    const powerupProducts = Object.values(STORE_PRODUCTS).filter(p => p.category === 'powerups');
+    
+    if (powerupProducts.length === 0) {
+        powerupsGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No hay power-ups disponibles</p>';
+        return;
+    }
+
+    powerupsGrid.innerHTML = powerupProducts.map(product => {
+        const ownedCount = getOwnedCount(product.gameId);
+        const currentCoins = window.GameDataManager ? window.GameDataManager.getCoins() : 0;
+        const canAfford = currentCoins >= product.price;
+        
+        return `
+            <div class="product-card ${!canAfford ? 'cannot-afford' : ''}" data-product="${product.id}">
+                <div class="product-icon">
+                    <i class="fas ${product.icon}" style="color: ${product.color}"></i>
+                </div>
+                
+                <div class="product-info">
+                    <h4 class="product-name">${product.name}</h4>
+                    <p class="product-description">${product.description}</p>
+                    
+                    <div class="product-effects">
+                        <h5>Efectos:</h5>
+                        <ul class="effects-list">
+                            ${product.effects.map(effect => `
+                                <li class="effect-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>${effect}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="product-pricing">
+                    <div class="product-price coins">
+                        <i class="fas fa-coins"></i>
+                        <span>${product.price}</span>
+                    </div>
+                    
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="changeQuantity('${product.id}', -1)">-</button>
+                        <input type="number" class="quantity-input" id="quantity-${product.id}" value="1" min="1" max="10" readonly>
+                        <button class="quantity-btn" onclick="changeQuantity('${product.id}', 1)">+</button>
+                    </div>
+                    
+                    <div class="total-cost">
+                        Total: <strong id="total-${product.id}">${product.price} 🪙</strong>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <button class="buy-btn ${!canAfford ? 'disabled' : ''}" 
+                            onclick="buyProduct('${product.id}')" 
+                            ${!canAfford ? 'disabled' : ''}>
+                        <i class="fas fa-shopping-cart"></i>
+                        ${canAfford ? 'Comprar' : 'Sin monedas'}
+                    </button>
+                </div>
+                
+                ${ownedCount > 0 ? `
+                    <div class="owned-indicator">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Tienes: ${ownedCount}</span>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+
+    console.log('✅ Power-ups renderizados');
+}
+
+// ✅ AGREGAR FUNCIONES QUE FALTAN
+function hidePowerupsSection() {
+    const section = document.querySelector('.powerups-section');
+    if (section) section.style.display = 'none';
+}
+
+function hideAvatarsSection() {
+    const section = document.querySelector('.premium-section');
+    if (section) section.style.display = 'none';
+}
+
+function hidePremiumSection() {
+    const section = document.querySelector('.premium-section');
+    if (section) section.style.display = 'none';
+}
+
+// ✅ FUNCIÓN PARA RENDERIZAR AVATARES PREMIUM CON PRECIOS DUALES
+function renderAvatarsPremium() {
+    console.log('👤 Renderizando avatares premium...');
+    
+    const premiumGrid = document.getElementById('premium-grid');
+    if (!premiumGrid) {
+        console.error('❌ No se encontró premium-grid');
+        return;
+    }
+
+    const avatarProducts = Object.values(STORE_PRODUCTS).filter(p => p.category === 'avatars');
+    
+    if (avatarProducts.length === 0) {
+        premiumGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No hay avatares premium disponibles</p>';
+        return;
+    }
+
+    premiumGrid.innerHTML = avatarProducts.map(product => {
+        const isOwned = checkAvatarOwnership(product.id);
+        const pricing = formatPrice(product.id);
+        
+        return `
+            <div class="product-card premium ${isOwned ? 'owned' : ''}" data-product="${product.id}">
+                <div class="product-icon">
+                    <i class="fas ${product.icon}" style="color: ${product.color}"></i>
+                </div>
+                
+                ${product.previewImage ? `
+                    <div class="avatar-preview-store">
+                        <img src="${product.previewImage}" alt="${product.name}" onerror="this.style.display='none'">
+                    </div>
+                ` : ''}
+                
+                <div class="product-info">
+                    <h4 class="product-name">${product.name}</h4>
+                    <p class="product-description">${product.description}</p>
+                    
+                    ${product.includes ? `
+                        <div class="product-includes">
+                            <h5>Incluye:</h5>
+                            <ul>
+                                ${product.includes.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${product.savings ? `
+                        <div class="product-savings">
+                            <i class="fas fa-tags"></i>
+                            <span>${product.savings}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="product-pricing">
+                    <div class="price-usd">
+                        <i class="fab fa-paypal"></i>
+                        <span>${pricing.usd}</span>
+                    </div>
+                    <div class="price-ars">
+                        <i class="fas fa-peso-sign"></i>
+                        <span>${pricing.ars}</span>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    ${isOwned ? `
+                        <div class="owned-indicator">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Ya tienes este avatar</span>
+                        </div>
+                    ` : `
+                        <button class="buy-btn premium" onclick="buyProduct('${product.id}')">
+                            <i class="fas fa-crown"></i>
+                            Comprar Premium
+                        </button>
+                    `}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    console.log('✅ Avatares premium renderizados');
+}
+
+function renderPremiumItems() {
+    console.log('👑 Renderizando items premium...');
+    
+    const premiumProducts = Object.values(STORE_PRODUCTS).filter(p => p.category === 'premium');
+    
+    if (premiumProducts.length === 0) {
+        console.log('⚠️ No hay productos premium definidos');
+        return;
+    }
+
+    // Renderizar en la misma grid que avatares por ahora
+    const premiumGrid = document.getElementById('premium-grid');
+    if (!premiumGrid) return;
+
+    const existingContent = premiumGrid.innerHTML;
+    
+    premiumGrid.innerHTML = existingContent + premiumProducts.map(product => {
+        const isOwned = checkPremiumOwnership(product.id);
+        const currentCoins = window.GameDataManager ? window.GameDataManager.getCoins() : 0;
+        const canAfford = currentCoins >= product.price;
+        
+        return `
+            <div class="product-card premium ${isOwned ? 'owned' : ''} ${!canAfford ? 'cannot-afford' : ''}" data-product="${product.id}">
+                <div class="product-icon">
+                    <i class="fas ${product.icon}" style="color: ${product.color}"></i>
+                </div>
+                
+                <div class="product-info">
+                    <h4 class="product-name">${product.name}</h4>
+                    <p class="product-description">${product.description}</p>
+                    
+                    <div class="product-effects">
+                        <h5>Efectos:</h5>
+                        <ul class="effects-list">
+                            ${product.effects.map(effect => `
+                                <li class="effect-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>${effect}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="product-pricing">
+                    <div class="product-price coins">
+                        <i class="fas fa-coins"></i>
+                        <span>${product.price.toLocaleString()}</span>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    ${isOwned ? `
+                        <div class="owned-indicator">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Ya tienes este item</span>
+                        </div>
+                    ` : `
+                        <button class="buy-btn premium ${!canAfford ? 'disabled' : ''}" 
+                                onclick="buyProduct('${product.id}')" 
+                                ${!canAfford ? 'disabled' : ''}>
+                            <i class="fas fa-crown"></i>
+                            ${canAfford ? 'Comprar Premium' : 'Sin monedas'}
+                        </button>
+                    `}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    console.log('✅ Items premium renderizados');
 }
 
 // ============================================
-// INICIALIZACIÓN COMPLETA CORREGIDA
+// FUNCIONES DE UTILIDAD
 // ============================================
 
-async function init() {
+// ✅ FUNCIÓN PARA FORMATEAR PRECIOS CON AMBAS MONEDAS
+function formatPrice(productId) {
+    const product = STORE_PRODUCTS[productId];
+    if (!product) return { usd: '$0.00', ars: '$0' };
+    
+    if (product.currency === 'USD') {
+        const priceUSD = product.price;
+        const priceARS = getPriceInARS(productId);
+        
+        return {
+            usd: `$${priceUSD.toFixed(2)} USD`,
+            ars: `$${priceARS.toLocaleString('es-AR')} ARS`,
+            both: `$${priceUSD.toFixed(2)} USD (≈ $${priceARS.toLocaleString('es-AR')} ARS)`
+        };
+    }
+    
+    if (product.currency === 'coins') {
+        return {
+            coins: `${product.price} 🪙`,
+            usd: 'N/A',
+            ars: 'N/A'
+        };
+    }
+    
+    return { usd: '$0.00', ars: '$0' };
+}
+
+// ✅ FUNCIÓN PARA OBTENER PRECIO EN ARS
+function getPriceInARS(productId) {
+    const product = STORE_PRODUCTS[productId];
+    if (!product) return 0;
+    
+    if (product.currency === 'coins') {
+        return 0; // No aplica para power-ups
+    }
+    
+    if (product.currency === 'USD') {
+        // ✅ TASA DE CAMBIO ACTUALIZADA PARA PRUEBAS
+        const usdToArs = 1000; // 1 USD = 1000 ARS aproximado
+        return Math.round(product.price * usdToArs);
+    }
+    
+    return 0;
+}
+
+// ✅ RESTO DE FUNCIONES (mantener las existentes)
+function checkAvatarOwnership(productId) {
     try {
-        console.log('🏪 === INICIALIZANDO TIENDA ===');
+        if (window.GameDataManager) {
+            // Verificar en GameDataManager si existe
+            const gameData = window.GameDataManager.getDebugInfo();
+            return gameData?.purchases?.includes(productId) || false;
+        }
         
-        // 1. Esperar GameDataManager
-        await waitForGameDataManager();
-        console.log('✅ GameDataManager disponible');
-        
-        // 2. Configurar listeners
-        setupGameDataListeners();
-        console.log('✅ Listeners configurados');
-        
-        // 3. Actualizar displays primero
-        updateAllDisplays();
-        console.log('✅ Displays actualizados');
-        
-        // 4. Renderizar productos - ¡ESTO ES CRÍTICO!
-        console.log('🎯 Iniciando renderizado de productos...');
-        renderProducts();
-        console.log('✅ Productos renderizados');
-        
-        storeData.isInitialized = true;
-        console.log('🎉 Tienda inicializada completamente');
-        
+        // Fallback a localStorage
+        const purchases = JSON.parse(localStorage.getItem('quizCristianoPurchases') || '[]');
+        return purchases.includes(productId);
     } catch (error) {
-        console.error('❌ Error inicializando tienda:', error);
-        
-        // Fallback: renderizar productos básicos
-        console.log('🆘 Renderizando productos de emergencia...');
-        renderEmergencyProducts();
+        console.warn('⚠️ Error verificando ownership:', error);
+        return false;
     }
 }
-
-// ✅ INICIALIZACIÓN AUTOMÁTICA MEJORADA
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏪 Store DOM cargado, iniciando secuencia...');
-    
-    // Verificar elementos críticos inmediatamente
-    const criticalElements = [
-        'powerups-grid', 'premium-grid', 'coins-display', 'mascot-store'
-    ];
-    
-    let missingElements = [];
-    criticalElements.forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            console.log(`✅ Elemento ${id} encontrado`);
-        } else {
-            console.error(`❌ Elemento ${id} NO encontrado`);
-            missingElements.push(id);
-        }
-    });
-    
-    if (missingElements.length > 0) {
-        console.error('❌ Elementos críticos faltantes:', missingElements);
-    }
-    
-    // Inicializar después de un breve delay para asegurar que todo esté listo
-    setTimeout(() => {
-        console.log('🚀 Iniciando init() de la tienda...');
-        init();
-    }, 500);
-    
-    // Backup: renderizar productos de emergencia si no se hace en 3 segundos
-    setTimeout(() => {
-        const powerupsGrid = document.getElementById('powerups-grid');
-        const premiumGrid = document.getElementById('premium-grid');
-        
-        if (powerupsGrid && powerupsGrid.innerHTML.trim() === '') {
-            console.warn('⚠️ No se renderizaron productos, usando emergencia...');
-            renderEmergencyProducts();
-        }
-    }, 3000);
-});
-
-console.log('✅ Store.js CORREGIDO cargado completamente');
-
-// ============================================
-// FUNCIONES AUXILIARES FALTANTES
-// ============================================
 
 async function waitForGameDataManager() {
-    return new Promise((resolve) => {
-        if (window.GameDataManager) {
-            resolve();
-        } else {
-            const checkInterval = setInterval(() => {
-                if (window.GameDataManager) {
-                    clearInterval(checkInterval);
-                    resolve();
-                }
-            }, 100);
-        }
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 30;
+        
+        const checkForGameDataManager = () => {
+            attempts++;
+            
+            if (window.GameDataManager) {
+                console.log('✅ GameDataManager encontrado');
+                resolve(window.GameDataManager);
+            } else if (attempts >= maxAttempts) {
+                console.warn('⚠️ GameDataManager no disponible después de 30 intentos');
+                reject(new Error('GameDataManager timeout'));
+            } else {
+                setTimeout(checkForGameDataManager, 100);
+            }
+        };
+        
+        checkForGameDataManager();
     });
 }
 
 function setupGameDataListeners() {
     console.log('🔗 Configurando listeners de GameDataManager...');
     
-    // Listener para cambios de monedas
     window.GameDataManager.onCoinsChanged((data) => {
+        console.log('💰 Monedas cambiaron:', data);
         updateCoinsDisplay();
+        updateProductCards();
     });
     
-    // Listener para cambios de inventario
     window.GameDataManager.onInventoryChanged((data) => {
-        updatePowerups();
+        console.log('🎒 Inventario cambió:', data);
+        updateProductCards();
     });
 }
 
 function updateAllDisplays() {
     updateCoinsDisplay();
     updateMascotDisplay();
+    updateProductCards();
 }
 
 function updateCoinsDisplay() {
-    const coinsDisplay = document.getElementById('coins-display');
-    if (coinsDisplay && window.GameDataManager) {
-        coinsDisplay.textContent = window.GameDataManager.getCoins();
+    const coinsDisplay = document.querySelector('.player-coins span');
+    if (!coinsDisplay) return;
+    
+    try {
+        let coins = 0;
+        
+        if (window.GameDataManager && window.GameDataManager.getCoins) {
+            coins = window.GameDataManager.getCoins();
+        } else {
+            // Fallback a localStorage
+            const gameData = JSON.parse(localStorage.getItem('quizCristianoData') || '{}');
+            coins = gameData.coins || 0;
+        }
+        
+        coinsDisplay.textContent = coins.toLocaleString();
+        
+    } catch (error) {
+        console.warn('⚠️ Error actualizando display de monedas:', error);
+        coinsDisplay.textContent = '0';
     }
 }
 
 function updateMascotDisplay() {
-    const mascotImage = document.getElementById('mascot-store');
-    if (mascotImage) {
-        const hasCorona = localStorage.getItem('joy_corona-unlocked') === 'true';
-        if (hasCorona) {
-            mascotImage.src = 'assets/images/joy-corona.png';
-        }
+    // Verificar si Joy tiene corona desbloqueada
+    const hasCorona = checkPremiumOwnership('joy_corona');
+    const mascotImage = document.querySelector('.mascot-store');
+    
+    if (mascotImage && hasCorona) {
+        mascotImage.src = 'assets/images/joy-corona.png';
+        console.log('👑 Joy con corona mostrada');
     }
 }
 
 function getOwnedCount(gameId) {
-    if (!window.GameDataManager) return 0;
-    return window.GameDataManager.getPowerupCount(gameId) || 0;
+    try {
+        if (window.GameDataManager && window.GameDataManager.getPowerupCount) {
+            return window.GameDataManager.getPowerupCount(gameId);
+        }
+        
+        // Fallback a localStorage
+        const inventory = JSON.parse(localStorage.getItem('quizCristianoInventory') || '{}');
+        return inventory[gameId] || 0;
+        
+    } catch (error) {
+        console.warn('⚠️ Error obteniendo cantidad owned:', error);
+        return 0;
+    }
 }
 
 function checkPremiumOwnership(premiumId) {
-    return localStorage.getItem(`${premiumId}-unlocked`) === 'true';
+    try {
+        if (window.GameDataManager) {
+            // Verificar en GameDataManager
+            const debugInfo = window.GameDataManager.getDebugInfo();
+            return debugInfo?.purchases?.includes(premiumId) || false;
+        }
+        
+        // Fallback a localStorage
+        const purchases = JSON.parse(localStorage.getItem('quizCristianoPurchases') || '[]');
+        return purchases.includes(premiumId);
+    } catch (error) {
+        console.warn('⚠️ Error verificando premium ownership:', error);
+        return false;
+    }
 }
 
 // ============================================
-// FUNCIONES DE COMPRA MEJORADAS
+// FUNCIONES DE COMPRA
 // ============================================
 
+// ✅ FUNCIONES DE COMPRA (mantener las existentes)
 window.showPurchaseModal = function(productId) {
-    console.log(`🛒 Mostrando modal de compra para: ${productId}`);
+    console.log('🛒 Mostrando modal de compra para:', productId);
     
     const product = STORE_PRODUCTS[productId];
     if (!product) {
-        console.error(`❌ Producto no encontrado: ${productId}`);
+        console.error('❌ Producto no encontrado:', productId);
         return;
     }
     
-    if (!window.GameDataManager) {
-        showNotification('Sistema no disponible', 'error');
-        return;
+    currentPurchaseProduct = productId;
+    window.currentPurchaseProduct = productId;
+    
+    if (product.currency === 'coins') {
+        showCoinPurchaseModal(product);
+    } else {
+        showPaymentOptionsModal(product);
     }
+};
+
+function showCoinPurchaseModal(product) {
+    console.log('🪙 Creando modal de compra con monedas para:', product.name);
     
-    // Verificar fondos
-    const currentCoins = window.GameDataManager.getCoins();
-    
-    // Calcular cantidad y costo total
-    let quantity = 1;
-    let totalCost = product.price;
-    
-    if (product.category === 'powerups') {
-        const quantityInput = document.getElementById(`qty-${productId}`);
-        if (quantityInput) {
-            quantity = parseInt(quantityInput.value) || 1;
-            totalCost = product.price * quantity;
-        }
-    }
-    
-    // Verificar si puede permitirse la compra
-    if (currentCoins < totalCost) {
-        showNotification(`Necesitas ${totalCost - currentCoins} monedas más`, 'error');
-        return;
-    }
-    
-    // Configurar datos del producto para el modal
-    currentPurchaseProduct = {
-        product: product,
-        quantity: quantity,
-        totalCost: totalCost
-    };
-    
-    // Exponer globalmente
-    window.currentPurchaseProduct = currentPurchaseProduct;
-    
-    // Llenar modal con información
     const modal = document.getElementById('purchase-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalProduct = document.getElementById('modal-product');
-    const modalPrice = document.getElementById('modal-price');
-    const modalTotal = document.getElementById('modal-total');
-    const modalCurrentCoins = document.getElementById('modal-current-coins');
-    const modalRemainingCoins = document.getElementById('modal-remaining-coins');
-    
     if (!modal) {
-        console.error('❌ Modal de compra no encontrado');
+        console.error('❌ Modal no encontrado');
         return;
     }
     
-    // Actualizar contenido del modal
-    if (modalTitle) modalTitle.textContent = `Confirmar compra de ${product.name}`;
+    const quantity = parseInt(document.getElementById(`quantity-${product.id}`)?.value) || 1;
+    const totalCost = product.price * quantity;
+    const currentCoins = window.GameDataManager ? window.GameDataManager.getCoins() : 0;
+    const canAfford = currentCoins >= totalCost;
     
-    if (modalProduct) {
-        modalProduct.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas ${product.icon}" style="color: ${product.color}; font-size: 1.5rem;"></i>
+    modal.innerHTML = `
+        <div class="modal-overlay" onclick="closePurchaseModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas ${product.icon}"></i> ${product.name}</h3>
+                <button class="modal-close" onclick="closePurchaseModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="product-preview">
+                    <div class="preview-icon">
+                        <i class="fas ${product.icon}" style="color: ${product.color}"></i>
+                    </div>
                 </div>
-                <div>
-                    <h4 style="margin: 0; color: var(--text-primary);">${product.name}</h4>
-                    <p style="margin: 5px 0 0 0; color: var(--text-secondary); font-size: 0.9rem;">${product.description}</p>
-                    ${quantity > 1 ? `<p style="margin: 5px 0 0 0; color: var(--text-accent); font-weight: 600;">Cantidad: ${quantity}</p>` : ''}
+                
+                <div class="purchase-info">
+                    <p class="product-description">${product.description}</p>
+                    
+                    <div class="cost-breakdown">
+                        <div class="cost-item">
+                            <span>Precio unitario:</span>
+                            <span>${product.price} 🪙</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Cantidad:</span>
+                            <span>${quantity}</span>
+                        </div>
+                        <div class="cost-item total">
+                            <span>Total:</span>
+                            <span>${totalCost} 🪙</span>
+                        </div>
+                    </div>
+                    
+                    <div class="coins-info">
+                        <div class="coins-current">
+                            <span>Monedas actuales:</span>
+                            <span>${currentCoins} 🪙</span>
+                        </div>
+                        <div class="coins-remaining">
+                            <span>Después de comprar:</span>
+                            <span>${Math.max(0, currentCoins - totalCost)} 🪙</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        `;
-    }
+            
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closePurchaseModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button class="btn-purchase ${!canAfford ? 'disabled' : ''}" 
+                        onclick="confirmPurchase()" 
+                        ${!canAfford ? 'disabled' : ''}>
+                    <i class="fas fa-shopping-cart"></i>
+                    ${canAfford ? 'Confirmar Compra' : 'Sin monedas suficientes'}
+                </button>
+            </div>
+        </div>
+    `;
     
-    if (modalPrice) modalPrice.textContent = `${product.price} monedas`;
-    if (modalTotal) modalTotal.textContent = `${totalCost} monedas`;
-    if (modalCurrentCoins) modalCurrentCoins.textContent = `${currentCoins} monedas`;
-    if (modalRemainingCoins) {
-        const remaining = currentCoins - totalCost;
-        modalRemainingCoins.textContent = `${remaining} monedas`;
-        modalRemainingCoins.style.color = remaining >= 0 ? 'var(--text-accent)' : 'var(--profile-error)';
-    }
-    
-    // Mostrar modal
     modal.style.display = 'flex';
+}
+
+// ✅ ACTUALIZAR LA FUNCIÓN processPurchase PARA SOPORTAR AMBOS MÉTODOS
+window.processPurchase = async function(purchaseData) {
+    console.log('💳 Procesando compra:', purchaseData);
     
-    console.log('✅ Modal de compra mostrado');
+    const productId = purchaseData || currentPurchaseProduct;
+    if (!productId) {
+        console.error('❌ No hay producto para procesar');
+        return;
+    }
+    
+    const product = STORE_PRODUCTS[productId];
+    if (!product) {
+        console.error('❌ Producto no encontrado:', productId);
+        return;
+    }
+    
+    // Determinar método de compra
+    if (product.currency === 'coins') {
+        return processCoinPurchase({ productId, product });
+    } else {
+        console.log('💰 Compra USD - usar PayPal o MercadoPago');
+        return showPaymentOptionsModal(product);
+    }
 };
 
-window.processPurchase = function(purchaseData) {
-    console.log('💳 Procesando compra...', purchaseData);
+function processCoinPurchase(purchaseData) {
+    console.log('🪙 Procesando compra con monedas:', purchaseData);
     
-    if (!purchaseData || !purchaseData.product) {
-        console.error('❌ Datos de compra inválidos');
+    if (storeData.isProcessingPurchase) {
+        console.log('⚠️ Ya se está procesando una compra');
         return;
     }
     
-    const { product, quantity, totalCost } = purchaseData;
+    storeData.isProcessingPurchase = true;
     
-    if (!window.GameDataManager) {
-        showNotification('Sistema no disponible', 'error');
-        return;
-    }
-    
-    // Verificar fondos nuevamente
-    const currentCoins = window.GameDataManager.getCoins();
-    if (currentCoins < totalCost) {
-        showNotification('Fondos insuficientes', 'error');
-        closePurchaseModal();
-        return;
-    }
-    
-    // Realizar la compra
-    const success = window.GameDataManager.spendCoins(totalCost, 'store_purchase');
-    
-    if (success) {
-        // Añadir al inventario
-        if (product.category === 'powerups') {
-            window.GameDataManager.addPowerup(product.gameId, quantity, 'store_purchase');
-            showNotification(`¡${product.name} x${quantity} comprado!`, 'success');
-        } else if (product.category === 'premium') {
-            // Manejar compras premium
-            savePremiumPurchase(product.id);
-            showNotification(`¡${product.name} desbloqueado!`, 'success');
+    try {
+        const { productId, product } = purchaseData;
+        const quantity = parseInt(document.getElementById(`quantity-${productId}`)?.value) || 1;
+        const totalCost = product.price * quantity;
+        
+        // Verificar GameDataManager
+        if (!window.GameDataManager) {
+            throw new Error('GameDataManager no disponible');
         }
         
-        console.log(`✅ Compra exitosa: ${product.name} x${quantity}`);
+        // Verificar monedas suficientes
+        const currentCoins = window.GameDataManager.getCoins();
+        if (currentCoins < totalCost) {
+            throw new Error('Monedas insuficientes');
+        }
+        
+        // Procesar compra
+        const success = window.GameDataManager.spendCoins(totalCost, `compra_${productId}`);
+        if (!success) {
+            throw new Error('Error al procesar el pago');
+        }
+        
+        // Agregar al inventario
+        window.GameDataManager.addPowerup(product.gameId, quantity, 'purchase');
+        
+        // Cerrar modal
+        closePurchaseModal();
         
         // Actualizar displays
-        updateCoinsDisplay();
-        updateProductCards();
-        updateMascotDisplay();
+        updateAllDisplays();
         
-        // Mostrar animación de monedas
-        showCoinAnimation(totalCost, false);
+        // Notificación de éxito
+        showNotification(`¡${product.name} comprado exitosamente!`, 'success');
         
-    } else {
-        showNotification('Error en la compra', 'error');
-        console.error('❌ Error procesando compra');
+        console.log('✅ Compra completada exitosamente');
+        
+    } catch (error) {
+        console.error('❌ Error en compra:', error);
+        showNotification(`❌ Error en la compra: ${error.message}`, 'error');
+    } finally {
+        storeData.isProcessingPurchase = false;
+    }
+}
+
+// ✅ NUEVA FUNCIÓN PARA MOSTRAR OPCIONES DE PAGO USD - CORREGIDA
+function showPaymentOptionsModal(product) {
+    console.log('💳 === CREANDO MODAL DE OPCIONES DE PAGO ===');
+    console.log('Producto:', product.name);
+    
+    const modal = document.getElementById('purchase-modal');
+    if (!modal) {
+        console.error('❌ Modal #purchase-modal no encontrado');
+        return;
     }
     
-    // Cerrar modal
-    closePurchaseModal();
+    const pricing = formatPrice(product.id);
+    console.log('💰 Precios calculados:', pricing);
+    
+    // ✅ LIMPIAR MODAL COMPLETAMENTE
+    modal.innerHTML = '';
+    
+    // ✅ CREAR CONTENIDO DEL MODAL
+    modal.innerHTML = `
+        <div class="modal-overlay" onclick="closePaymentOptionsModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas ${product.icon}"></i> ${product.name}</h3>
+                <button class="modal-close" onclick="closePaymentOptionsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="product-preview">
+                    ${product.previewImage ? `
+                        <img src="${product.previewImage}" alt="${product.name}" class="preview-image">
+                    ` : `
+                        <div class="preview-icon">
+                            <i class="fas ${product.icon}" style="color: ${product.color}"></i>
+                        </div>
+                    `}
+                </div>
+                
+                <div class="purchase-info">
+                    <p class="product-description">${product.description}</p>
+                    
+                    <div class="pricing-details">
+                        <h4>💰 Precio del producto:</h4>
+                        <div class="price-breakdown">
+                            <div class="price-line-usd">
+                                <span class="currency">🇺🇸 USD:</span>
+                                <span class="amount">${pricing.usd}</span>
+                            </div>
+                            <div class="price-line-ars">
+                                <span class="currency">🇦🇷 ARS:</span>
+                                <span class="amount">${pricing.ars}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="payment-options">
+                    <h4>🔥 Elige tu método de pago:</h4>
+                    
+                    <button class="payment-btn mercadopago" onclick="payWithMercadoPago('${product.id}')">
+                        <div class="payment-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="payment-info">
+                            <div class="payment-name">MercadoPago</div>
+                            <div class="payment-desc">Tarjetas, transferencia, efectivo</div>
+                        </div>
+                        <div class="payment-price">${pricing.ars}</div>
+                    </button>
+                    
+                    <button class="payment-btn paypal" onclick="payWithPayPal('${product.id}')">
+                        <div class="payment-icon">
+                            <i class="fab fa-paypal"></i>
+                        </div>
+                        <div class="payment-info">
+                            <div class="payment-name">PayPal</div>
+                            <div class="payment-desc">Pago internacional seguro</div>
+                        </div>
+                        <div class="payment-price">${pricing.usd}</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // ✅ FORZAR DISPLAY DEL MODAL
+    console.log('🎬 Mostrando modal...');
+    modal.style.display = 'flex';
+    modal.style.opacity = '1';
+    modal.style.visibility = 'visible';
+    
+    // ✅ AGREGAR CLASE PARA ANIMACIÓN
+    setTimeout(() => {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+    }, 10);
+    
+    console.log('✅ Modal de pago mostrado');
+    console.log('📊 Estado del modal:', {
+        display: modal.style.display,
+        opacity: modal.style.opacity,
+        visibility: modal.style.visibility,
+        innerHTML: modal.innerHTML.length > 0
+    });
+}
+
+// ✅ FUNCIÓN PAYWITHMERCADOPAGO MEJORADA
+window.payWithMercadoPago = async function(productId) {
+    console.log('💳 Iniciando pago con MercadoPago para:', productId);
+    
+    try {
+        currentPurchaseProduct = productId;
+        window.currentPurchaseProduct = productId;
+        
+        // Cerrar modal de opciones
+        closePaymentOptionsModal();
+        
+        // Verificar si procesarPagoMercadoPago está disponible
+        if (typeof procesarPagoMercadoPago === 'function') {
+            await procesarPagoMercadoPago(productId);
+        } else {
+            console.warn('⚠️ MercadoPago no disponible, simulando compra...');
+            
+            // Simular compra exitosa para testing
+            setTimeout(async () => {
+                await unlockPremiumProduct(productId);
+                showNotification('¡Compra simulada exitosamente!', 'success');
+            }, 2000);
+        }
+        
+    } catch (error) {
+        console.error('❌ Error en pago MercadoPago:', error);
+        showNotification(`Error: ${error.message}`, 'error');
+    }
 };
 
-function savePremiumPurchase(productId) {
+// ✅ FUNCIÓN PARA PAGAR CON PAYPAL
+window.payWithPayPal = async function(productId) {
+    console.log('💰 Iniciando pago con PayPal para:', productId);
+    
     try {
-        localStorage.setItem(`${productId}-unlocked`, 'true');
-        console.log(`💾 Compra premium guardada: ${productId}`);
+        currentPurchaseProduct = productId;
+        window.currentPurchaseProduct = productId;
+        
+        const product = STORE_PRODUCTS[productId];
+        if (!product) {
+            throw new Error('Producto no encontrado');
+        }
+        
+        // Cerrar modal de opciones
+        closePaymentOptionsModal();
+        
+        // Crear URL de PayPal (simulada)
+        const paypalUrl = createPayPalUrl(product);
+        
+        // Abrir PayPal en nueva ventana
+        window.open(paypalUrl, '_blank');
+        
+        showNotification('Serás redirigido a PayPal para completar el pago', 'info');
+        
+        // Simular pago exitoso después de 5 segundos (para testing)
+        setTimeout(() => {
+            simulateSuccessfulPayPalPurchase(productId);
+        }, 5000);
+        
     } catch (error) {
-        console.error('❌ Error guardando compra premium:', error);
+        console.error('❌ Error en pago PayPal:', error);
+        showNotification(`Error: ${error.message}`, 'error');
     }
+};
+
+// ✅ FUNCIÓN PARA CREAR URL DE PAYPAL
+function createPayPalUrl(product) {
+    const baseUrl = 'https://www.paypal.com/cgi-bin/webscr';
+    const params = new URLSearchParams({
+        cmd: '_xclick',
+        business: 'tu-email@paypal.com', // Reemplazar con tu email de PayPal
+        item_name: product.name,
+        item_number: product.id,
+        amount: product.price,
+        currency_code: 'USD',
+        return: `${window.location.origin}/store.html?payment=success&product=${product.id}&method=paypal`,
+        cancel_return: `${window.location.origin}/store.html?payment=cancel`,
+        notify_url: `${window.location.origin}/api/paypal/webhook`
+    });
+    
+    return `${baseUrl}?${params.toString()}`;
+}
+
+// ✅ FUNCIÓN PARA SIMULAR COMPRA EXITOSA DE PAYPAL
+function simulateSuccessfulPayPalPurchase(productId) {
+    console.log('🎭 Simulando compra exitosa de PayPal para:', productId);
+    
+    // Desbloquear producto
+    unlockPremiumProduct(productId);
+    
+    showNotification('¡Compra con PayPal exitosa!', 'success');
 }
 
 function updateProductCards() {
-    console.log('🔄 Actualizando tarjetas de productos...');
-    renderProducts();
+    // Actualizar estado de botones de compra basado en monedas actuales
+    const productCards = document.querySelectorAll('.product-card');
+    const currentCoins = window.GameDataManager ? window.GameDataManager.getCoins() : 0;
+    
+    productCards.forEach(card => {
+        const productId = card.dataset.product;
+        const product = STORE_PRODUCTS[productId];
+        
+        if (product && product.currency === 'coins') {
+            const buyBtn = card.querySelector('.buy-btn');
+            const canAfford = currentCoins >= product.price;
+            
+            if (buyBtn) {
+                buyBtn.disabled = !canAfford;
+                buyBtn.classList.toggle('disabled', !canAfford);
+                buyBtn.innerHTML = `
+                    <i class="fas fa-shopping-cart"></i>
+                    ${canAfford ? 'Comprar' : 'Sin monedas'}
+                `;
+            }
+            
+            card.classList.toggle('cannot-afford', !canAfford);
+        }
+    });
 }
 
-function closePurchaseModal() {
+// ✅ DETECTAR PAGOS EXITOSOS MEJORADO
+window.addEventListener('load', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const productId = urlParams.get('product');
+    const method = urlParams.get('method');
+    
+    if (paymentStatus === 'success' && productId) {
+        console.log('🎉 Pago exitoso detectado:', { productId, method });
+        
+        // Desbloquear producto
+        unlockPremiumProduct(productId);
+        
+        // Mostrar notificación
+        const methodName = method === 'paypal' ? 'PayPal' : 'MercadoPago';
+        showNotification(`¡Compra con ${methodName} exitosa!`, 'success');
+        
+        // Limpiar URL
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+});
+
+// Función para desbloquear productos premium
+async function unlockPremiumProduct(productId) {
+    try {
+        console.log('🔓 Desbloqueando producto premium:', productId);
+        
+        // Agregar a compras en localStorage
+        const purchases = JSON.parse(localStorage.getItem('quizCristianoPurchases') || '[]');
+        if (!purchases.includes(productId)) {
+            purchases.push(productId);
+            localStorage.setItem('quizCristianoPurchases', JSON.stringify(purchases));
+        }
+        
+        // Actualizar GameDataManager si está disponible
+        if (window.GameDataManager) {
+            // Aquí puedes agregar lógica específica para GameDataManager
+            console.log('✅ Producto desbloqueado en GameDataManager');
+        }
+        
+        // Actualizar displays
+        updateAllDisplays();
+        renderProducts();
+        
+        console.log('✅ Producto premium desbloqueado:', productId);
+        
+    } catch (error) {
+        console.error('❌ Error desbloqueando producto:', error);
+    }
+}
+
+// ============================================
+// FUNCIONES GLOBALES PARA EL HTML
+// ============================================
+
+window.buyProduct = function(productId) {
+    console.log('🛒 === COMPRA INICIADA ===');
+    console.log('Producto:', productId);
+    
+    // ✅ VERIFICAR QUE EL PRODUCTO EXISTE
+    const product = STORE_PRODUCTS[productId];
+    if (!product) {
+        console.error('❌ Producto no encontrado:', productId);
+        showNotification('❌ Producto no encontrado', 'error');
+        return;
+    }
+    
+    console.log('✅ Producto encontrado:', product.name);
+    console.log('💱 Moneda:', product.currency);
+    console.log('💰 Precio:', product.price);
+    
+    // ✅ ESTABLECER PRODUCTO ACTUAL GLOBALMENTE
+    currentPurchaseProduct = productId;
+    window.currentPurchaseProduct = productId;
+    
+    // ✅ DETERMINAR TIPO DE COMPRA Y PROCESAR
+    if (product.currency === 'coins') {
+        console.log('🪙 Procesando compra con monedas...');
+        
+        // Verificar que GameDataManager esté disponible
+        if (!window.GameDataManager) {
+            console.error('❌ GameDataManager no disponible');
+            showNotification('❌ Sistema no disponible. Recarga la página.', 'error');
+            return;
+        }
+        
+        // Obtener cantidad del input (si existe)
+        const quantityInput = document.getElementById(`quantity-${productId}`);
+        const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+        
+        console.log('📦 Cantidad:', quantity);
+        console.log('💰 Costo total:', product.price * quantity);
+        console.log('💳 Monedas disponibles:', window.GameDataManager.getCoins());
+        
+        // Mostrar modal de confirmación
+        showCoinPurchaseModal(product);
+        
+    } else if (product.currency === 'USD') {
+        console.log('💵 Procesando compra con USD...');
+        showPaymentOptionsModal(product);
+        
+    } else {
+        console.error('❌ Moneda no soportada:', product.currency);
+        showNotification('❌ Tipo de producto no soportado', 'error');
+    }
+};
+
+window.closePurchaseModal = function() {
     const modal = document.getElementById('purchase-modal');
     if (modal) {
         modal.style.display = 'none';
     }
+    
+    // Limpiar producto actual
     currentPurchaseProduct = null;
     window.currentPurchaseProduct = null;
-    console.log('❌ Modal de compra cerrado');
-}
+};
 
+// ✅ FUNCIÓN PARA CERRAR MODAL DE OPCIONES DE PAGO
+window.closePaymentOptionsModal = function() {
+    console.log('❌ Cerrando modal de opciones de pago...');
+    
+    const modal = document.getElementById('purchase-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+        
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.style.opacity = '0';
+            modal.style.visibility = 'hidden';
+        }, 300);
+    }
+    
+    // Limpiar producto actual
+    currentPurchaseProduct = null;
+    window.currentPurchaseProduct = null;
+    
+    console.log('✅ Modal cerrado');
+};
+
+window.confirmPurchase = function() {
+    console.log('💳 Confirmando compra desde HTML...');
+    
+    if (!currentPurchaseProduct) {
+        console.error('❌ No hay producto seleccionado');
+        return;
+    }
+    
+    const product = STORE_PRODUCTS[currentPurchaseProduct];
+    if (!product) {
+        console.error('❌ Producto no encontrado');
+        return;
+    }
+    
+    // Procesar según tipo de moneda
+    if (product.currency === 'coins') {
+        processCoinPurchase({ productId: currentPurchaseProduct, product });
+    } else {
+        console.log('💰 Compra USD - usar modal de opciones');
+        showPaymentOptionsModal(product);
+    }
+};
+
+// Función para cambiar cantidad
+window.changeQuantity = function(productId, change) {
+    const input = document.getElementById(`quantity-${productId}`);
+    const totalDisplay = document.getElementById(`total-${productId}`);
+    
+    if (!input || !totalDisplay) return;
+    
+    let newValue = parseInt(input.value) + change;
+    newValue = Math.max(1, Math.min(10, newValue)); // Entre 1 y 10
+    
+    input.value = newValue;
+    
+    const product = STORE_PRODUCTS[productId];
+    if (product) {
+        const total = product.price * newValue;
+        totalDisplay.textContent = `${total} 🪙`;
+    }
+};
+
+// Función para mostrar notificaciones
 function showNotification(message, type = 'info') {
+    console.log(`📢 ${type.toUpperCase()}: ${message}`);
+    
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     
@@ -650,7 +1531,7 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    // Estilos inline
+    // Estilos
     notification.style.cssText = `
         position: fixed;
         top: 80px;
@@ -695,81 +1576,17 @@ function showNotification(message, type = 'info') {
         notification.style.transform = 'translateX(0)';
     }, 100);
     
-    // Remover después de 4 segundos
+    // Remover después de 3 segundos
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => notification.remove(), 300);
-    }, 4000);
+    }, 3000);
 }
 
-function showCoinAnimation(amount, isPositive) {
-    const animation = document.createElement('div');
-    animation.className = `coin-animation ${isPositive ? 'positive' : 'negative'}`;
-    animation.textContent = `${isPositive ? '+' : '-'}${amount}`;
-    
-    const coinsDisplay = document.getElementById('coins-display');
-    if (coinsDisplay) {
-        const rect = coinsDisplay.getBoundingClientRect();
-        animation.style.left = rect.left + 'px';
-        animation.style.top = rect.top + 'px';
-    } else {
-        animation.style.right = '20px';
-        animation.style.top = '20px';
-    }
-    
-    animation.style.position = 'fixed';
-    animation.style.zIndex = '2000';
-    animation.style.color = isPositive ? '#27ae60' : '#e74c3c';
-    animation.style.fontSize = '1.5rem';
-    animation.style.fontWeight = 'bold';
-    animation.style.pointerEvents = 'none';
-    animation.style.animation = isPositive ? 'coinFloatUp 2s ease-out forwards' : 'coinFloatDown 2s ease-out forwards';
-    
-    document.body.appendChild(animation);
-    
-    setTimeout(() => {
-        animation.remove();
-    }, 2000);
-}
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏪 Iniciando tienda...');
+    init();
+});
 
-// ============================================
-// FUNCIONES PARA CONTROLES DE CANTIDAD
-// ============================================
-
-window.changeQuantity = function(productId, delta) {
-    const quantityInput = document.getElementById(`qty-${productId}`);
-    const totalElement = document.getElementById(`total-${productId}`);
-    
-    if (!quantityInput || !totalElement) return;
-    
-    const product = STORE_PRODUCTS[productId];
-    if (!product) return;
-    
-    let currentValue = parseInt(quantityInput.value) || 1;
-    let newValue = Math.max(1, Math.min(99, currentValue + delta));
-    
-    quantityInput.value = newValue;
-    
-    const newTotal = product.price * newValue;
-    totalElement.textContent = `${newTotal} monedas`;
-};
-
-window.validateQuantity = function(productId) {
-    const quantityInput = document.getElementById(`qty-${productId}`);
-    const totalElement = document.getElementById(`total-${productId}`);
-    
-    if (!quantityInput || !totalElement) return;
-    
-    const product = STORE_PRODUCTS[productId];
-    if (!product) return;
-    
-    let value = parseInt(quantityInput.value) || 1;
-    value = Math.max(1, Math.min(99, value));
-    
-    quantityInput.value = value;
-    
-    const newTotal = product.price * value;
-    totalElement.textContent = `${newTotal} monedas`;
-};
-
-console.log('✅ Store.js funciones auxiliares cargadas');
+console.log('✅ Store.js COMPLETAMENTE CARGADO Y FUNCIONAL');

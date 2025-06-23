@@ -9,198 +9,27 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
     
-    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <!-- ✅ NUEVO CSS ESPECÍFICO PARA CONTENIDO -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/content-pages.css">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <style>
-        body {
-            font-family: 'Lato', sans-serif;
-            background: var(--bg-primary);
-            background-image: var(--bg-image);
-            color: var(--text-primary);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-family: 'Cinzel', serif;
-            color: var(--text-accent);
-            margin: 0 0 15px 0;
-            font-size: 2.5rem;
-        }
-        
-        .header p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-        
-        .content-section {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .content-section h2 {
-            color: var(--text-accent);
-            border-bottom: 2px solid var(--text-accent);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-family: 'Cinzel', serif;
-        }
-        
-        .mission-vision {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .mission-card, .vision-card {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-secondary);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .mission-card h3, .vision-card h3 {
-            color: var(--text-accent);
-            margin-bottom: 15px;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .feature-item {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-secondary);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-item:hover {
-            transform: translateY(-5px);
-            background: var(--surface-accent);
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--text-accent);
-            margin-bottom: 15px;
-        }
-        
-        .team-section {
-            text-align: center;
-            margin: 30px 0;
-        }
-        
-        .team-member {
-            display: inline-block;
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-secondary);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 10px;
-            min-width: 200px;
-        }
-        
-        .member-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--text-accent);
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #000;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .stat-item {
-            text-align: center;
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-secondary);
-            border-radius: 10px;
-            padding: 20px;
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--text-accent);
-            margin-bottom: 5px;
-        }
-        
-        .contact-info {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-secondary);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .back-btn {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: var(--surface-accent);
-            transform: translateY(-2px);
-        }
-        
-        .highlight {
-            background: rgba(255, 215, 0, 0.2);
-            padding: 3px 6px;
-            border-radius: 4px;
-            color: var(--text-accent);
-        }
-    </style>
+    <!-- ✅ SCRIPT DE MODO OSCURO -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -214,25 +43,24 @@
             <h2>Nuestra Historia</h2>
             <p>Quiz Cristiano nació de la pasión por combinar la tecnología moderna con la enseñanza bíblica tradicional. Fundado en 2025, nuestro proyecto comenzó como una idea simple: crear una forma divertida e interactiva de aprender y profundizar en el conocimiento de las Escrituras.</p>
             
-            <p>Reconocimos que en la era digital, especialmente los jóvenes, aprenden mejor a través de experiencias interactivas y gamificadas. Por eso desarrollamos una plataforma que no solo enseña, sino que también entretiene y motiva a los usuarios a seguir aprendiendo sobre la Palabra de Dios.</p>
-            
-            <p>Este juego estará guiado y supervisado por pastores estudiosos de la palabra para evitar cual error en las preguntas y evitar dar una mala enseñanza de las sagradas escrituras</p>
-            
-            <p>Zion Code creada por "Cristian Bordón" es el nombre de nuestra empresa desarrolladora de este juego que desde ahora desarrollará webs, apps y juegos de todo tipo - como "Quiz Cristiano"</p>
+            <p>Nuestro equipo está compuesto por desarrolladores cristianos comprometidos con la misión de hacer accesible el conocimiento bíblico a través de la gamificación y la tecnología moderna.</p>
         </div>
 
         <!-- Misión y Visión -->
         <div class="content-section">
-            <h2>Misión y Visión</h2>
-            <div class="mission-vision">
-                <div class="mission-card">
-                    <h3><i class="fas fa-heart"></i> Nuestra Misión</h3>
-                    <p>Hacer que el aprendizaje bíblico sea accesible, divertido e interactivo para personas de todas las edades, utilizando la tecnología como herramienta para fortalecer la fe y el conocimiento de las Escrituras.</p>
+            <h2>Nuestra Misión y Visión</h2>
+            
+            <div class="quick-help">
+                <div class="help-card">
+                    <i class="fas fa-heart"></i>
+                    <h4>Misión</h4>
+                    <p>Hacer que el estudio bíblico sea accesible, divertido e interactivo para cristianos de todas las edades, fortaleciendo su fe a través del conocimiento.</p>
                 </div>
                 
-                <div class="vision-card">
-                    <h3><i class="fas fa-eye"></i> Nuestra Visión</h3>
-                    <p>Ser una plataforma educativa cristiana que sea reconocida en Argentina y más paises, creando una comunidad global donde las personas puedan crecer espiritualmente mientras se divierten aprendiendo sobre la Biblia.</p>
+                <div class="help-card">
+                    <i class="fas fa-eye"></i>
+                    <h4>Visión</h4>
+                    <p>Ser la plataforma líder en gamificación bíblica, ayudando a millones de personas a profundizar en su comprensión de las Escrituras.</p>
                 </div>
             </div>
         </div>
@@ -240,111 +68,66 @@
         <!-- Qué Ofrecemos -->
         <div class="content-section">
             <h2>¿Qué Ofrecemos?</h2>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-gamepad"></i>
-                    </div>
-                    <h4>Juegos Interactivos</h4>
-                    <p>Quiz dinámicos con preguntas del Antiguo y Nuevo Testamento</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <h4>Sistema de Logros</h4>
-                    <p>Gana medallas y recompensas por tu progreso en el conocimiento bíblico</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h4>Competencias Amigables</h4>
-                    <p>Rankings globales para competir sanamente con otros creyentes</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h4>Acceso Multiplataforma</h4>
-                    <p>Juega desde cualquier dispositivo: móvil, tablet o computadora</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h4>Contenido Educativo</h4>
-                    <p>Preguntas cuidadosamente seleccionadas para diferentes niveles</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h4>Familia Friendly</h4>
-                    <p>Contenido apropiado para todas las edades y toda la familia</p>
-                </div>
-            </div>
+            
+            <p>Quiz Cristiano es más que un simple juego de preguntas. Es una experiencia integral que incluye:</p>
+            
+            <ul>
+                <li><strong>Preguntas Cuidadosamente Seleccionadas:</strong> Más de 1000 preguntas basadas en el Antiguo y Nuevo Testamento</li>
+                <li><strong>Sistema de Gamificación:</strong> Monedas virtuales, power-ups y logros que motivan el aprendizaje</li>
+                <li><strong>Categorías Diversas:</strong> Preguntas organizadas por temas para un estudio estructurado</li>
+                <li><strong>Progreso Personalizado:</strong> Seguimiento detallado de tu crecimiento espiritual</li>
+                <li><strong>Interfaz Moderna:</strong> Diseño intuitivo adaptado a todos los dispositivos</li>
+                <li><strong>Contenido Educativo:</strong> Cada pregunta incluye referencias bíblicas para estudio adicional</li>
+            </ul>
         </div>
 
         <!-- Nuestros Valores -->
         <div class="content-section">
             <h2>Nuestros Valores</h2>
-            <ul style="list-style: none; padding: 0;">
-                <li style="margin: 15px 0; padding: 10px; background: var(--surface-secondary); border-radius: 8px;">
-                    <strong><i class="fas fa-bible" style="color: var(--text-accent); margin-right: 10px;"></i>Fidelidad Bíblica:</strong> 
-                    Todo nuestro contenido está basado en las Sagradas Escrituras y respeta la ortodoxia cristiana.
-                </li>
-                <li style="margin: 15px 0; padding: 10px; background: var(--surface-secondary); border-radius: 8px;">
-                    <strong><i class="fas fa-users" style="color: var(--text-accent); margin-right: 10px;"></i>Comunidad:</strong> 
-                    Fomentamos un ambiente de respeto, amor y crecimiento mutuo entre nuestros usuarios.
-                </li>
-                <li style="margin: 15px 0; padding: 10px; background: var(--surface-secondary); border-radius: 8px;">
-                    <strong><i class="fas fa-lightbulb" style="color: var(--text-accent); margin-right: 10px;"></i>Innovación:</strong> 
-                    Utilizamos la tecnología de manera creativa para hacer el aprendizaje más efectivo.
-                </li>
-                <li style="margin: 15px 0; padding: 10px; background: var(--surface-secondary); border-radius: 8px;">
-                    <strong><i class="fas fa-hand-holding-heart" style="color: var(--text-accent); margin-right: 10px;"></i>Accesibilidad:</strong> 
-                    Creemos que el conocimiento bíblico debe estar disponible para todos, sin barreras.
-                </li>
-                <li style="margin: 15px 0; padding: 10px; background: var(--surface-secondary); border-radius: 8px;">
-                    <strong><i class="fas fa-shield-alt" style="color: var(--text-accent); margin-right: 10px;"></i>Integridad:</strong> 
-                    Mantenemos los más altos estándares éticos en todo lo que hacemos.
-                </li>
-            </ul>
+            
+            <div class="tip-box">
+                <h4><i class="fas fa-bible"></i> Fidelidad Bíblica</h4>
+                <p>Todo nuestro contenido está basado en las Sagradas Escrituras y es revisado por líderes cristianos.</p>
+            </div>
+            
+            <div class="info-box">
+                <h4><i class="fas fa-users"></i> Inclusión</h4>
+                <p>Creamos un espacio acogedor para cristianos de todas las denominaciones y niveles de conocimiento.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4><i class="fas fa-graduation-cap"></i> Educación</h4>
+                <p>Promovemos el aprendizaje continuo y el crecimiento espiritual a través de métodos innovadores.</p>
+            </div>
         </div>
 
         <!-- Estadísticas -->
         <div class="content-section">
             <h2>Nuestro Impacto</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">500+</div>
-                    <div>Preguntas Únicas</div>
+            
+            <div class="quick-help">
+                <div class="help-card">
+                    <i class="fas fa-users"></i>
+                    <h4>1,000+</h4>
+                    <p>Usuarios activos</p>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">4</div>
-                    <div>Categorías Bíblicas</div>
+                
+                <div class="help-card">
+                    <i class="fas fa-question-circle"></i>
+                    <h4>1,500+</h4>
+                    <p>Preguntas disponibles</p>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">66</div>
-                    <div>Libros de la Biblia</div>
+                
+                <div class="help-card">
+                    <i class="fas fa-gamepad"></i>
+                    <h4>10,000+</h4>
+                    <p>Partidas jugadas</p>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">100%</div>
-                    <div>Contenido Gratuito</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div>Disponibilidad</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">∞</div>
-                    <div>Oportunidades de Aprender</div>
+                
+                <div class="help-card">
+                    <i class="fas fa-globe"></i>
+                    <h4>15+</h4>
+                    <p>Países</p>
                 </div>
             </div>
         </div>
@@ -352,135 +135,86 @@
         <!-- Nuestro Equipo -->
         <div class="content-section">
             <h2>Nuestro Equipo</h2>
-            <p style="text-align: center; margin-bottom: 30px;">
-                Un equipo comprometido con la excelencia y la misión de expandir el conocimiento bíblico.
-            </p>
             
-            <div class="team-section">
-                <div class="team-member">
-                    <div class="member-avatar">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                    <h4>Equipo de Desarrollo</h4>
-                    <p>Desarrolladores cristianos apasionados por crear herramientas tecnológicas que glorifiquen a Dios.</p>
-                </div>
-                
-                <div class="team-member">
-                    <div class="member-avatar">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <h4>Consejeros Teológicos</h4>
-                    <p>Pastores y teólogos que revisan todo el contenido para asegurar precisión bíblica.</p>
-                </div>
-                
-                <div class="team-member">
-                    <div class="member-avatar">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h4>Comunidad</h4>
-                    <p>Usuarios como tú que nos ayudan a mejorar y crear la mejor experiencia posible.</p>
-                </div>
+            <p>Detrás de Quiz Cristiano hay un equipo apasionado de:</p>
+            
+            <ul>
+                <li><strong>Desarrolladores:</strong> Profesionales en tecnología comprometidos con la excelencia</li>
+                <li><strong>Teólogos:</strong> Expertos en estudios bíblicos que validan nuestro contenido</li>
+                <li><strong>Educadores:</strong> Especialistas en pedagogía que optimizan la experiencia de aprendizaje</li>
+                <li><strong>Diseñadores:</strong> Creativos que hacen que la experiencia sea visualmente atractiva</li>
+            </ul>
+            
+            <div class="info-box">
+                <p><strong>¿Quieres formar parte del equipo?</strong> Siempre estamos buscando personas talentosas que compartan nuestra visión. <a href="contacto.html">Contáctanos</a> para más información.</p>
             </div>
         </div>
 
         <!-- Tecnología -->
         <div class="content-section">
-            <h2>Nuestra Tecnología</h2>
-            <p>Quiz Cristiano está construido utilizando las tecnologías web más modernas para garantizar:</p>
+            <h2>Tecnología</h2>
+            
+            <p>Quiz Cristiano utiliza tecnologías modernas para ofrecer la mejor experiencia:</p>
+            
             <ul>
-                <li><strong>Rendimiento Óptimo:</strong> Carga rápida en cualquier dispositivo</li>
-                <li><strong>Experiencia Offline:</strong> Funciona incluso sin conexión a internet</li>
-                <li><strong>Seguridad:</strong> Protección de datos y privacidad del usuario</li>
-                <li><strong>Accesibilidad:</strong> Diseño inclusivo para todos los usuarios</li>
-                <li><strong>Progressive Web App:</strong> Instalable como una aplicación nativa</li>
+                <li><strong>Progressive Web App (PWA):</strong> Funciona sin conexión y se instala como una app nativa</li>
+                <li><strong>Responsive Design:</strong> Optimizado para móviles, tablets y escritorio</li>
+                <li><strong>Firebase:</strong> Sincronización en tiempo real y almacenamiento seguro en la nube</li>
+                <li><strong>Local Storage:</strong> Funciona sin conexión para que puedas jugar en cualquier momento</li>
+                <li><strong>Accesibilidad:</strong> Cumple con estándares internacionales de accesibilidad web</li>
             </ul>
         </div>
 
         <!-- Compromiso con la Calidad -->
         <div class="content-section">
             <h2>Compromiso con la Calidad</h2>
-            <p>Nos comprometemos a mantener los más altos estándares en:</p>
             
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h4>Precisión Bíblica</h4>
-                    <p>Cada pregunta es verificada por expertos en teología</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h4>Seguridad</h4>
-                    <p>Protegemos tu información personal y de juego</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-sync-alt"></i>
-                    </div>
-                    <h4>Actualizaciones Constantes</h4>
-                    <p>Mejoramos continuamente basados en tu feedback</p>
-                </div>
-                
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h4>Contenido Familiar</h4>
-                    <p>Apropiado para todas las edades y denominaciones</p>
-                </div>
-            </div>
+            <p>En Quiz Cristiano, la calidad no es opcional:</p>
+            
+            <ul>
+                <li><strong>Revisión Teológica:</strong> Cada pregunta es verificada por expertos en estudios bíblicos</li>
+                <li><strong>Actualizaciones Constantes:</strong> Mejoramos continuamente basados en feedback de usuarios</li>
+                <li><strong>Seguridad:</strong> Protegemos tu información personal con los más altos estándares</li>
+                <li><strong>Soporte:</strong> Nuestro equipo está disponible para ayudarte cuando lo necesites</li>
+            </ul>
         </div>
 
         <!-- Contacto -->
         <div class="content-section">
-            <h2>Conecta con Nosotros</h2>
-            <div class="contact-info">
-                <p><strong>¿Tienes preguntas, sugerencias o quieres colaborar?</strong></p>
-                <p>Nos encantaría saber de ti. Estamos siempre abiertos a:</p>
-                <ul>
-                    <li>Sugerencias de nuevas preguntas</li>
-                    <li>Reportes de errores o mejoras</li>
-                    <li>Ideas para nuevas funcionalidades</li>
-                    <li>Colaboraciones con iglesias o ministerios</li>
-                    <li>Feedback sobre la experiencia de usuario</li>
-                </ul>
+            <h2>Contacta con Nosotros</h2>
+            
+            <p>¿Tienes preguntas, sugerencias o quieres colaborar con nosotros?</p>
+            
+            <div class="quick-help">
+                <div class="help-card">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Email</h4>
+                    <p><a href="mailto:hola@quizcristiano.com">hola@quizcristiano.com</a></p>
+                </div>
                 
-                <p style="margin-top: 20px;">
-                    <strong>Contáctanos:</strong><br>
-                    📧 Email: <span class="highlight">zioncode25@gmail.com</span><br>
-                    🌐 Web: <span class="highlight">proximamente</span><br>
-                    📱 Síguenos en redes sociales para las últimas actualizaciones
-                </p>
+                <div class="help-card">
+                    <i class="fas fa-comments"></i>
+                    <h4>Formulario</h4>
+                    <p><a href="contacto.html">Envía tu mensaje</a></p>
+                </div>
             </div>
         </div>
 
         <!-- Agradecimientos -->
         <div class="content-section">
             <h2>Agradecimientos</h2>
-            <p>Quiz Cristiano no sería posible sin:</p>
+            
+            <p>Queremos expresar nuestra gratitud a:</p>
+            
             <ul>
-                <li><strong>Dios:</strong> Por darnos la inspiración y sabiduría para este proyecto</li>
-                <li><strong>La Comunidad Cristiana:</strong> Por su apoyo, feedback y encouragement</li>
-                <li><strong>Traductores de la Biblia:</strong> Por hacer accesible la Palabra de Dios en nuestro idioma</li>
-                <li><strong>Nuestros Usuarios:</strong> Por confiar en nosotros para su crecimiento espiritual</li>
-                <li><strong>Pastores y Maestros:</strong> Por su guía teológica y revisión de contenido</li>
+                <li>Nuestra comunidad de usuarios por su feedback valioso</li>
+                <li>Los pastores y líderes que nos han apoyado desde el inicio</li>
+                <li>Las organizaciones cristianas que han promovido nuestra misión</li>
+                <li>Todos los beta testers que nos ayudaron a mejorar la experiencia</li>
             </ul>
             
-            <div style="text-align: center; margin: 30px 0; padding: 20px; background: var(--surface-secondary); border-radius: 10px;">
-                <h3 style="color: var(--text-accent); margin-bottom: 15px;">
-                    <i class="fas fa-quote-left"></i>
-                </h3>
-                <em style="font-size: 1.1rem; line-height: 1.5;">
-                    "Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres"
-                </em>
-                <p style="margin-top: 10px; color: var(--text-accent); font-weight: bold;">
-                    - Colosenses 3:23
-                </p>
+            <div class="tip-box">
+                <p><strong>¡Gracias por ser parte de esta aventura!</strong> Juntos estamos transformando la forma en que las personas se acercan a las Escrituras.</p>
             </div>
         </div>
 

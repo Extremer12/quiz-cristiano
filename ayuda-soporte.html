@@ -9,161 +9,27 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
     
-    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <!-- ✅ NUEVO CSS ESPECÍFICO PARA CONTENIDO -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/content-pages.css">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <style>
-        body {
-            font-family: 'Lato', sans-serif;
-            background: var(--bg-primary);
-            background-image: var(--bg-image);
-            color: var(--text-primary);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-family: 'Cinzel', serif;
-            color: var(--text-accent);
-            margin: 0 0 10px 0;
-            font-size: 2rem;
-        }
-        
-        .help-section {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-        
-        .help-section h2 {
-            color: var(--text-accent);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .faq-item {
-            border-bottom: 1px solid var(--border-secondary);
-            padding: 15px 0;
-            cursor: pointer;
-        }
-        
-        .faq-item:last-child {
-            border-bottom: none;
-        }
-        
-        .faq-question {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .faq-answer {
-            margin-top: 10px;
-            color: var(--text-secondary);
-            display: none;
-            padding-left: 20px;
-        }
-        
-        .faq-item.active .faq-answer {
-            display: block;
-        }
-        
-        .faq-icon {
-            transition: transform 0.3s ease;
-        }
-        
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-        }
-        
-        .quick-help {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .help-card {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-secondary);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .help-card:hover {
-            transform: translateY(-3px);
-            background: var(--surface-accent);
-        }
-        
-        .help-card i {
-            font-size: 2rem;
-            color: var(--text-accent);
-            margin-bottom: 10px;
-        }
-        
-        .back-btn {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: var(--surface-accent);
-            transform: translateY(-2px);
-        }
-        
-        .contact-emergency {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .tip-box {
-            background: rgba(52, 152, 219, 0.1);
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-    </style>
+    <!-- ✅ SCRIPT DE MODO OSCURO -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">

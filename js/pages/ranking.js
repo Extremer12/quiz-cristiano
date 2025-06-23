@@ -1,141 +1,133 @@
-/* filepath: js/pages/ranking.js */
 /**
  * ================================================
- * RANKING HÍBRIDO - USUARIOS BOT Y REALES
- * Quiz Cristiano - Sistema completo de competencia
+ * RANKING POR DIVISIONES - SISTEMA COMPLETO CON TABLAS
+ * Quiz Cristiano - Sistema de competencia por divisiones con ascensos/descensos
  * ================================================
  */
 
 // ============================================
-// CONFIGURACIÓN Y VARIABLES GLOBALES
+// CONFIGURACIÓN DE DIVISIONES ACTUALIZADA
+// ============================================
+
+const DIVISION_SYSTEM = {
+    divisions: [
+        {
+            id: 'corona-divina',
+            name: 'Corona Divina',
+            minLevel: 100,
+            maxLevel: Infinity,
+            color: '#ffd700',
+            gradient: 'linear-gradient(135deg, #ffd700, #ffed4e)',
+            icon: 'fa-crown',
+            trophyImage: 'assets/images/Trofeos/corona-divina.png',
+            description: 'Para leyendas del conocimiento bíblico',
+            maxPlayers: 30,
+            promotionZone: { start: 1, end: 0 }, // No hay ascenso desde la división más alta
+            relegationZone: { start: 26, end: 30 }, // Últimos 5 descienden
+            rewards: {
+                monthly: { coins: 10000, title: 'Leyenda Bíblica' },
+                seasonal: { coins: 25000, avatar: 'legendary_crown' }
+            }
+        },
+        {
+            id: 'diamante',
+            name: 'División Diamante',
+            minLevel: 76,
+            maxLevel: 100,
+            color: '#b9f2ff',
+            gradient: 'linear-gradient(135deg, #b9f2ff, #66d9ef)',
+            icon: 'fa-gem',
+            trophyImage: 'assets/images/Trofeos/Diamante.png',
+            description: 'Para maestros de las Escrituras',
+            maxPlayers: 30,
+            promotionZone: { start: 1, end: 5 }, // Primeros 5 ascienden
+            relegationZone: { start: 26, end: 30 }, // Últimos 5 descienden
+            rewards: {
+                monthly: { coins: 5000, title: 'Maestro Bíblico' },
+                seasonal: { coins: 12000, avatar: 'diamond_scholar' }
+            }
+        },
+        {
+            id: 'platino',
+            name: 'División Platino',
+            minLevel: 51,
+            maxLevel: 75,
+            color: '#e5e4e2',
+            gradient: 'linear-gradient(135deg, #e5e4e2, #c0c0c0)',
+            icon: 'fa-medal',
+            trophyImage: 'assets/images/Trofeos/Platino.png',
+            description: 'Para expertos en conocimiento bíblico',
+            maxPlayers: 30,
+            promotionZone: { start: 1, end: 5 }, // Primeros 5 ascienden
+            relegationZone: { start: 26, end: 30 }, // Últimos 5 descienden (a una división inferior que agregaremos)
+            rewards: {
+                monthly: { coins: 2500, title: 'Experto Bíblico' },
+                seasonal: { coins: 6000, avatar: 'platinum_student' }
+            }
+        }
+    ],
+    
+    // Configuración del puntaje integral
+    scoring: {
+        weights: {
+            activity: 0.40,      // 40% - Partidas jugadas en el mes
+            victories: 0.30,     // 30% - Ratio de victorias
+            achievements: 0.20,  // 20% - Logros desbloqueados
+            level: 0.10         // 10% - Nivel del jugador
+        },
+        
+        // Factores de normalización
+        maxValues: {
+            monthlyGames: 100,
+            winRate: 1.0,
+            maxAchievements: 50,
+            maxLevel: 100
+        }
+    },
+    
+    // Sistema de temporadas
+    season: {
+        duration: 30, // días
+        resetDay: 1,  // día del mes para reset
+        currentSeason: getCurrentSeason()
+    }
+};
+
+// ============================================
+// NOMBRES BÍBLICOS PARA BOTS
+// ============================================
+
+const BIBLICAL_NAMES = [
+    // Hombres
+    'Abraham', 'Isaac', 'Jacob', 'José', 'Moisés', 'Aarón', 'Josué', 'Caleb', 'Samuel', 'David',
+    'Salomón', 'Daniel', 'Ezequiel', 'Isaías', 'Jeremías', 'Jonás', 'Elías', 'Eliseo', 'Nehemías', 'Esdras',
+    'Pedro', 'Juan', 'Santiago', 'Andrés', 'Felipe', 'Mateo', 'Lucas', 'Marcos', 'Pablo', 'Timoteo',
+    
+    // Mujeres
+    'Sara', 'Rebeca', 'Raquel', 'Lea', 'Miriam', 'Débora', 'Rut', 'Ana', 'Ester', 'Abigail',
+    'María', 'Marta', 'María Magdalena', 'Lidia', 'Priscila', 'Dorcas', 'Eunice', 'Lois', 'Febe', 'Junia'
+];
+
+const VERSES_LIBRARY = [
+    'Juan 3:16', 'Salmos 23:1', 'Filipenses 4:13', 'Proverbios 3:5-6', 'Romanos 8:28',
+    'Mateo 11:28', 'Jeremías 29:11', 'Isaías 40:31', '1 Corintios 13:4-7', 'Gálatas 5:22-23',
+    'Efesios 6:10-11', 'Hebreos 11:1', 'Santiago 1:2-3', '1 Pedro 5:7', 'Apocalipsis 21:4'
+];
+
+// ============================================
+// VARIABLES GLOBALES
 // ============================================
 
 let rankingData = {
     isInitialized: false,
-    currentType: 'monedas',
-    currentPage: 0,
-    maxPlayersPerPage: 20,
-    totalPlayers: 0,
-    isLoading: false
-};
-
-// ✅ USUARIOS BOT REALISTAS CON NOMBRES BÍBLICOS
-const BOT_PLAYERS = [
-    // Top performers (Posiciones 1-10)
-    { name: 'Samuel_El_Profeta', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'master' },
-    { name: 'David_Rey_Salmista', avatar: 'assets/images/mascota.png', isBot: true, level: 'master' },
-    { name: 'María_De_Betania', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'master' },
-    { name: 'Pablo_Apóstol', avatar: 'assets/images/mascota.png', isBot: true, level: 'master' },
-    { name: 'Ester_La_Reina', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'master' },
-    { name: 'Josué_Conquistador', avatar: 'assets/images/mascota.png', isBot: true, level: 'master' },
-    { name: 'Débora_Jueza', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'master' },
-    { name: 'Juan_El_Amado', avatar: 'assets/images/mascota.png', isBot: true, level: 'master' },
-    { name: 'Rut_La_Fiel', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'master' },
-    { name: 'Pedro_Pescador', avatar: 'assets/images/mascota.png', isBot: true, level: 'master' },
-
-    // High performers (Posiciones 11-30)
-    { name: 'Abraham_Patriarca', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Sara_La_Madre', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-    { name: 'Moisés_Libertador', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Miriam_Profetisa', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-    { name: 'Caleb_Valiente', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Ana_Orante', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-    { name: 'Elías_Profeta', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Eliseo_Discípulo', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Nehemías_Constructor', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Esdras_Escriba', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Daniel_Sabio', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Jeremías_Llorones', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Ezequiel_Visionario', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Isaías_Consolador', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Salomón_Sabio', avatar: 'assets/images/mascota.png', isBot: true, level: 'expert' },
-    { name: 'Rebeca_Esposa', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-    { name: 'Raquel_Amada', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-    { name: 'Lea_Primera', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-    { name: 'Tamar_Valiente', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-    { name: 'Abigail_Sabia', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'expert' },
-
-    // Mid performers (Posiciones 31-60)
-    { name: 'Isaac_Bendecido', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Jacob_Luchador', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'José_Soñador', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Benjamín_Amado', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Judá_León', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Leví_Sacerdote', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Rubén_Primero', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Simeón_Segundo', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Zabulón_Puerto', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Isacar_Fuerte', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Aarón_Hermano', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Gedeón_Guerrero', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Sansón_Fuerte', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Samuel_Juez', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Saúl_Rey', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Jonatán_Amigo', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Absalón_Bello', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Adonías_Rival', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Jeroboam_Norte', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Roboam_Sur', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Asa_Bueno', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Josafat_Justo', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Ezequías_Fiel', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Josías_Reformador', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Zorobabel_Constructor', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Hageo_Profeta', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Zacarías_Vidente', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Malaquías_Último', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Mateo_Cobrador', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-    { name: 'Marcos_Joven', avatar: 'assets/images/mascota.png', isBot: true, level: 'intermediate' },
-
-    // Lower performers (Posiciones 61-100)
-    { name: 'Lucas_Médico', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Santiago_Mayor', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Santiago_Menor', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Andrés_Hermano', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Felipe_Evangelista', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Bartolomé_Fiel', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Tomás_Dudoso', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Judas_Tadeo', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Simón_Zelote', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Matías_Sustituto', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Bernabé_Consolador', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Silas_Compañero', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Timoteo_Joven', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Tito_Colaborador', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Filemón_Amigo', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Onésimo_Esclavo', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Lidia_Comerciante', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'beginner' },
-    { name: 'Priscila_Maestra', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'beginner' },
-    { name: 'Aquila_Esposo', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Apolos_Elocuente', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Esteban_Mártir', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Felipe_Diácono', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Nicodemo_Fariseo', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'José_Arimatea', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Lázaro_Resucitado', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Marta_Trabajadora', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'beginner' },
-    { name: 'Magdalena_Seguidora', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'beginner' },
-    { name: 'Juana_Esposa', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'beginner' },
-    { name: 'Susana_Discípula', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'beginner' },
-    { name: 'Dorcas_Caritativa', avatar: 'assets/images/joy-trofeo.png', isBot: true, level: 'beginner' },
-    { name: 'Cornelio_Centurión', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Jairo_Padre', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Zaqueo_Bajo', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Bartimeo_Ciego', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Eneas_Paralítico', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Eutico_Dormido', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Epafrodito_Mensajero', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Epafras_Intercesor', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Gayo_Hospitalario', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' },
-    { name: 'Demetrio_Platero', avatar: 'assets/images/mascota.png', isBot: true, level: 'beginner' }
-];
-
-// ✅ CONFIGURACIÓN DE PUNTAJES POR NIVEL
-const SCORE_RANGES = {
-    master: { min: 8000, max: 15000 },
-    expert: { min: 4000, max: 7999 },
-    intermediate: { min: 1500, max: 3999 },
-    beginner: { min: 100, max: 1499 }
+    currentDivision: null,
+    playerScore: 0,
+    playerRank: 0,
+    currentType: 'integral',
+    seasonPlayers: [],
+    allDivisions: {},
+    isLoading: false,
+    selectedPlayer: null
 };
 
 // ============================================
@@ -143,809 +135,691 @@ const SCORE_RANGES = {
 // ============================================
 
 async function init() {
+    console.log('🏆 Inicializando sistema de ranking por divisiones...');
+    
     try {
-        console.log('🏆 Inicializando sistema de ranking...');
-        
-        // Esperar a GameDataManager
         await waitForGameDataManager();
-        
-        // Configurar listeners
-        setupGameDataListeners();
-        
-        // ✅ AGREGAR SINCRONIZACIÓN DE PERFIL
-        syncProfileData();
-        
-        // Cargar ranking por defecto
-        await loadRanking('monedas');
-        
-        // Actualizar posición del usuario
-        updateMyPosition();
-        
-        // Actualizar monedas
-        updateCoinsDisplay();
+        calculatePlayerDivision();
+        await loadAllDivisionsData();
+        renderDivisionInterface();
+        updateAllDisplays();
         
         rankingData.isInitialized = true;
-        console.log('✅ Sistema de ranking inicializado correctamente');
+        console.log('✅ Sistema de ranking por divisiones inicializado');
         
     } catch (error) {
         console.error('❌ Error inicializando ranking:', error);
+        showFallbackInterface();
+    }
+}
+
+// ============================================
+// GENERACIÓN DE JUGADORES Y DATOS
+// ============================================
+
+function generatePlayer(isBot = true, division, position) {
+    const baseScore = Math.max(10, 100 - (position * 2) + (Math.random() * 10 - 5));
+    
+    if (!isBot) {
+        // Jugador real - usar datos del perfil
+        const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        
+        return {
+            id: 'current_player',
+            name: profileData.displayName || profileData.username || currentUser.displayName || 'Usuario',
+            level: calculatePlayerLevel(window.GameDataManager.getStats()),
+            score: rankingData.playerScore,
+            avatar: profileData.currentAvatar || getCurrentPlayerAvatar(),
+            monthlyGames: getMonthlyData(window.GameDataManager.getStats()).gamesPlayed,
+            winRate: getMonthlyData(window.GameDataManager.getStats()).winRate,
+            achievements: window.GameDataManager.getStats().achievements?.length || 0,
+            favoriteVerse: profileData.favoriteVerse || 'Juan 3:16',
+            isBot: false,
+            isCurrentPlayer: true,
+            joinDate: new Date(2024, 0, 1), // Fecha de registro
+            palmares: [] // Se agregará después
+        };
+    }
+    
+    // Bot generado
+    const name = BIBLICAL_NAMES[Math.floor(Math.random() * BIBLICAL_NAMES.length)];
+    const verse = VERSES_LIBRARY[Math.floor(Math.random() * VERSES_LIBRARY.length)];
+    const avatar = getRandomAvatar();
+    
+    // Generar fecha de registro aleatoria (último año)
+    const joinDate = new Date();
+    joinDate.setDate(joinDate.getDate() - Math.floor(Math.random() * 365));
+    
+    return {
+        id: `bot_${division.id}_${position}_${Date.now()}`,
+        name: name,
+        level: Math.floor(Math.random() * (division.maxLevel - division.minLevel + 1)) + division.minLevel,
+        score: Math.max(1, baseScore),
+        avatar: avatar,
+        monthlyGames: Math.floor(Math.random() * 80) + 20,
+        winRate: Math.random() * 0.6 + 0.3, // 30% - 90%
+        achievements: Math.floor(Math.random() * 25) + 5,
+        favoriteVerse: verse,
+        isBot: true,
+        isCurrentPlayer: false,
+        joinDate: joinDate,
+        palmares: generateBotPalmares() // Historial de medallas del bot
+    };
+}
+
+function generateBotPalmares() {
+    const palmares = [];
+    const numMedals = Math.floor(Math.random() * 5); // 0-4 medallas
+    
+    for (let i = 0; i < numMedals; i++) {
+        const months = ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05'];
+        const positions = [1, 2, 3];
+        const divisions = ['platino', 'diamante'];
+        
+        palmares.push({
+            season: months[Math.floor(Math.random() * months.length)],
+            division: divisions[Math.floor(Math.random() * divisions.length)],
+            position: positions[Math.floor(Math.random() * positions.length)],
+            date: new Date(2024, Math.floor(Math.random() * 12), 1)
+        });
+    }
+    
+    return palmares;
+}
+
+async function loadAllDivisionsData() {
+    console.log('📊 Cargando datos de todas las divisiones...');
+    
+    for (let division of DIVISION_SYSTEM.divisions) {
+        rankingData.allDivisions[division.id] = generateDivisionPlayers(division);
+    }
+    
+    // Insertar jugador real en su división correspondiente
+    if (rankingData.currentDivision) {
+        const divisionPlayers = rankingData.allDivisions[rankingData.currentDivision.id];
+        
+        // Buscar si ya existe el jugador
+        const existingPlayerIndex = divisionPlayers.findIndex(p => p.isCurrentPlayer);
+        
+        if (existingPlayerIndex !== -1) {
+            // Actualizar datos del jugador existente
+            divisionPlayers[existingPlayerIndex] = generatePlayer(false, rankingData.currentDivision, existingPlayerIndex + 1);
+        } else {
+            // Agregar jugador y reemplazar un bot
+            const realPlayer = generatePlayer(false, rankingData.currentDivision, 15); // Posición media inicial
+            divisionPlayers[14] = realPlayer; // Reemplazar bot en posición 15
+        }
+        
+        // Re-ordenar por puntaje
+        divisionPlayers.sort((a, b) => b.score - a.score);
+        
+        // Actualizar ranking del jugador
+        const playerIndex = divisionPlayers.findIndex(p => p.isCurrentPlayer);
+        rankingData.playerRank = playerIndex + 1;
+    }
+    
+    console.log('✅ Datos de todas las divisiones cargados');
+}
+
+function generateDivisionPlayers(division) {
+    const players = [];
+    
+    for (let i = 0; i < division.maxPlayers; i++) {
+        players.push(generatePlayer(true, division, i + 1));
+    }
+    
+    // Ordenar por puntaje
+    players.sort((a, b) => b.score - a.score);
+    
+    return players;
+}
+
+// ============================================
+// RENDERIZADO DE INTERFAZ ACTUALIZADA
+// ============================================
+
+function renderDivisionInterface() {
+    const container = document.querySelector('.ranking-container');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <!-- Header con división actual -->
+        <header class="ranking-header">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="ranking-title">
+                <h1>Ranking por Divisiones</h1>
+                <p>Temporada ${getCurrentSeason()}</p>
+            </div>
+            
+            <div class="player-coins">
+                <i class="fas fa-coins"></i>
+                <span id="coins-display">${window.GameDataManager.getCoins()}</span>
+            </div>
+        </header>
+
+        <!-- Mi División Actual -->
+        <section class="my-division-section">
+            <div class="division-card" data-division="${rankingData.currentDivision.id}">
+                <div class="division-trophy">
+                    <img src="${rankingData.currentDivision.trophyImage}" alt="${rankingData.currentDivision.name}">
+                </div>
+                <div class="division-info">
+                    <h2>${rankingData.currentDivision.name}</h2>
+                    <p>${rankingData.currentDivision.description}</p>
+                    <div class="my-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">${rankingData.playerScore}</span>
+                            <span class="stat-label">Puntos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">#${rankingData.playerRank || '?'}</span>
+                            <span class="stat-label">Posición</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${getDaysUntilSeasonEnd()}</span>
+                            <span class="stat-label">Días restantes</span>
+                        </div>
+                    </div>
+                    <div class="promotion-relegation-info">
+                        ${renderPromotionRelegationInfo()}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Selector de División -->
+        <section class="division-selector">
+            <h2><i class="fas fa-layer-group"></i> Ver División</h2>
+            <div class="division-tabs">
+                ${DIVISION_SYSTEM.divisions.map(division => `
+                    <button class="division-tab ${division.id === rankingData.currentDivision.id ? 'active' : ''}" 
+                            onclick="showDivisionTable('${division.id}')">
+                        <img src="${division.trophyImage}" alt="${division.name}">
+                        <span>${division.name}</span>
+                    </button>
+                `).join('')}
+            </div>
+        </section>
+
+        <!-- Tabla de Ranking de División -->
+        <section class="division-ranking">
+            <div class="ranking-header-section">
+                <h2 id="division-ranking-title">Ranking ${rankingData.currentDivision.name}</h2>
+                <div class="season-info">
+                    <i class="fas fa-calendar"></i>
+                    <span>Termina en ${getDaysUntilSeasonEnd()} días</span>
+                </div>
+            </div>
+            
+            <!-- Información de Ascensos/Descensos -->
+            <div class="promotion-relegation-legend">
+                <div class="legend-item promotion">
+                    <div class="legend-color"></div>
+                    <span>Zona de Ascenso (Top 5)</span>
+                </div>
+                <div class="legend-item safe">
+                    <div class="legend-color"></div>
+                    <span>Zona Segura</span>
+                </div>
+                <div class="legend-item relegation">
+                    <div class="legend-color"></div>
+                    <span>Zona de Descenso (Últimos 5)</span>
+                </div>
+            </div>
+            
+            <!-- Top 3 Podio -->
+            <div class="podium-section">
+                <div class="podium" id="division-podium">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Tabla completa -->
+            <div class="players-table" id="division-players-table">
+                <div class="loading-players">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando ranking...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de Perfil de Jugador -->
+        <div class="player-modal" id="player-modal" style="display: none;">
+            <div class="modal-overlay" onclick="closePlayerModal()"></div>
+            <div class="player-modal-content">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="single-player-new.html" class="nav-item">
+                <i class="fas fa-play"></i>
+                <span>Jugar</span>
+            </a>
+            <a href="ranking.html" class="nav-item active">
+                <i class="fas fa-trophy"></i>
+                <span>Ranking</span>
+            </a>
+            <a href="logros.html" class="nav-item">
+                <i class="fas fa-medal"></i>
+                <span>Logros</span>
+            </a>
+            <a href="store.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>Tienda</span>
+            </a>
+        </nav>
+    `;
+    
+    // Cargar la tabla de la división actual
+    showDivisionTable(rankingData.currentDivision.id);
+}
+
+function renderPromotionRelegationInfo() {
+    const currentRank = rankingData.playerRank;
+    const division = rankingData.currentDivision;
+    
+    if (currentRank <= 5 && division.promotionZone.end > 0) {
+        return `<div class="promotion-info">🎉 ¡En zona de ascenso! Mantén tu posición para subir de división.</div>`;
+    } else if (currentRank >= 26) {
+        return `<div class="relegation-info">⚠️ En zona de descenso. Mejora tu puntuación para mantenerte en la división.</div>`;
+    } else {
+        const toPromotion = Math.max(0, 5 - currentRank + 1);
+        const toRelegation = Math.max(0, currentRank - 25);
+        return `<div class="safe-info">✅ En zona segura. ${toPromotion > 0 ? `${toPromotion} posiciones para ascenso.` : `${toRelegation} posiciones del descenso.`}</div>`;
+    }
+}
+
+// ============================================
+// FUNCIONES DE TABLA Y NAVEGACIÓN
+// ============================================
+
+window.showDivisionTable = function(divisionId) {
+    const division = DIVISION_SYSTEM.divisions.find(d => d.id === divisionId);
+    const players = rankingData.allDivisions[divisionId];
+    
+    if (!division || !players) return;
+    
+    console.log(`📊 Mostrando tabla de ${division.name}`);
+    
+    // Actualizar tabs activos
+    document.querySelectorAll('.division-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelector(`[onclick="showDivisionTable('${divisionId}')"]`).classList.add('active');
+    
+    // Actualizar título
+    document.getElementById('division-ranking-title').textContent = `Ranking ${division.name}`;
+    
+    // Renderizar podio
+    renderDivisionPodium(players.slice(0, 3));
+    
+    // Renderizar tabla completa
+    renderPlayersTable(players, division);
+};
+
+function renderPlayersTable(players, division) {
+    const tableContainer = document.getElementById('division-players-table');
+    
+    const tableHTML = `
+        <div class="players-table-header">
+            <div class="pos">Pos</div>
+            <div class="player">Jugador</div>
+            <div class="stats">Estadísticas</div>
+            <div class="points">Puntos</div>
+        </div>
+        <div class="players-table-body">
+            ${players.map((player, index) => {
+                const position = index + 1;
+                let rowClass = 'player-row';
+                
+                // Determinar zona
+                if (position <= 5 && division.promotionZone.end > 0) {
+                    rowClass += ' promotion-zone';
+                } else if (position >= 26) {
+                    rowClass += ' relegation-zone';
+                } else {
+                    rowClass += ' safe-zone';
+                }
+                
+                if (player.isCurrentPlayer) {
+                    rowClass += ' current-player';
+                }
+                
+                return `
+                    <div class="${rowClass}" onclick="showPlayerProfile('${player.id}', '${division.id}')">
+                        <div class="player-position">
+                            <span class="position-number">${position}</span>
+                            ${position <= 3 ? `<i class="fas fa-trophy position-trophy trophy-${position}"></i>` : ''}
+                        </div>
+                        <div class="player-info">
+                            <div class="player-avatar">
+                                <img src="${player.avatar}" alt="${player.name}" onerror="this.src='assets/images/fotos-perfil/niña.jpg'">
+                                ${player.isBot ? '' : '<div class="real-player-badge"><i class="fas fa-user"></i></div>'}
+                            </div>
+                            <div class="player-details">
+                                <div class="player-name">${player.name}</div>
+                                <div class="player-level">Nivel ${player.level}</div>
+                            </div>
+                        </div>
+                        <div class="player-stats">
+                            <div class="stat-item">
+                                <span class="stat-value">${player.monthlyGames}</span>
+                                <span class="stat-label">Partidas</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">${Math.round(player.winRate * 100)}%</span>
+                                <span class="stat-label">Victorias</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">${player.achievements}</span>
+                                <span class="stat-label">Logros</span>
+                            </div>
+                        </div>
+                        <div class="player-score">${player.score}</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+    
+    tableContainer.innerHTML = tableHTML;
+}
+
+// ============================================
+// MODAL DE PERFIL DE JUGADOR
+// ============================================
+
+window.showPlayerProfile = function(playerId, divisionId) {
+    const players = rankingData.allDivisions[divisionId];
+    const player = players.find(p => p.id === playerId);
+    const position = players.findIndex(p => p.id === playerId) + 1;
+    
+    if (!player) return;
+    
+    console.log('👤 Mostrando perfil de:', player.name);
+    
+    const modal = document.getElementById('player-modal');
+    const modalContent = modal.querySelector('.player-modal-content');
+    
+    modalContent.innerHTML = `
+        <div class="player-profile-header">
+            <button class="modal-close" onclick="closePlayerModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="player-profile-avatar">
+                <img src="${player.avatar}" alt="${player.name}" onerror="this.src='assets/images/fotos-perfil/niña.jpg'">
+                ${player.isBot ? '<div class="bot-badge">BOT</div>' : '<div class="real-badge">REAL</div>'}
+            </div>
+            <div class="player-profile-info">
+                <h2>${player.name}</h2>
+                <div class="player-position-badge">
+                    Posición #${position} en ${DIVISION_SYSTEM.divisions.find(d => d.id === divisionId).name}
+                </div>
+                <div class="player-level-badge">Nivel ${player.level}</div>
+            </div>
+        </div>
+        
+        <div class="player-profile-content">
+            <div class="profile-section">
+                <h3><i class="fas fa-heart"></i> Versículo Favorito</h3>
+                <div class="favorite-verse">
+                    "${player.favoriteVerse}"
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3><i class="fas fa-chart-bar"></i> Estadísticas</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                        <div class="stat-value">${player.monthlyGames}</div>
+                        <div class="stat-label">Partidas este mes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                        <div class="stat-value">${Math.round(player.winRate * 100)}%</div>
+                        <div class="stat-label">Tasa de victorias</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-medal"></i></div>
+                        <div class="stat-value">${player.achievements}</div>
+                        <div class="stat-label">Logros</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="stat-value">${player.score}</div>
+                        <div class="stat-label">Puntos</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3><i class="fas fa-calendar"></i> Información General</h3>
+                <div class="general-info">
+                    <div class="info-item">
+                        <span class="info-label">Miembro desde:</span>
+                        <span class="info-value">${formatDate(player.joinDate)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tipo de cuenta:</span>
+                        <span class="info-value">${player.isBot ? 'Bot generado' : 'Jugador real'}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3><i class="fas fa-crown"></i> Palmarés</h3>
+                <div class="palmares-section">
+                    ${player.palmares && player.palmares.length > 0 ? 
+                        player.palmares.map(medal => `
+                            <div class="medal-item">
+                                <div class="medal-icon position-${medal.position}">
+                                    <i class="fas fa-medal"></i>
+                                </div>
+                                <div class="medal-info">
+                                    <div class="medal-title">Puesto ${medal.position} - ${medal.division.charAt(0).toUpperCase() + medal.division.slice(1)}</div>
+                                    <div class="medal-date">Temporada ${medal.season}</div>
+                                </div>
+                            </div>
+                        `).join('') :
+                        '<div class="no-palmares">Aún no tiene medallas en su palmarés.</div>'
+                    }
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'flex';
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+};
+
+window.closePlayerModal = function() {
+    const modal = document.getElementById('player-modal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+};
+
+// ============================================
+// FUNCIONES DE UTILIDAD ACTUALIZADAS
+// ============================================
+
+function formatDate(date) {
+    return new Intl.DateTimeFormat('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }).format(new Date(date));
+}
+
+function calculatePlayerDivision() {
+    const gameData = window.GameDataManager.getStats();
+    const playerLevel = calculatePlayerLevel(gameData);
+    
+    console.log('📊 Calculando división para nivel:', playerLevel);
+    
+    for (let division of DIVISION_SYSTEM.divisions) {
+        if (playerLevel >= division.minLevel && playerLevel <= division.maxLevel) {
+            rankingData.currentDivision = division;
+            break;
+        }
+    }
+    
+    if (!rankingData.currentDivision) {
+        rankingData.currentDivision = DIVISION_SYSTEM.divisions[DIVISION_SYSTEM.divisions.length - 1];
+    }
+    
+    rankingData.playerScore = calculateIntegralScore(gameData);
+    
+    console.log(`🏆 Jugador en ${rankingData.currentDivision.name} con ${rankingData.playerScore} puntos`);
+}
+
+function calculateIntegralScore(gameData) {
+    const weights = DIVISION_SYSTEM.scoring.weights;
+    const maxValues = DIVISION_SYSTEM.scoring.maxValues;
+    
+    const monthlyData = getMonthlyData(gameData);
+    
+    const activityScore = Math.min(monthlyData.gamesPlayed / maxValues.monthlyGames, 1) * 100;
+    const victoryScore = monthlyData.winRate * 100;
+    const achievementScore = (gameData.achievements?.length || 0) / maxValues.maxAchievements * 100;
+    const levelScore = Math.min(calculatePlayerLevel(gameData) / maxValues.maxLevel, 1) * 100;
+    
+    const finalScore = (
+        activityScore * weights.activity +
+        victoryScore * weights.victories +
+        achievementScore * weights.achievements +
+        levelScore * weights.level
+    );
+    
+    return Math.round(finalScore);
+}
+
+function getMonthlyData(gameData) {
+    const totalGames = gameData.gamesPlayed || 0;
+    const victories = gameData.victories || 0;
+    
+    const monthlyGames = Math.floor(totalGames * 0.3);
+    const monthlyVictories = Math.floor(victories * 0.3);
+    
+    return {
+        gamesPlayed: monthlyGames,
+        victories: monthlyVictories,
+        winRate: monthlyGames > 0 ? monthlyVictories / monthlyGames : 0
+    };
+}
+
+function calculatePlayerLevel(gameData) {
+    const experience = gameData.victories * 100 + gameData.gamesPlayed * 10;
+    return Math.floor(experience / 1000) + 1;
+}
+
+function renderDivisionPodium(topPlayers) {
+    const podium = document.getElementById('division-podium');
+    if (!podium || topPlayers.length < 3) return;
+    
+    podium.innerHTML = `
+        <div class="podium-place second">
+            <div class="podium-avatar">
+                <img src="${topPlayers[1]?.avatar || 'assets/images/fotos-perfil/niña.jpg'}" alt="${topPlayers[1]?.name}">
+            </div>
+            <div class="podium-info">
+                <h3>${topPlayers[1]?.name || 'Usuario'}</h3>
+                <p>${topPlayers[1]?.score || 0} pts</p>
+            </div>
+            <div class="podium-rank">2</div>
+        </div>
+
+        <div class="podium-place first">
+            <div class="podium-crown">
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="podium-avatar">
+                <img src="${topPlayers[0]?.avatar || 'assets/images/fotos-perfil/niña.jpg'}" alt="${topPlayers[0]?.name}">
+            </div>
+            <div class="podium-info">
+                <h3>${topPlayers[0]?.name || 'Usuario'}</h3>
+                <p>${topPlayers[0]?.score || 0} pts</p>
+            </div>
+            <div class="podium-rank">1</div>
+        </div>
+
+        <div class="podium-place third">
+            <div class="podium-avatar">
+                <img src="${topPlayers[2]?.avatar || 'assets/images/fotos-perfil/niña.jpg'}" alt="${topPlayers[2]?.name}">
+            </div>
+            <div class="podium-info">
+                <h3>${topPlayers[2]?.name || 'Usuario'}</h3>
+                <p>${topPlayers[2]?.score || 0} pts</p>
+            </div>
+            <div class="podium-rank">3</div>
+        </div>
+    `;
+}
+
+function getCurrentSeason() {
+    const now = new Date();
+    return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+}
+
+function getDaysUntilSeasonEnd() {
+    const now = new Date();
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    return Math.ceil((nextMonth - now) / (1000 * 60 * 60 * 24));
+}
+
+function getRandomAvatar() {
+    const avatars = [
+        'assets/images/fotos-perfil/niña.jpg',
+        'assets/images/fotos-perfil/niño.jpg',
+        'assets/images/fotos-perfil/oveja.jpg',
+        'assets/images/fotos-perfil/paloma.jpg'
+    ];
+    return avatars[Math.floor(Math.random() * avatars.length)];
+}
+
+function getCurrentPlayerAvatar() {
+    const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
+    return profileData.currentAvatar || 'assets/images/fotos-perfil/niña.jpg';
+}
+
+function updateAllDisplays() {
+    const coinsDisplay = document.getElementById('coins-display');
+    if (coinsDisplay && window.GameDataManager) {
+        coinsDisplay.textContent = window.GameDataManager.getCoins();
     }
 }
 
 async function waitForGameDataManager() {
     return new Promise((resolve) => {
-        const checkGameDataManager = () => {
-            if (window.GameDataManager) {
-                console.log('✅ GameDataManager disponible para ranking');
-                resolve();
-            } else {
-                console.log('⏳ Esperando GameDataManager...');
-                setTimeout(checkGameDataManager, 100);
-            }
-        };
-        checkGameDataManager();
-    });
-}
-
-function setupGameDataListeners() {
-    console.log('🔗 Configurando listeners para ranking...');
-    
-    window.GameDataManager.onCoinsChanged((data) => {
-        console.log('💰 Monedas cambiaron, actualizando ranking:', data);
-        updateCoinsDisplay();
-        updateMyPosition();
-    });
-    
-    window.GameDataManager.onDataChanged((data) => {
-        console.log('📊 Datos cambiaron, actualizando posición:', data);
-        updateMyPosition();
-    });
-}
-
-// ============================================
-// FUNCIONES PRINCIPALES DE RANKING
-// ============================================
-
-async function loadRanking(type) {
-    console.log(`📊 Cargando ranking: ${type}`);
-    
-    rankingData.isLoading = true;
-    rankingData.currentType = type;
-    rankingData.currentPage = 0;
-    
-    // Mostrar loading
-    showLoadingState();
-    
-    try {
-        // Generar datos híbridos
-        const hybridData = generateHybridRanking(type);
-        
-        // Renderizar podio
-        renderPodium(hybridData.slice(0, 3));
-        
-        // Renderizar lista inicial
-        renderPlayersList(hybridData.slice(3, 23)); // Mostrar del 4 al 23
-        
-        // Actualizar título
-        updateRankingTitle(type);
-        
-        // Actualizar tabs activos
-        updateActiveTabs(type);
-        
-        console.log(`✅ Ranking ${type} cargado con ${hybridData.length} jugadores`);
-        
-    } catch (error) {
-        console.error('❌ Error cargando ranking:', error);
-        showErrorState();
-    } finally {
-        rankingData.isLoading = false;
-    }
-}
-
-function generateHybridRanking(type) {
-    console.log(`🔀 Generando ranking híbrido para: ${type}`);
-    
-    const allPlayers = [];
-    
-    // 1. Agregar usuario real (si existe)
-    const realUser = generateRealUserData();
-    if (realUser) {
-        allPlayers.push(realUser);
-    }
-    
-    // 2. Agregar usuarios bot con datos apropiados
-    BOT_PLAYERS.forEach((bot, index) => {
-        const playerData = generateBotPlayerData(bot, index, type);
-        allPlayers.push(playerData);
-    });
-    
-    // 3. Agregar variación aleatoria para realismo
-    allPlayers.forEach(player => {
-        addRandomVariation(player, type);
-    });
-    
-    // 4. Ordenar por el tipo de ranking
-    allPlayers.sort((a, b) => {
-        switch (type) {
-            case 'monedas':
-                return b.coins - a.coins;
-            case 'victorias':
-                return b.victories - a.victories;
-            case 'rachas':
-                return b.maxStreak - a.maxStreak;
-            case 'semanal':
-                return b.weeklyScore - a.weeklyScore;
-            default:
-                return b.coins - a.coins;
-        }
-    });
-    
-    // 5. Asignar posiciones finales
-    allPlayers.forEach((player, index) => {
-        player.position = index + 1;
-    });
-    
-    console.log(`✅ Ranking híbrido generado con ${allPlayers.length} jugadores`);
-    return allPlayers;
-}
-
-function generateRealUserData() {
-    console.log('👤 Generando datos del usuario real...');
-    
-    if (!window.GameDataManager) {
-        console.warn('⚠️ GameDataManager no disponible');
-        return null;
-    }
-    
-    // Obtener datos del usuario actual
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    
-    // ✅ OBTENER DATOS DEL PERFIL GUARDADO
-    const profileData = JSON.parse(localStorage.getItem('quiz-cristiano-profile') || '{}');
-    
-    console.log('📊 Datos del usuario:', currentUser);
-    console.log('📊 Datos del perfil:', profileData);
-    
-    // Determinar el nombre a mostrar (prioridad: displayName > username > nombre del currentUser)
-    let displayName = 'Jugador';
-    
-    if (profileData.displayName && profileData.displayName.trim()) {
-        displayName = profileData.displayName.trim();
-        console.log('✅ Usando displayName del perfil:', displayName);
-    } else if (profileData.username && profileData.username.trim()) {
-        displayName = profileData.username.trim();
-        console.log('✅ Usando username del perfil:', displayName);
-    } else if (currentUser.displayName) {
-        displayName = currentUser.displayName;
-        console.log('✅ Usando displayName del currentUser:', displayName);
-    } else if (currentUser.name && currentUser.name !== 'Invitado') {
-        displayName = currentUser.name;
-        console.log('✅ Usando name del currentUser:', displayName);
-    } else {
-        displayName = 'Jugador Anónimo';
-        console.log('⚠️ Usando nombre por defecto:', displayName);
-    }
-    
-    const stats = window.GameDataManager.getStats();
-    const userLevel = calculateUserLevel(stats);
-    
-    const userData = {
-        name: displayName,
-        avatar: profileData.currentAvatar || currentUser.photo || getMascotAvatar(),
-        isBot: false,
-        isCurrentUser: true,
-        level: userLevel.name,
-        lastActive: 'Ahora',
-        
-        // Datos según el tipo de ranking
-        coins: stats.coins || 0,
-        victories: stats.victories || 0,
-        streakCount: stats.currentStreak || 0,
-        weeklyScore: Math.floor((stats.coins || 0) * 0.1) + ((stats.victories || 0) * 10),
-        
-        // Metadatos adicionales
-        gamesPlayed: stats.gamesPlayed || 0,
-        winRate: stats.winRate || 0,
-        perfectGames: stats.perfectGames || 0
-    };
-    
-    console.log('✅ Datos del usuario generados:', userData);
-    return userData;
-}
-
-function generateBotPlayerData(bot, index, type) {
-    const level = bot.level;
-    const scoreRange = SCORE_RANGES[level];
-    
-    // Generar puntajes base según el nivel
-    const baseCoins = Math.floor(Math.random() * (scoreRange.max - scoreRange.min + 1)) + scoreRange.min;
-    const baseVictories = Math.floor(baseCoins / 100) + Math.floor(Math.random() * 10);
-    const maxStreak = Math.floor(Math.random() * (level === 'master' ? 20 : level === 'expert' ? 15 : level === 'intermediate' ? 10 : 5)) + 1;
-    
-    return {
-        id: `bot_${index}`,
-        name: bot.name,
-        avatar: bot.avatar,
-        coins: baseCoins,
-        victories: baseVictories,
-        gamesPlayed: baseVictories + Math.floor(Math.random() * 5),
-        maxStreak: maxStreak,
-        weeklyScore: baseCoins * 0.2 + baseVictories * 30 + Math.floor(Math.random() * 500),
-        isReal: false,
-        isBot: true,
-        level: level,
-        lastActive: generateRandomLastActive()
-    };
-}
-
-function addRandomVariation(player, type) {
-    // Agregar variación aleatoria del 5-15% para realismo
-    const variation = 0.05 + Math.random() * 0.1; // 5-15%
-    
-    switch (type) {
-        case 'monedas':
-            player.coins += Math.floor(player.coins * (Math.random() > 0.5 ? variation : -variation));
-            break;
-        case 'victorias':
-            player.victorias += Math.floor(Math.random() * 3) - 1; // -1, 0, +1
-            break;
-        case 'rachas':
-            player.maxStreak += Math.floor(Math.random() * 3) - 1;
-            break;
-        case 'semanal':
-            player.weeklyScore += Math.floor(player.weeklyScore * (Math.random() > 0.5 ? variation : -variation));
-            break;
-    }
-    
-    // Asegurar valores mínimos
-    player.coins = Math.max(0, player.coins);
-    player.victorias = Math.max(0, player.victorias);
-    player.maxStreak = Math.max(1, player.maxStreak);
-    player.weeklyScore = Math.max(0, player.weeklyScore);
-}
-
-// ============================================
-// RENDERIZADO
-// ============================================
-
-function renderPodium(topThree) {
-    console.log('🏆 Renderizando podio top 3');
-    
-    if (topThree.length >= 1) {
-        renderPodiumPlace(1, topThree[0]);
-    }
-    if (topThree.length >= 2) {
-        renderPodiumPlace(2, topThree[1]);
-    }
-    if (topThree.length >= 3) {
-        renderPodiumPlace(3, topThree[2]);
-    }
-}
-
-function renderPodiumPlace(position, player) {
-    const podiumElement = document.getElementById(`podium-${position}`);
-    if (!podiumElement) return;
-    
-    const avatarImg = podiumElement.querySelector('img');
-    const nameElement = podiumElement.querySelector('h3');
-    const scoreElement = podiumElement.querySelector('p');
-    
-    if (avatarImg) {
-        avatarImg.src = player.avatar;
-        avatarImg.alt = player.name;
-    }
-    
-    if (nameElement) {
-        nameElement.textContent = truncateName(player.name, 12);
-    }
-    
-    if (scoreElement) {
-        scoreElement.textContent = getScoreDisplay(player, rankingData.currentType);
-    }
-    
-    // Agregar indicador de usuario real
-    if (player.isReal) {
-        podiumElement.classList.add('current-user');
-    } else {
-        podiumElement.classList.remove('current-user');
-    }
-}
-
-function renderPlayersList(players) {
-    const playersListElement = document.getElementById('players-list');
-    if (!playersListElement) return;
-    
-    playersListElement.innerHTML = '';
-    
-    players.forEach(player => {
-        const playerElement = createPlayerElement(player);
-        playersListElement.appendChild(playerElement);
-    });
-    
-    // Actualizar botón de cargar más
-    updateLoadMoreButton(players.length);
-}
-
-function createPlayerElement(player) {
-    const div = document.createElement('div');
-    div.className = `player-item ${player.isReal ? 'current-user' : ''} ${player.isBot ? '' : 'verified'}`;
-    div.onclick = () => showPlayerModal(player);
-    
-    div.innerHTML = `
-        <div class="player-rank ${player.position <= 3 ? 'top3' : ''}">
-            #${player.position}
-        </div>
-        
-        <img src="${player.avatar}" alt="${player.name}" class="player-avatar-small">
-        
-        <div class="player-info">
-            <div class="player-name">${truncateName(player.name, 15)}</div>
-            <div class="player-stats-small">
-                ${player.victorias} victorias • ${player.gamesPlayed} partidas
-            </div>
-        </div>
-        
-        <div class="player-score">
-            ${getScoreDisplay(player, rankingData.currentType)}
-        </div>
-        
-        <div class="player-badge">
-            <i class="fas ${player.isReal ? 'fa-user' : player.level === 'master' ? 'fa-crown' : player.level === 'expert' ? 'fa-star' : 'fa-user-circle'}"></i>
-        </div>
-    `;
-    
-    return div;
-}
-
-// ============================================
-// FUNCIONES DE UTILIDAD
-// ============================================
-
-function getCurrentUserName() {
-    // ✅ PRIORIDAD: perfil > currentUser > fallback
-    
-    // 1. Intentar obtener del perfil guardado
-    try {
-        const profileData = JSON.parse(localStorage.getItem('quiz-cristiano-profile') || '{}');
-        if (profileData.displayName && profileData.displayName.trim()) {
-            console.log('📝 Nombre obtenido del perfil (displayName):', profileData.displayName);
-            return profileData.displayName.trim();
-        }
-        if (profileData.username && profileData.username.trim()) {
-            console.log('📝 Nombre obtenido del perfil (username):', profileData.username);
-            return profileData.username.trim();
-        }
-    } catch (error) {
-        console.warn('⚠️ Error obteniendo nombre del perfil:', error);
-    }
-    
-    // 2. Intentar obtener del currentUser
-    try {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.displayName && currentUser.displayName !== 'Invitado') {
-            console.log('📝 Nombre obtenido del currentUser (displayName):', currentUser.displayName);
-            return currentUser.displayName;
-        }
-        if (currentUser.name && currentUser.name !== 'Invitado') {
-            console.log('📝 Nombre obtenido del currentUser (name):', currentUser.name);
-            return currentUser.name;
-        }
-    } catch (error) {
-        console.warn('⚠️ Error obteniendo nombre del currentUser:', error);
-    }
-    
-    // 3. Fallback
-    console.log('📝 Usando nombre por defecto');
-    return 'Jugador Anónimo';
-}
-
-function getMascotAvatar() {
-    // Verificar si tiene corona desbloqueada
-    const hasCorona = localStorage.getItem('joy-corona-unlocked') === 'true';
-    return hasCorona ? 'assets/images/joy-corona.png' : 'assets/images/joy-trofeo.png';
-}
-
-function calculateUserLevel(stats) {
-    const totalScore = stats.coins + (stats.victories * 100);
-    
-    if (totalScore >= 8000) return 'master';
-    if (totalScore >= 4000) return 'expert';
-    if (totalScore >= 1500) return 'intermediate';
-    return 'beginner';
-}
-
-function generateRandomLastActive() {
-    const options = [
-        'Hace 5 min', 'Hace 15 min', 'Hace 30 min', 'Hace 1 hora',
-        'Hace 2 horas', 'Hace 1 día', 'Hace 2 días', 'Hace 1 semana'
-    ];
-    return options[Math.floor(Math.random() * options.length)];
-}
-
-function getScoreDisplay(player, type) {
-    switch (type) {
-        case 'monedas':
-            return `${player.coins.toLocaleString()}`;
-        case 'victorias':
-            return `${player.victorias}`;
-        case 'rachas':
-            return `${player.maxStreak}`;
-        case 'semanal':
-            return `${Math.floor(player.weeklyScore).toLocaleString()}`;
-        default:
-            return `${player.coins.toLocaleString()}`;
-    }
-}
-
-function truncateName(name, maxLength) {
-    if (name.length <= maxLength) return name;
-    return name.substring(0, maxLength - 3) + '...';
-}
-
-// ============================================
-// ACTUALIZACIONES DE UI
-// ============================================
-
-function updateMyPosition() {
-    console.log('📍 Actualizando mi posición en el ranking...');
-    
-    // Obtener nombre actualizado
-    const myName = getCurrentUserName();
-    
-    // Actualizar elementos de "Mi Posición"
-    const myNameElement = document.getElementById('my-name');
-    const myPositionElement = document.getElementById('my-position');
-    const myScoreElement = document.getElementById('my-score');
-    const myAvatarElement = document.getElementById('my-avatar');
-    
-    if (myNameElement) {
-        myNameElement.textContent = myName;
-        console.log('✅ Nombre actualizado en mi posición:', myName);
-    }
-    
-    if (myPositionElement) {
-        // Buscar la posición del usuario en el ranking actual
-        const userPosition = findUserPositionInRanking(myName);
-        myPositionElement.textContent = userPosition ? `#${userPosition}` : '#???';
-    }
-    
-    if (myScoreElement && window.GameDataManager) {
-        const stats = window.GameDataManager.getStats();
-        const scoreText = getScoreDisplay({ 
-            coins: stats.coins, 
-            victories: stats.victories, 
-            streakCount: stats.currentStreak 
-        }, rankingData.currentType);
-        myScoreElement.textContent = scoreText;
-    }
-    
-    if (myAvatarElement) {
-        const profileData = JSON.parse(localStorage.getItem('quiz-cristiano-profile') || '{}');
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        const avatarSrc = profileData.currentAvatar || currentUser.photo || getMascotAvatar();
-        myAvatarElement.src = avatarSrc;
-    }
-}
-
-function findUserPositionInRanking(userName) {
-    // Buscar en el ranking actual la posición del usuario
-    const playersList = document.querySelectorAll('.player-item');
-    for (let i = 0; i < playersList.length; i++) {
-        const playerName = playersList[i].querySelector('.player-name')?.textContent;
-        if (playerName === userName) {
-            return i + 4; // +4 porque los primeros 3 están en el podio
-        }
-    }
-    return null;
-}
-
-function updateCoinsDisplay() {
-    if (!window.GameDataManager) return;
-    
-    const coinsElements = document.querySelectorAll('#coins-display');
-    const currentCoins = window.GameDataManager.getCoins();
-    
-    coinsElements.forEach(element => {
-        if (element) {
-            element.textContent = currentCoins.toLocaleString();
-        }
-    });
-}
-
-function updateRankingTitle(type) {
-    const titleElement = document.getElementById('ranking-type-title');
-    if (!titleElement) return;
-    
-    const titles = {
-        monedas: 'Ranking de Monedas',
-        victorias: 'Ranking de Victorias', 
-        rachas: 'Ranking de Rachas',
-        semanal: 'Ranking Semanal'
-    };
-    
-    titleElement.textContent = titles[type] || 'Ranking';
-}
-
-function updateActiveTabs(type) {
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(tab => {
-        if (tab.dataset.tab === type) {
-            tab.classList.add('active');
+        if (window.GameDataManager) {
+            resolve();
         } else {
-            tab.classList.remove('active');
-        }
-    });
-}
-
-function updateLoadMoreButton(playersShown) {
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    if (!loadMoreBtn) return;
-    
-    if (playersShown >= 20) {
-        loadMoreBtn.style.display = 'inline-flex';
-    } else {
-        loadMoreBtn.style.display = 'none';
-    }
-}
-
-// ============================================
-// ESTADOS DE CARGA Y ERROR
-// ============================================
-
-function showLoadingState() {
-    const playersListElement = document.getElementById('players-list');
-    if (!playersListElement) return;
-    
-    playersListElement.innerHTML = `
-        <div class="loading-players">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Cargando ranking...</p>
-        </div>
-    `;
-}
-
-function showErrorState() {
-    const playersListElement = document.getElementById('players-list');
-    if (!playersListElement) return;
-    
-    playersListElement.innerHTML = `
-        <div class="empty-ranking">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Error cargando ranking</h3>
-            <p>No se pudo cargar el ranking. Intenta de nuevo.</p>
-            <button onclick="loadRanking('${rankingData.currentType}')" class="btn-retry">
-                <i class="fas fa-redo"></i> Reintentar
-            </button>
-        </div>
-    `;
-}
-
-// ============================================
-// MODAL DE JUGADOR
-// ============================================
-
-function showPlayerModal(player) {
-    console.log('👤 Mostrando modal del jugador:', player.name);
-    
-    const modal = document.getElementById('player-modal');
-    const modalPlayerName = document.getElementById('modal-player-name');
-    const modalPlayerProfile = document.getElementById('modal-player-profile');
-    
-    if (!modal || !modalPlayerProfile) return;
-    
-    if (modalPlayerName) {
-        modalPlayerName.textContent = player.name;
-    }
-    
-    modalPlayerProfile.innerHTML = `
-        <div class="player-profile-header">
-            <img src="${player.avatar}" alt="${player.name}" class="profile-avatar">
-            <div class="profile-info">
-                <h3>${player.name}</h3>
-                <span class="profile-level ${player.level}">${getLevelName(player.level)}</span>
-                <span class="profile-status">${player.isReal ? 'Usuario Real' : 'Bot'}</span>
-            </div>
-        </div>
-        
-        <div class="player-stats-detailed">
-            <div class="stat-row">
-                <span class="stat-label">Posición:</span>
-                <span class="stat-value">#${player.position}</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Monedas:</span>
-                <span class="stat-value">${player.coins.toLocaleString()}</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Victorias:</span>
-                <span class="stat-value">${player.victorias}</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Partidas Jugadas:</span>
-                <span class="stat-value">${player.gamesPlayed}</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Mejor Racha:</span>
-                <span class="stat-value">${player.maxStreak}</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Última Actividad:</span>
-                <span class="stat-value">${player.lastActive}</span>
-            </div>
-        </div>
-        
-        ${player.isReal ? '' : `
-            <div class="bot-disclaimer">
-                <i class="fas fa-robot"></i>
-                <p>Este es un jugador generado automáticamente para poblar el ranking.</p>
-            </div>
-        `}
-    `;
-    
-    modal.style.display = 'flex';
-}
-
-function getLevelName(level) {
-    const levels = {
-        master: 'Maestro',
-        expert: 'Experto',
-        intermediate: 'Intermedio',
-        beginner: 'Principiante'
-    };
-    return levels[level] || 'Jugador';
-}
-
-// ============================================
-// FUNCIONES GLOBALES PARA EL HTML
-// ============================================
-
-window.switchToRanking = function(type) {
-    console.log(`🔄 Cambiando a ranking: ${type}`);
-    loadRanking(type);
-};
-
-window.refreshCurrentRanking = function() {
-    console.log('🔄 Refrescando ranking actual');
-    
-    // Animación del botón
-    const refreshBtn = document.querySelector('.refresh-btn i');
-    if (refreshBtn) {
-        refreshBtn.style.animation = 'spin 1s linear';
-        setTimeout(() => {
-            refreshBtn.style.animation = '';
-        }, 1000);
-    }
-    
-    loadRanking(rankingData.currentType);
-};
-
-window.loadMorePlayersData = function() {
-    console.log('📄 Cargando más jugadores...');
-    
-    // Generar más datos
-    const moreData = generateHybridRanking(rankingData.currentType);
-    const startIndex = 23 + (rankingData.currentPage * 20);
-    const endIndex = startIndex + 20;
-    const newPlayers = moreData.slice(startIndex, endIndex);
-    
-    if (newPlayers.length > 0) {
-        const playersListElement = document.getElementById('players-list');
-        newPlayers.forEach(player => {
-            const playerElement = createPlayerElement(player);
-            playersListElement.appendChild(playerElement);
-        });
-        
-        rankingData.currentPage++;
-        updateLoadMoreButton(newPlayers.length);
-    } else {
-        // No hay más jugadores
-        const loadMoreBtn = document.getElementById('load-more-btn');
-        if (loadMoreBtn) {
-            loadMoreBtn.innerHTML = '<i class="fas fa-check"></i> <span>No hay más jugadores</span>';
-            loadMoreBtn.disabled = true;
-        }
-    }
-};
-
-// ✅ FUNCIÓN PARA SINCRONIZAR DATOS DEL PERFIL
-function syncProfileData() {
-    console.log('🔄 Sincronizando datos del perfil con ranking...');
-    
-    // Escuchar cambios en el perfil
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'quiz-cristiano-profile') {
-            console.log('📝 Perfil actualizado, recargando ranking...');
-            updateMyPosition();
-            
-            // Recargar ranking para reflejar el nuevo nombre
-            setTimeout(() => {
-                loadRanking(rankingData.currentType);
-            }, 500);
-        }
-    });
-    
-    // También escuchar cambios desde la misma pestaña
-    const originalSetItem = localStorage.setItem;
-    localStorage.setItem = function(key, value) {
-        const result = originalSetItem.apply(this, arguments);
-        if (key === 'quiz-cristiano-profile') {
-            console.log('📝 Perfil actualizado en la misma pestaña');
-            setTimeout(() => {
-                updateMyPosition();
-                loadRanking(rankingData.currentType);
+            const checkInterval = setInterval(() => {
+                if (window.GameDataManager) {
+                    clearInterval(checkInterval);
+                    resolve();
+                }
             }, 100);
         }
-        return result;
-    };
+    });
 }
 
-// ============================================
-// NOTIFICACIONES
-// ============================================
-
-function showNotification(message, type = 'info') {
-    console.log(`📢 Notificación: ${message} (${type})`);
-    
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    
-    const icons = {
-        success: 'fa-check-circle',
-        error: 'fa-exclamation-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
-    
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas ${icons[type] || icons.info}"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: var(--surface-primary);
-        backdrop-filter: var(--backdrop-blur);
-        border: 1px solid var(--border-primary);
-        border-radius: 15px;
-        padding: 15px 20px;
-        z-index: 2000;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        box-shadow: var(--shadow-primary);
-        max-width: 300px;
-    `;
-    
-    const content = notification.querySelector('.notification-content');
-    content.style.cssText = `
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--text-primary);
-        font-weight: 500;
-    `;
-    
-    const colors = {
-        success: '#27ae60',
-        error: '#e74c3c',
-        warning: '#f39c12',
-        info: '#3498db'
-    };
-    
-    if (colors[type]) {
-        content.querySelector('i').style.color = colors[type];
-    }
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => notification.style.transform = 'translateX(0)', 100);
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
+function showFallbackInterface() {
+    console.log('⚠️ Mostrando interfaz de fallback...');
 }
 
 // ============================================
@@ -953,16 +827,8 @@ function showNotification(message, type = 'info') {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏆 Ranking HTML cargado, inicializando...');
+    console.log('🏆 Ranking por divisiones cargando...');
     init();
 });
 
-// Debug para desarrollo
-window.RankingDebug = {
-    data: rankingData,
-    bots: BOT_PLAYERS,
-    generateHybrid: generateHybridRanking,
-    getGameDataManager: () => window.GameDataManager
-};
-
-console.log('✅ Ranking.js HÍBRIDO cargado completamente');
+console.log('✅ Ranking por divisiones con tablas cargado completamente');

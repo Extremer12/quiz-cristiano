@@ -177,9 +177,12 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="js/modules/gamedatamanager.js"></script>
-    <script src="js/modules/dark-mode.js"></script>
-    <script src="js/pages/store.js"></script>
+    <!-- Agregar ANTES de los otros scripts, justo antes de cerrar </body> -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="js/config/mercadopago-config.js"></script>
+<script src="js/modules/gamedatamanager.js"></script>
+<script src="js/modules/dark-mode.js"></script>
+<script src="js/pages/store.js"></script>
     <script src="js/modules/ads-manager.js" type="module"></script>
     <!-- Script de inicialización en store.html -->
     <script>
@@ -241,5 +244,469 @@
             }, 1000);
         });
     </script>
+
+<!-- Modal para Mercado Pago -->
+<div class="mercadopago-modal" id="mp-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeMPModal()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Pagar con Mercado Pago</h3>
+            <button class="modal-close" onclick="closeMPModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="mp-checkout-container">
+                <!-- Aquí se renderiza el checkout de MP -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ INFORMACIÓN DE TARJETAS DE PRUEBA -->
+<script>
+console.log('💳 TARJETAS DE PRUEBA MERCADO PAGO:');
+console.log('');
+console.log('🔵 MASTERCARD (Aprobación):');
+console.log('   📱 5031 7557 3453 0604');
+console.log('   📅 11/30');
+console.log('   🔐 123');
+console.log('');
+console.log('🔵 VISA (Aprobación):');
+console.log('   📱 4509 9535 6623 3704');
+console.log('   📅 11/30');
+console.log('   🔐 123');
+console.log('');
+console.log('👤 Titular: APRO (para aprobación)');
+console.log('🚫 Titular: OTHE (para rechazo)');
+console.log('💡 No se cobrará dinero real');
+</script>
+
+
+
+<script>
+console.log('💳 CONFIGURACIÓN DE PAGOS:');
+console.log('✅ Mercado Pago: Configurado para Argentina');
+console.log('✅ PayPal: Configurado para internacional');
+console.log('');
+console.log('🧪 TARJETAS DE PRUEBA MERCADO PAGO:');
+console.log('💳 Mastercard: 5031 7557 3453 0604 (11/30, 123, APRO)');
+console.log('💳 Visa: 4509 9535 6623 3704 (11/30, 123, APRO)');
+console.log('');
+console.log('🌍 PayPal: Usa tu cuenta sandbox o real');
+</script>
+
+<style>
+/* ✅ MODAL CSS FORZADO - PRIORIDAD MÁXIMA */
+#purchase-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(15px) !important;
+    z-index: 999999 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* ✅ MOSTRAR MODAL CUANDO TENGA ESTILO FLEX */
+#purchase-modal[style*="display: flex"],
+#purchase-modal[style*="display:flex"] {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* ✅ OVERLAY DEL MODAL */
+#purchase-modal .modal-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    z-index: 999990 !important;
+}
+
+/* ✅ CONTENIDO DEL MODAL */
+#purchase-modal .modal-content {
+    background: #1a1a1a !important;
+    border: 2px solid #ffd700 !important;
+    border-radius: 20px !important;
+    max-width: 90vw !important;
+    width: 500px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    position: relative !important;
+    z-index: 999999 !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8) !important;
+    margin: 20px !important;
+    transform: scale(1) !important;
+    opacity: 1 !important;
+}
+
+/* ✅ HEADER DEL MODAL */
+#purchase-modal .modal-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 20px !important;
+    border-bottom: 1px solid #333 !important;
+    background: #2a2a2a !important;
+    border-radius: 18px 18px 0 0 !important;
+}
+
+#purchase-modal .modal-header h3 {
+    margin: 0 !important;
+    color: #ffd700 !important;
+    font-size: 1.3rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+#purchase-modal .modal-close {
+    background: #333 !important;
+    border: none !important;
+    color: #fff !important;
+    font-size: 1.5rem !important;
+    cursor: pointer !important;
+    padding: 8px !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+}
+
+#purchase-modal .modal-close:hover {
+    background: #555 !important;
+    transform: scale(1.1) !important;
+}
+
+/* ✅ BODY DEL MODAL */
+#purchase-modal .modal-body {
+    padding: 25px !important;
+    color: #fff !important;
+}
+
+/* ✅ PREVIEW DEL PRODUCTO */
+#purchase-modal .product-preview {
+    text-align: center !important;
+    margin-bottom: 20px !important;
+}
+
+#purchase-modal .preview-icon {
+    font-size: 4rem !important;
+    color: #ffd700 !important;
+    margin-bottom: 15px !important;
+}
+
+#purchase-modal .preview-image {
+    max-width: 120px !important;
+    max-height: 120px !important;
+    border-radius: 15px !important;
+    border: 2px solid #ffd700 !important;
+    margin: 0 auto 15px auto !important;
+    display: block !important;
+}
+
+/* ✅ INFORMACIÓN DEL PRODUCTO */
+#purchase-modal .purchase-info {
+    color: #fff !important;
+}
+
+#purchase-modal .product-description {
+    text-align: center !important;
+    margin-bottom: 20px !important;
+    color: #ccc !important;
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+}
+
+/* ✅ DETALLES DE PRECIOS */
+#purchase-modal .pricing-details {
+    background: #2a2a2a !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    border: 1px solid #444 !important;
+}
+
+#purchase-modal .pricing-details h4 {
+    color: #ffd700 !important;
+    margin-bottom: 15px !important;
+    text-align: center !important;
+    font-size: 1.2rem !important;
+}
+
+#purchase-modal .price-breakdown {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+}
+
+#purchase-modal .price-line-usd,
+#purchase-modal .price-line-ars {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+    background: rgba(255, 215, 0, 0.1) !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+}
+
+#purchase-modal .price-line-usd .currency,
+#purchase-modal .price-line-ars .currency {
+    font-weight: 600 !important;
+    color: #fff !important;
+}
+
+#purchase-modal .price-line-usd .amount,
+#purchase-modal .price-line-ars .amount {
+    font-weight: 700 !important;
+    color: #ffd700 !important;
+    font-size: 1.1rem !important;
+}
+
+/* ✅ OPCIONES DE PAGO */
+#purchase-modal .payment-options {
+    margin-top: 25px !important;
+}
+
+#purchase-modal .payment-options h4 {
+    color: #ffd700 !important;
+    margin-bottom: 20px !important;
+    text-align: center !important;
+    font-size: 1.2rem !important;
+}
+
+#purchase-modal .payment-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    width: 100% !important;
+    padding: 18px !important;
+    margin: 12px 0 !important;
+    background: #2a2a2a !important;
+    border: 2px solid #444 !important;
+    border-radius: 15px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-size: 1rem !important;
+}
+
+#purchase-modal .payment-btn:hover {
+    background: #333 !important;
+    border-color: #ffd700 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.3) !important;
+}
+
+#purchase-modal .payment-btn.mercadopago {
+    border-color: #009ee3 !important;
+}
+
+#purchase-modal .payment-btn.mercadopago:hover {
+    border-color: #007bb5 !important;
+    background: rgba(0, 158, 227, 0.1) !important;
+}
+
+#purchase-modal .payment-btn.paypal {
+    border-color: #0070ba !important;
+}
+
+#purchase-modal .payment-btn.paypal:hover {
+    border-color: #005ea6 !important;
+    background: rgba(0, 112, 186, 0.1) !important;
+}
+
+#purchase-modal .payment-icon {
+    font-size: 2.2rem !important;
+    width: 50px !important;
+    text-align: center !important;
+    color: #ffd700 !important;
+}
+
+#purchase-modal .payment-btn.mercadopago .payment-icon {
+    color: #009ee3 !important;
+}
+
+#purchase-modal .payment-btn.paypal .payment-icon {
+    color: #0070ba !important;
+}
+
+#purchase-modal .payment-info {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+#purchase-modal .payment-name {
+    font-weight: 700 !important;
+    color: #fff !important;
+    font-size: 1.2rem !important;
+}
+
+#purchase-modal .payment-desc {
+    color: #ccc !important;
+    font-size: 0.9rem !important;
+}
+
+#purchase-modal .payment-price {
+    color: #ffd700 !important;
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    text-align: right !important;
+    align-self: center !important;
+}
+
+/* ✅ FOOTER DEL MODAL */
+#purchase-modal .modal-footer {
+    display: flex !important;
+    gap: 15px !important;
+    padding: 20px !important;
+    border-top: 1px solid #333 !important;
+    justify-content: flex-end !important;
+    background: #1a1a1a !important;
+    border-radius: 0 0 18px 18px !important;
+}
+
+#purchase-modal .btn-cancel,
+#purchase-modal .btn-purchase {
+    padding: 12px 25px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 1rem !important;
+}
+
+#purchase-modal .btn-cancel {
+    background: #333 !important;
+    color: #fff !important;
+    border: 1px solid #555 !important;
+}
+
+#purchase-modal .btn-cancel:hover {
+    background: #444 !important;
+    transform: translateY(-2px) !important;
+}
+
+#purchase-modal .btn-purchase {
+    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+    color: white !important;
+}
+
+#purchase-modal .btn-purchase:hover {
+    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4) !important;
+}
+
+#purchase-modal .btn-purchase:disabled,
+#purchase-modal .btn-purchase.disabled {
+    background: #333 !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+/* ✅ RESPONSIVE PARA MÓVILES */
+@media (max-width: 768px) {
+    #purchase-modal .modal-content {
+        width: 95vw !important;
+        margin: 10px !important;
+        max-height: 95vh !important;
+    }
+    
+    #purchase-modal .modal-header,
+    #purchase-modal .modal-body,
+    #purchase-modal .modal-footer {
+        padding: 15px !important;
+    }
+    
+    #purchase-modal .payment-btn {
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 12px !important;
+        padding: 20px !important;
+    }
+    
+    #purchase-modal .payment-info {
+        align-items: center !important;
+    }
+    
+    #purchase-modal .payment-price {
+        text-align: center !important;
+    }
+    
+    #purchase-modal .modal-footer {
+        flex-direction: column !important;
+    }
+    
+    #purchase-modal .btn-purchase,
+    #purchase-modal .btn-cancel {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+}
+
+/* ✅ ANIMACIÓN DE ENTRADA */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+#purchase-modal.show .modal-content {
+    animation: modalFadeIn 0.3s ease-out !important;
+}
+
+/* ✅ ASEGURAR VISIBILIDAD TOTAL */
+#purchase-modal * {
+    box-sizing: border-box !important;
+}
+
+#purchase-modal {
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* ✅ FORZAR Z-INDEX MÁXIMO */
+#purchase-modal {
+    z-index: 2147483647 !important;
+}
+
+#purchase-modal .modal-content {
+    z-index: 2147483647 !important;
+}
+
+/* ✅ ELIMINAR CUALQUIER INTERFERENCIA */
+body.modal-open {
+    overflow: hidden !important;
+}
+</style>
 </body>
 </html>

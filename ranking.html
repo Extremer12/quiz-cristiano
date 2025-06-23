@@ -39,10 +39,9 @@
         })();
     </script>
 
-<!-- ADSENSE-->
+    <!-- ADSENSE-->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
-
 </head>
 <body>
     <div class="ranking-container">
@@ -53,8 +52,8 @@
             </button>
             
             <div class="ranking-title">
-                <h1>Ranking Global</h1>
-                <p>Compite con jugadores de todo el mundo</p>
+                <h1>Ranking por Divisiones</h1>
+                <p>Sistema competitivo por temporadas</p>
             </div>
             
             <div class="player-coins">
@@ -63,138 +62,267 @@
             </div>
         </header>
 
-        <!-- Tabs de Rankings -->
-        <section class="ranking-tabs">
-            <button class="tab-btn active" onclick="switchRanking('monedas')" data-tab="monedas">
-                <i class="fas fa-coins"></i>
-                <span>Monedas</span>
-            </button>
-            <button class="tab-btn" onclick="switchRanking('victorias')" data-tab="victorias">
-                <i class="fas fa-trophy"></i>
-                <span>Victorias</span>
-            </button>
-            <button class="tab-btn" onclick="switchRanking('rachas')" data-tab="rachas">
-                <i class="fas fa-fire"></i>
-                <span>Rachas</span>
-            </button>
-            <button class="tab-btn" onclick="switchRanking('semanal')" data-tab="semanal">
-                <i class="fas fa-calendar-week"></i>
-                <span>Semanal</span>
-            </button>
-        </section>
-
-        <!-- Mi Posición -->
-        <section class="my-position">
-            <div class="my-position-card">
-                <div class="position-badge">
-                    <span id="my-position">#???</span>
-                </div>
-                <div class="my-stats">
-                    <img src="assets/images/mascota.png" alt="Mi Avatar" class="my-avatar" id="my-avatar">
-                    <div class="my-info">
-                        <h3 id="my-name">Mi Nombre</h3>
-                        <p id="my-score">0 puntos</p>
+        <!-- ✅ NUEVA SECCIÓN: EXPLICACIÓN DEL SISTEMA -->
+        <section class="system-explanation" id="system-explanation">
+            <div class="explanation-header">
+                <h2><i class="fas fa-info-circle"></i> ¿Cómo Funciona el Ranking?</h2>
+                <button class="toggle-explanation" onclick="toggleExplanation()">
+                    <i class="fas fa-chevron-down" id="explanation-icon"></i>
+                </button>
+            </div>
+            
+            <div class="explanation-content" id="explanation-content">
+                <!-- Sistema de Puntuación -->
+                <div class="explanation-section">
+                    <h3><i class="fas fa-calculator"></i> Sistema de Puntuación Integral</h3>
+                    <p>Tu puntaje se calcula combinando múltiples factores para premiar tanto la habilidad como la dedicación:</p>
+                    
+                    <div class="scoring-breakdown">
+                        <div class="scoring-item">
+                            <div class="scoring-icon activity">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="scoring-info">
+                                <h4>Actividad (40%)</h4>
+                                <p>Partidas jugadas este mes. Máximo: 100 partidas = 40 puntos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="scoring-item">
+                            <div class="scoring-icon victories">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="scoring-info">
+                                <h4>Victorias (30%)</h4>
+                                <p>Porcentaje de victorias. 100% victorias = 30 puntos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="scoring-item">
+                            <div class="scoring-icon achievements">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <div class="scoring-info">
+                                <h4>Logros (20%)</h4>
+                                <p>Logros desbloqueados. Máximo: 50 logros = 20 puntos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="scoring-item">
+                            <div class="scoring-icon level">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="scoring-info">
+                                <h4>Nivel (10%)</h4>
+                                <p>Tu nivel actual. Nivel 100 = 10 puntos</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-example">
+                        <h4><i class="fas fa-equals"></i> Ejemplo de Cálculo</h4>
+                        <div class="example-calculation">
+                            <div class="calc-line">
+                                <span>Actividad:</span> <span>50 partidas × 40% = 20 puntos</span>
+                            </div>
+                            <div class="calc-line">
+                                <span>Victorias:</span> <span>75% × 30% = 22.5 puntos</span>
+                            </div>
+                            <div class="calc-line">
+                                <span>Logros:</span> <span>25 logros × 20% = 10 puntos</span>
+                            </div>
+                            <div class="calc-line">
+                                <span>Nivel:</span> <span>Nivel 60 × 10% = 6 puntos</span>
+                            </div>
+                            <div class="calc-total">
+                                <span><strong>Total:</strong></span> <span><strong>58.5 puntos</strong></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="my-badge">
-                    <i class="fas fa-user" id="my-badge-icon"></i>
+
+                <!-- Divisiones -->
+                <div class="explanation-section">
+                    <h3><i class="fas fa-layer-group"></i> Sistema de Divisiones</h3>
+                    <p>Compite contra jugadores de tu mismo nivel en divisiones exclusivas:</p>
+                    
+                    <div class="divisions-info">
+                        <div class="division-info-card platino">
+                            <div class="division-trophy-info">
+                                <img src="assets/images/Trofeos/Platino.png" alt="División Platino">
+                            </div>
+                            <div class="division-details">
+                                <h4>División Platino</h4>
+                                <p><strong>Requisito:</strong> Niveles 51-75</p>
+                                <p><strong>Premios mensuales:</strong> 2,500 monedas</p>
+                                <p><strong>Título:</strong> Experto Bíblico</p>
+                            </div>
+                        </div>
+                        
+                        <div class="division-info-card diamante">
+                            <div class="division-trophy-info">
+                                <img src="assets/images/Trofeos/Diamante.png" alt="División Diamante">
+                            </div>
+                            <div class="division-details">
+                                <h4>División Diamante</h4>
+                                <p><strong>Requisito:</strong> Niveles 76-100</p>
+                                <p><strong>Premios mensuales:</strong> 5,000 monedas</p>
+                                <p><strong>Título:</strong> Maestro Bíblico</p>
+                            </div>
+                        </div>
+                        
+                        <div class="division-info-card corona-divina">
+                            <div class="division-trophy-info">
+                                <img src="assets/images/Trofeos/corona-divina.png" alt="Corona Divina">
+                            </div>
+                            <div class="division-details">
+                                <h4>Corona Divina</h4>
+                                <p><strong>Requisito:</strong> Nivel 100+</p>
+                                <p><strong>Premios mensuales:</strong> 10,000 monedas</p>
+                                <p><strong>Título:</strong> Leyenda Bíblica</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temporadas -->
+                <div class="explanation-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Sistema de Temporadas</h3>
+                    <div class="season-info">
+                        <div class="season-item">
+                            <div class="season-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="season-text">
+                                <h4>Duración</h4>
+                                <p>Cada temporada dura exactamente 30 días</p>
+                            </div>
+                        </div>
+                        
+                        <div class="season-item">
+                            <div class="season-icon">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                            <div class="season-text">
+                                <h4>Reset Mensual</h4>
+                                <p>El primer día de cada mes comienza una nueva temporada</p>
+                            </div>
+                        </div>
+                        
+                        <div class="season-item">
+                            <div class="season-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="season-text">
+                                <h4>Premios del Top 3</h4>
+                                <p>Los 3 mejores de cada división reciben premios especiales</p>
+                            </div>
+                        </div>
+                        
+                        <div class="season-item">
+                            <div class="season-icon">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <div class="season-text">
+                                <h4>Medallas Permanentes</h4>
+                                <p>Las medallas ganadas se muestran para siempre en tu perfil</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consejos -->
+                <div class="explanation-section">
+                    <h3><i class="fas fa-lightbulb"></i> Consejos para Subir en el Ranking</h3>
+                    <div class="tips-grid">
+                        <div class="tip-card">
+                            <i class="fas fa-play-circle"></i>
+                            <h4>Juega Regularmente</h4>
+                            <p>La actividad es el 40% de tu puntaje. Juega varias partidas al día.</p>
+                        </div>
+                        
+                        <div class="tip-card">
+                            <i class="fas fa-target"></i>
+                            <h4>Mejora tu Precisión</h4>
+                            <p>Las victorias cuentan 30%. Estudia para aumentar tu porcentaje de aciertos.</p>
+                        </div>
+                        
+                        <div class="tip-card">
+                            <i class="fas fa-trophy"></i>
+                            <h4>Desbloquea Logros</h4>
+                            <p>Los logros dan 20% del puntaje. Intenta completar todos los desafíos.</p>
+                        </div>
+                        
+                        <div class="tip-card">
+                            <i class="fas fa-arrow-up"></i>
+                            <h4>Sube de Nivel</h4>
+                            <p>El nivel contribuye 10%. Juega consistentemente para ganar experiencia.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Podio Top 3 -->
-        <section class="podium-section">
-            <div class="podium">
-                <!-- Segundo Lugar -->
-                <div class="podium-place second" id="podium-2">
-                    <div class="podium-avatar">
-                        <img src="assets/images/mascota.png" alt="Segundo lugar">
-                        <div class="podium-crown silver">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                    </div>
-                    <div class="podium-info">
-                        <h3>Jugador 2</h3>
-                        <p>0 pts</p>
-                    </div>
-                    <div class="podium-rank">2</div>
+        <!-- Mi División Actual -->
+        <section class="my-division-section">
+            <div class="division-card" data-division="platino" id="my-division-card">
+                <div class="division-trophy">
+                    <img src="assets/images/Trofeos/Platino.png" alt="División Platino" id="my-division-trophy">
                 </div>
-
-                <!-- Primer Lugar -->
-                <div class="podium-place first" id="podium-1">
-                    <div class="podium-avatar">
-                        <img src="assets/images/mascota.png" alt="Primer lugar">
-                        <div class="podium-crown gold">
-                            <i class="fas fa-crown"></i>
+                <div class="division-info">
+                    <h2 id="my-division-name">División Platino</h2>
+                    <p id="my-division-description">Para expertos en conocimiento bíblico</p>
+                    <div class="my-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="my-score">0</span>
+                            <span class="stat-label">Puntos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="my-rank">#?</span>
+                            <span class="stat-label">Posición</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="days-remaining">30</span>
+                            <span class="stat-label">Días restantes</span>
                         </div>
                     </div>
-                    <div class="podium-info">
-                        <h3>Jugador 1</h3>
-                        <p>0 pts</p>
-                    </div>
-                    <div class="podium-rank">1</div>
-                </div>
-
-                <!-- Tercer Lugar -->
-                <div class="podium-place third" id="podium-3">
-                    <div class="podium-avatar">
-                        <img src="assets/images/mascota.png" alt="Tercer lugar">
-                        <div class="podium-crown bronze">
-                            <i class="fas fa-award"></i>
-                        </div>
-                    </div>
-                    <div class="podium-info">
-                        <h3>Jugador 3</h3>
-                        <p>0 pts</p>
-                    </div>
-                    <div class="podium-rank">3</div>
                 </div>
             </div>
         </section>
 
-        <!-- Lista de Rankings -->
-        <section class="ranking-list">
-            <div class="ranking-list-header">
-                <h3 id="ranking-type-title">Ranking de Monedas</h3>
-                <div class="refresh-btn" onclick="refreshRanking()">
-                    <i class="fas fa-sync-alt"></i>
+        <!-- Sistema de Divisiones Overview -->
+        <section class="divisions-overview">
+            <h2><i class="fas fa-layer-group"></i> Todas las Divisiones</h2>
+            <div class="divisions-grid" id="divisions-grid">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Ranking de Mi División -->
+        <section class="division-ranking">
+            <div class="ranking-header-section">
+                <h2 id="division-ranking-title">Ranking División Platino</h2>
+                <div class="season-info">
+                    <i class="fas fa-calendar"></i>
+                    <span id="season-info">Temporada 2025-06</span>
                 </div>
             </div>
             
-            <div class="players-list" id="players-list">
-                <!-- Los jugadores se cargan dinámicamente -->
+            <!-- Top 3 Podio -->
+            <div class="podium-section">
+                <div class="podium" id="division-podium">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Lista completa -->
+            <div class="players-list" id="division-players-list">
                 <div class="loading-players">
                     <i class="fas fa-spinner fa-spin"></i>
                     <p>Cargando ranking...</p>
                 </div>
             </div>
-
-            <!-- Cargar más jugadores -->
-            <div class="load-more-section">
-                <button class="load-more-btn" onclick="loadMorePlayers()" id="load-more-btn">
-                    <i class="fas fa-chevron-down"></i>
-                    <span>Cargar más jugadores</span>
-                </button>
-            </div>
         </section>
-
-        <!-- Modal de perfil de jugador -->
-        <div class="player-modal" id="player-modal" style="display: none;">
-            <div class="modal-overlay" onclick="closePlayerModal()"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="modal-player-name">Nombre del Jugador</h3>
-                    <button class="modal-close" onclick="closePlayerModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="player-profile" id="modal-player-profile">
-                        <!-- Contenido del perfil -->
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
@@ -226,10 +354,39 @@
     <script src="js/modules/dark-mode.js"></script>
     <script src="js/pages/ranking.js"></script>
     <script src="js/modules/ads-manager.js" type="module"></script>
+    
     <!-- Script de inicialización -->
     <script>
         // Variables globales
-        let currentRankingType = 'monedas';
+        let currentRankingType = 'integral';
+        let explanationExpanded = false;
+        
+        // ✅ NUEVA FUNCIÓN PARA ALTERNAR EXPLICACIÓN
+        window.toggleExplanation = function() {
+            const content = document.getElementById('explanation-content');
+            const icon = document.getElementById('explanation-icon');
+            
+            explanationExpanded = !explanationExpanded;
+            
+            if (explanationExpanded) {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+                
+                // Animación suave
+                setTimeout(() => {
+                    content.style.opacity = '1';
+                    content.style.maxHeight = '2000px';
+                }, 10);
+            } else {
+                content.style.opacity = '0';
+                content.style.maxHeight = '0';
+                icon.style.transform = 'rotate(0deg)';
+                
+                setTimeout(() => {
+                    content.style.display = 'none';
+                }, 300);
+            }
+        };
         
         // Funciones globales para el HTML
         window.switchRanking = function(type) {
@@ -259,12 +416,12 @@
         
         // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏆 Ranking HTML cargado');
+            console.log('🏆 Ranking HTML cargado con explicación del sistema');
             
             // Verificar elementos críticos
             const criticalElements = [
-                'coins-display', 'podium-1', 'podium-2', 'podium-3',
-                'players-list', 'my-position', 'ranking-type-title'
+                'coins-display', 'division-podium', 'division-players-list',
+                'my-division-card', 'divisions-grid', 'explanation-content'
             ];
             
             criticalElements.forEach(id => {

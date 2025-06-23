@@ -9,116 +9,27 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
     
-    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <!-- ✅ NUEVO CSS ESPECÍFICO PARA CONTENIDO -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
+    <link rel="stylesheet" href="css/pages/content-pages.css">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <style>
-        body {
-            font-family: 'Lato', sans-serif;
-            background: var(--bg-primary);
-            background-image: var(--bg-image);
-            color: var(--text-primary);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-family: 'Cinzel', serif;
-            color: var(--text-accent);
-            margin: 0 0 10px 0;
-            font-size: 2rem;
-        }
-        
-        .content {
-            background: var(--surface-primary);
-            backdrop-filter: var(--backdrop-blur);
-            border: 1px solid var(--border-primary);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .content h2 {
-            color: var(--text-accent);
-            border-bottom: 2px solid var(--text-accent);
-            padding-bottom: 10px;
-            margin-top: 30px;
-        }
-        
-        .content h3 {
-            color: var(--text-primary);
-            margin-top: 25px;
-        }
-        
-        .content p, .content li {
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-        }
-        
-        .content ul {
-            padding-left: 25px;
-        }
-        
-        .back-btn {
-            background: var(--surface-secondary);
-            border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            padding: 12px 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: var(--surface-accent);
-            transform: translateY(-2px);
-        }
-        
-        .highlight {
-            background: rgba(255, 215, 0, 0.2);
-            padding: 3px 6px;
-            border-radius: 4px;
-            color: var(--text-accent);
-        }
-        
-        .warning-box {
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        
-        .info-box {
-            background: rgba(52, 152, 219, 0.1);
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-    </style>
+    <!-- ✅ SCRIPT DE MODO OSCURO -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -130,17 +41,18 @@
 
         <div class="content">
             <div class="info-box">
-                <p><strong>¡Bienvenido a Quiz Cristiano!</strong> Estos términos establecen las reglas para usar nuestra aplicación. Al usar Quiz Cristiano, aceptas estos términos completamente.</p>
+                <h4><i class="fas fa-info-circle"></i> Importante</h4>
+                <p>Al usar Quiz Cristiano, aceptas estos términos. Por favor, léelos cuidadosamente.</p>
             </div>
 
             <h2>1. Aceptación de Términos</h2>
             
             <p>Al acceder y usar Quiz Cristiano, confirmas que:</p>
             <ul>
-                <li>Has leído y entendido estos términos</li>
-                <li>Aceptas cumplir con todas las condiciones</li>
-                <li>Tienes la edad legal para aceptar contratos en tu jurisdicción</li>
-                <li>Si eres menor de edad, tienes permiso parental</li>
+                <li>Tienes al menos 13 años de edad (o la edad mínima requerida en tu jurisdicción)</li>
+                <li>Posees la capacidad legal para aceptar estos términos</li>
+                <li>Has leído, comprendido y aceptas cumplir con estos términos</li>
+                <li>Si eres menor de edad, tienes el consentimiento de tus padres o tutores</li>
             </ul>
 
             <h2>2. Descripción del Servicio</h2>
@@ -148,18 +60,20 @@
             <h3>2.1 ¿Qué es Quiz Cristiano?</h3>
             <p>Quiz Cristiano es una aplicación web educativa que ofrece:</p>
             <ul>
-                <li><strong>Juegos de preguntas bíblicas:</strong> Preguntas del Antiguo y Nuevo Testamento</li>
-                <li><strong>Sistema de progreso:</strong> Monedas virtuales, logros y ranking</li>
-                <li><strong>Contenido educativo:</strong> Material de aprendizaje cristiano</li>
-                <li><strong>Experiencia personalizada:</strong> Perfiles y configuraciones</li>
+                <li>Juegos de preguntas basados en la Biblia</li>
+                <li>Sistema de gamificación con monedas virtuales y logros</li>
+                <li>Herramientas de seguimiento de progreso espiritual</li>
+                <li>Contenido educativo cristiano</li>
+                <li>Funciones de personalización de perfil</li>
             </ul>
 
             <h3>2.2 Acceso al Servicio</h3>
             <p>Ofrecemos acceso a través de:</p>
             <ul>
                 <li>Navegadores web modernos</li>
-                <li>Aplicación web progresiva (PWA)</li>
-                <li>Dispositivos móviles y computadoras</li>
+                <li>Progressive Web App (PWA) instalable</li>
+                <li>Dispositivos móviles y de escritorio</li>
+                <li>Modo offline limitado</li>
             </ul>
 
             <h2>3. Registro y Cuentas de Usuario</h2>
@@ -167,27 +81,27 @@
             <h3>3.1 Creación de Cuenta</h3>
             <p>Puedes usar Quiz Cristiano de dos formas:</p>
             <ul>
-                <li><strong>Usuario invitado:</strong> Sin registro, datos locales</li>
-                <li><strong>Usuario registrado:</strong> Con cuenta Google, sincronización en la nube</li>
+                <li><strong>Como invitado:</strong> Funcionalidad básica sin necesidad de registro</li>
+                <li><strong>Con cuenta:</strong> Acceso completo con sincronización en la nube</li>
             </ul>
 
             <h3>3.2 Responsabilidades del Usuario</h3>
             <p>Si creas una cuenta, eres responsable de:</p>
             <ul>
-                <li>Mantener la seguridad de tu cuenta</li>
-                <li>Proporcionar información precisa</li>
-                <li>Notificar cualquier uso no autorizado</li>
-                <li>Cumplir con estos términos</li>
+                <li>Mantener la confidencialidad de tu información de acceso</li>
+                <li>Todas las actividades realizadas bajo tu cuenta</li>
+                <li>Notificarnos inmediatamente sobre cualquier uso no autorizado</li>
+                <li>Proporcionar información precisa y actualizada</li>
             </ul>
 
             <h3>3.3 Restricciones de Cuenta</h3>
             <div class="warning-box">
-                <p><strong>Está prohibido:</strong></p>
+                <h4><i class="fas fa-exclamation-triangle"></i> Prohibido</h4>
                 <ul>
-                    <li>Crear múltiples cuentas para obtener ventajas</li>
-                    <li>Compartir credenciales de cuenta</li>
-                    <li>Usar bots o automatización</li>
-                    <li>Intentar acceder a cuentas de otros usuarios</li>
+                    <li>Crear múltiples cuentas para obtener ventajas injustas</li>
+                    <li>Compartir cuentas con otras personas</li>
+                    <li>Vender, transferir o ceder tu cuenta</li>
+                    <li>Usar información falsa o engañosa</li>
                 </ul>
             </div>
 
@@ -196,22 +110,22 @@
             <h3>4.1 Comportamiento Permitido</h3>
             <p>Quiz Cristiano está diseñado para:</p>
             <ul>
-                <li>Educación y entretenimiento familiar</li>
-                <li>Aprendizaje sobre la Biblia y fe cristiana</li>
-                <li>Uso personal y no comercial</li>
-                <li>Compartir conocimientos bíblicos</li>
+                <li>Estudio y aprendizaje bíblico personal</li>
+                <li>Entretenimiento educativo familiar</li>
+                <li>Crecimiento espiritual individual</li>
+                <li>Compartir conocimiento bíblico de manera respetuosa</li>
             </ul>
 
             <h3>4.2 Comportamiento Prohibido</h3>
             <div class="warning-box">
-                <p><strong>Está estrictamente prohibido:</strong></p>
+                <h4><i class="fas fa-ban"></i> No está permitido:</h4>
                 <ul>
-                    <li><strong>Hacer trampa:</strong> Usar métodos deshonestos para obtener puntuaciones</li>
-                    <li><strong>Explotación:</strong> Abusar de bugs o vulnerabilidades</li>
-                    <li><strong>Contenido inapropiado:</strong> Crear nombres de usuario ofensivos</li>
-                    <li><strong>Interferencia:</strong> Intentar interrumpir el servicio</li>
-                    <li><strong>Ingeniería inversa:</strong> Descompilar o modificar la aplicación</li>
-                    <li><strong>Uso comercial:</strong> Revender o redistribuir contenido</li>
+                    <li>Usar el servicio para actividades ilegales</li>
+                    <li>Intentar hackear, explotar o comprometer la seguridad</li>
+                    <li>Distribuir malware o contenido dañino</li>
+                    <li>Hacer ingeniería inversa del código</li>
+                    <li>Crear herramientas automáticas para obtener ventajas</li>
+                    <li>Usar el servicio para spam o actividades comerciales no autorizadas</li>
                 </ul>
             </div>
 
@@ -220,40 +134,41 @@
             <h3>5.1 Nuestro Contenido</h3>
             <p>Quiz Cristiano y todo su contenido son propiedad de los desarrolladores, incluyendo:</p>
             <ul>
-                <li>Preguntas y respuestas</li>
-                <li>Diseño e interfaz</li>
-                <li>Código fuente</li>
-                <li>Imágenes y gráficos</li>
-                <li>Mascota "Joy" y personajes</li>
+                <li>Preguntas, respuestas y explicaciones</li>
+                <li>Diseño, gráficos e interfaz de usuario</li>
+                <li>Código fuente y tecnología</li>
+                <li>Marcas, logos y materiales de marketing</li>
+                <li>Algoritmos y sistemas de gamificación</li>
             </ul>
 
             <h3>5.2 Contenido Bíblico</h3>
             <p>Las referencias bíblicas utilizadas provienen de:</p>
             <ul>
-                <li>Dominio público: Textos bíblicos tradicionales</li>
-                <li>Interpretaciones comúnmente aceptadas</li>
-                <li>Conocimiento teológico general</li>
+                <li>Traducciones bíblicas de dominio público</li>
+                <li>Fuentes académicas reconocidas</li>
+                <li>Material educativo cristiano autorizado</li>
             </ul>
 
             <h3>5.3 Tu Contenido</h3>
             <p>Si proporcionas contenido (como nombres de usuario), garantizas que:</p>
             <ul>
-                <li>Es apropiado y no ofensivo</li>
+                <li>Tienes el derecho legal para proporcionarlo</li>
                 <li>No infringe derechos de terceros</li>
-                <li>Cumple con valores cristianos</li>
+                <li>Es apropiado y respetuoso</li>
+                <li>No contiene material ofensivo o ilegal</li>
             </ul>
 
             <h2>6. Privacidad y Datos</h2>
             
-            <p>El manejo de tus datos personales se rige por nuestra <a href="politicas-privacidad.html" style="color: var(--text-accent);">Política de Privacidad</a>, que forma parte integral de estos términos.</p>
+            <p>El manejo de tus datos personales se rige por nuestra <a href="politicas-privacidad.html">Política de Privacidad</a>, que forma parte integral de estos términos.</p>
 
             <h3>6.1 Datos del Juego</h3>
             <p>Recopilamos datos de juego para:</p>
             <ul>
-                <li>Mantener tu progreso</li>
-                <li>Generar estadísticas</li>
-                <li>Mejorar la experiencia</li>
-                <li>Prevenir trampas</li>
+                <li>Mantener tu progreso y estadísticas</li>
+                <li>Personalizar tu experiencia</li>
+                <li>Mejorar nuestros servicios</li>
+                <li>Prevenir trampas y abuso</li>
             </ul>
 
             <h2>7. Monedas Virtuales y Compras</h2>
@@ -261,15 +176,16 @@
             <h3>7.1 Monedas del Juego</h3>
             <p>Las monedas virtuales en Quiz Cristiano:</p>
             <ul>
-                <li><strong>No tienen valor real:</strong> Son solo para el juego</li>
-                <li><strong>No son transferibles:</strong> No se pueden cambiar por dinero real</li>
-                <li><strong>No son reembolsables:</strong> Una vez gastadas, no se devuelven</li>
-                <li><strong>Pueden perderse:</strong> Si eliminas tu cuenta o datos</li>
+                <li>No tienen valor monetario real</li>
+                <li>No son transferibles entre usuarios</li>
+                <li>No pueden convertirse en dinero real</li>
+                <li>Pueden perderse si se elimina la cuenta</li>
             </ul>
 
             <h3>7.2 Power-ups y Compras</h3>
             <div class="info-box">
-                <p><strong>Actualmente, Quiz Cristiano es completamente gratuito.</strong> Todas las funciones están disponibles sin costo. Si en el futuro implementamos compras opcionales, se actualizarán estos términos.</p>
+                <h4><i class="fas fa-shopping-cart"></i> Compras Opcionales</h4>
+                <p>Todos los power-ups se pueden obtener jugando. Las compras premium son opcionales y están destinadas a apoyar el desarrollo continuo del juego.</p>
             </div>
 
             <h2>8. Publicidad</h2>
@@ -278,17 +194,17 @@
             <p>Quiz Cristiano puede mostrar anuncios para:</p>
             <ul>
                 <li>Mantener el servicio gratuito</li>
-                <li>Financiar desarrollo y mejoras</li>
-                <li>Cubrir costos de hosting y mantenimiento</li>
+                <li>Financiar el desarrollo de nuevas funciones</li>
+                <li>Apoyar la infraestructura del servidor</li>
             </ul>
 
             <h3>8.2 Tipos de Anuncios</h3>
             <p>Los anuncios que mostramos:</p>
             <ul>
-                <li>Son apropiados para audiencia familiar</li>
-                <li>No contienen contenido adulto o inapropiado</li>
-                <li>Se integran de manera no intrusiva</li>
-                <li>Pueden ser personalizados según tus intereses</li>
+                <li>Son apropiados para toda la familia</li>
+                <li>No contienen contenido ofensivo</li>
+                <li>Son claramente identificables como publicidad</li>
+                <li>Pueden ser bloqueados con versiones premium</li>
             </ul>
 
             <h2>9. Disponibilidad y Modificaciones</h2>
@@ -296,18 +212,19 @@
             <h3>9.1 Disponibilidad del Servicio</h3>
             <p>Nos esforzamos por mantener Quiz Cristiano disponible, pero:</p>
             <ul>
-                <li>Puede haber interrupciones por mantenimiento</li>
-                <li>Algunos servicios pueden no estar disponibles temporalmente</li>
-                <li>No garantizamos disponibilidad 24/7</li>
+                <li>Pueden ocurrir interrupciones por mantenimiento</li>
+                <li>Problemas técnicos pueden afectar el servicio temporalmente</li>
+                <li>No garantizamos disponibilidad 100% del tiempo</li>
+                <li>Nos reservamos el derecho de suspender el servicio cuando sea necesario</li>
             </ul>
 
             <h3>9.2 Modificaciones</h3>
             <p>Nos reservamos el derecho de:</p>
             <ul>
-                <li>Actualizar características y funciones</li>
-                <li>Modificar o eliminar contenido</li>
-                <li>Cambiar estos términos (con notificación previa)</li>
-                <li>Suspender o discontinuar el servicio</li>
+                <li>Modificar estas condiciones con previo aviso</li>
+                <li>Actualizar funciones y características del juego</li>
+                <li>Cambiar precios de elementos premium</li>
+                <li>Descontinuar funciones que no sean viables</li>
             </ul>
 
             <h2>10. Terminación</h2>
@@ -315,120 +232,45 @@
             <h3>10.1 Terminación por tu Parte</h3>
             <p>Puedes dejar de usar Quiz Cristiano en cualquier momento:</p>
             <ul>
-                <li>Eliminando la aplicación</li>
-                <li>Solicitando la eliminación de tu cuenta</li>
-                <li>Dejando de acceder al servicio</li>
+                <li>Simplemente deja de acceder al servicio</li>
+                <li>Solicita la eliminación de tu cuenta contactándonos</li>
+                <li>Desinstala la aplicación de tus dispositivos</li>
             </ul>
 
             <h3>10.2 Terminación por Nuestra Parte</h3>
             <p>Podemos suspender o terminar tu acceso si:</p>
             <ul>
-                <li>Violas estos términos</li>
-                <li>Usas el servicio de manera inapropiada</li>
-                <li>Por razones legales o de seguridad</li>
-                <li>El servicio se discontinúa</li>
+                <li>Violas estos términos de servicio</li>
+                <li>Usas el servicio de manera abusiva</li>
+                <li>Participas en actividades fraudulentas</li>
+                <li>Por razones legales o regulatorias</li>
             </ul>
 
             <h2>11. Limitación de Responsabilidad</h2>
             
             <div class="warning-box">
-                <p><strong>Importante:</strong> Quiz Cristiano se proporciona "tal como es" sin garantías de ningún tipo.</p>
+                <h4><i class="fas fa-exclamation-triangle"></i> Importante</h4>
+                <p>Quiz Cristiano se proporciona "tal como está". No somos responsables por:</p>
+                <ul>
+                    <li>Daños directos o indirectos por el uso del servicio</li>
+                    <li>Pérdida de datos o progreso del juego</li>
+                    <li>Interrupciones del servicio</li>
+                    <li>Decisiones basadas en el contenido del juego</li>
+                </ul>
             </div>
 
-            <h3>11.1 Exención de Garantías</h3>
-            <p>No garantizamos que:</p>
-            <ul>
-                <li>El servicio esté libre de errores</li>
-                <li>Funcione ininterrumpidamente</li>
-                <li>Cumpla con todas tus expectativas</li>
-                <li>Toda la información sea 100% precisa</li>
-            </ul>
-
-            <h3>11.2 Limitación de Daños</h3>
-            <p>En la máxima medida permitida por la ley, no seremos responsables por:</p>
-            <ul>
-                <li>Pérdida de datos o progreso del juego</li>
-                <li>Daños indirectos o consecuenciales</li>
-                <li>Pérdida de tiempo o productividad</li>
-                <li>Problemas técnicos de tu dispositivo</li>
-            </ul>
-
-            <h2>12. Indemnización</h2>
+            <h2>12. Ley Aplicable</h2>
             
-            <p>Aceptas defender e indemnizar a Quiz Cristiano contra cualquier reclamación que surja de:</p>
-            <ul>
-                <li>Tu uso del servicio</li>
-                <li>Violación de estos términos</li>
-                <li>Infracción de derechos de terceros</li>
-                <li>Contenido que proporcionas</li>
-            </ul>
+            <p>Estos términos se rigen por las leyes aplicables sin considerar principios de conflicto de leyes.</p>
 
-            <h2>13. Resolución de Disputas</h2>
+            <h2>13. Contacto</h2>
             
-            <h3>13.1 Contacto Directo</h3>
-            <p>Si tienes algún problema, contáctanos primero:</p>
-            <ul>
-                <li>📧 Email: contacto@quizcristiano.com</li>
-                <li>📱 A través de la sección "Contacto" en la app</li>
-                <li>⏰ Responderemos en un máximo de 7 días hábiles</li>
-            </ul>
-
-            <h3>13.2 Ley Aplicable</h3>
-            <p>Estos términos se rigen por:</p>
-            <ul>
-                <li>Las leyes de tu país de residencia</li>
-                <li>Estándares internacionales de protección al consumidor</li>
-                <li>Principios de equidad y buena fe</li>
-            </ul>
-
-            <h2>14. Menores de Edad</h2>
+            <p>Si tienes preguntas sobre estos términos, contacta con nosotros a través de:</p>
             
-            <div class="info-box">
-                <p><strong>Quiz Cristiano es apto para toda la familia</strong> y puede ser usado por niños bajo supervisión parental.</p>
+            <div class="contact-info">
+                <p><strong>Email:</strong> <a href="mailto:legal@quizcristiano.com">legal@quizcristiano.com</a></p>
+                <p><strong>Formulario de contacto:</strong> <a href="contacto.html">Página de contacto</a></p>
             </div>
-
-            <h3>14.1 Usuarios Menores de 13 años</h3>
-            <p>Para usuarios menores de 13 años:</p>
-            <ul>
-                <li>Se requiere consentimiento parental</li>
-                <li>Los padres son responsables del uso</li>
-                <li>Pueden solicitar eliminación de datos</li>
-                <li>Se aplican protecciones adicionales</li>
-            </ul>
-
-            <h2>15. Contacto y Soporte</h2>
-            
-            <p>Para preguntas sobre estos términos o soporte técnico:</p>
-            
-            <div class="info-box">
-                <p><strong>Información de Contacto:</strong></p>
-                <p>📧 <strong>Email principal:</strong> contacto@quizcristiano.com</p>
-                <p>📧 <strong>Soporte técnico:</strong> soporte@quizcristiano.com</p>
-                <p>📧 <strong>Asuntos legales:</strong> legal@quizcristiano.com</p>
-                <p>🌐 <strong>Sitio web:</strong> www.quizcristiano.com</p>
-                <p>📱 <strong>En la app:</strong> Menú → Contacto</p>
-            </div>
-
-            <h2>16. Actualizaciones de Términos</h2>
-            
-            <p>Estos términos pueden actualizarse ocasionalmente:</p>
-            <ul>
-                <li>Te notificaremos sobre cambios importantes</li>
-                <li>Los cambios menores se reflejarán en la fecha de actualización</li>
-                <li>Continuar usando la app implica aceptar los nuevos términos</li>
-                <li>Siempre puedes revisar la versión actual aquí</li>
-            </ul>
-
-            <h2>17. Disposiciones Finales</h2>
-            
-            <h3>17.1 Divisibilidad</h3>
-            <p>Si alguna parte de estos términos es inválida, el resto permanece en efecto.</p>
-
-            <h3>17.2 Términos Completos</h3>
-            <p>Estos términos, junto con la Política de Privacidad, constituyen el acuerdo completo entre tú y Quiz Cristiano.</p>
-
-            <h3>17.3 Renuncia</h3>
-            <p>No hacer cumplir algún término no constituye una renuncia a hacerlo en el futuro.</p>
         </div>
 
         <div style="text-align: center; margin: 30px 0;">

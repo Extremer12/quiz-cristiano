@@ -39,10 +39,9 @@
         })();
     </script>
 
-<!-- ADSENSE-->
+    <!-- ADSENSE -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
-
 </head>
 <body>
     <div class="profile-container">
@@ -58,23 +57,24 @@
             </div>
             
             <div class="save-indicator" id="save-indicator" style="display: none;">
-                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-check"></i>
             </div>
         </header>
 
         <!-- Foto de Perfil Section -->
         <section class="avatar-section">
             <div class="avatar-container">
-                <div class="current-avatar" id="current-avatar" onclick="showAvatarModal()">
-                    <img src="assets/images/mascota.png" alt="Avatar actual" id="avatar-image">
+                <div class="current-avatar" id="current-avatar-btn">
+                    <img src="assets/images/fotos-perfil/niña.jpg" alt="Avatar actual" id="current-avatar-img">
                     <div class="avatar-overlay">
                         <i class="fas fa-camera"></i>
                         <span>Cambiar</span>
                     </div>
                 </div>
+                
                 <div class="avatar-info">
-                    <h3 id="display-name">Jugador</h3>
-                    <p class="user-level" id="user-level">Principiante</p>
+                    <h3 id="current-username">Usuario</h3>
+                    <span class="user-level" id="user-level">Nivel 1</span>
                 </div>
             </div>
         </section>
@@ -85,38 +85,146 @@
                 <h3><i class="fas fa-user-edit"></i> Información Personal</h3>
                 
                 <div class="form-group">
-                    <label for="username">Nombre de Usuario</label>
+                    <label for="username">Nombre de Usuario *</label>
                     <div class="input-container">
-                        <input type="text" id="username" placeholder="Elige tu nombre de usuario" maxlength="20">
-                        <div class="validation-status" id="username-status">
-                            <i class="fas fa-circle-notch fa-spin"></i>
-                        </div>
+                        <input type="text" id="username" name="username" placeholder="Tu nombre de usuario único" maxlength="20" required>
+                        <div class="validation-status" id="username-status"></div>
                     </div>
-                    <div class="input-help">
-                        <span id="username-help">3-20 caracteres, solo letras, números y guiones bajos</span>
+                    <div class="input-help" id="username-help">
+                        El nombre de usuario debe ser único y tener entre 3-20 caracteres
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="display-name-input">Nombre a Mostrar</label>
-                    <input type="text" id="display-name-input" placeholder="Tu nombre para mostrar" maxlength="30">
-                    <div class="input-help">
-                        <span>Este nombre aparecerá en los rankings</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="favorite-verse">Versículo Favorito (Opcional)</label>
-                    <textarea id="favorite-verse" placeholder="Comparte tu versículo bíblico favorito..." maxlength="200" rows="3"></textarea>
+                    <label for="display-name">Nombre a Mostrar</label>
+                    <input type="text" id="display-name" name="display-name" placeholder="¿Cómo quieres que te llamen?" maxlength="30">
                     <div class="character-count">
-                        <span id="verse-count">0</span>/200
+                        <span id="display-name-count">0</span>/30
                     </div>
                 </div>
 
-                <button class="save-profile-btn" id="save-profile-btn" onclick="saveUserProfile()">
+                <div class="form-group">
+                    <label for="favorite-verse">Versículo Favorito</label>
+                    <textarea id="favorite-verse" name="favorite-verse" placeholder="Comparte tu versículo bíblico favorito..." maxlength="200" rows="3"></textarea>
+                    <div class="character-count">
+                        <span id="favorite-verse-count">0</span>/200
+                    </div>
+                </div>
+
+                <button type="button" class="save-profile-btn" id="save-profile-btn" onclick="saveUserProfile()">
                     <i class="fas fa-save"></i>
                     <span>Guardar Cambios</span>
                 </button>
+            </div>
+        </section>
+
+        <!-- ✅ NUEVA SECCIÓN: PALMARÉS -->
+        <section class="palmares-section">
+            <h3><i class="fas fa-crown"></i> Mi Palmarés</h3>
+            <p class="palmares-description">Medallas y logros obtenidos en el ranking por divisiones</p>
+            
+            <!-- Estadísticas de Ranking -->
+            <div class="ranking-stats">
+                <div class="ranking-stat-card">
+                    <div class="stat-icon division-icon">
+                        <img src="assets/images/Trofeos/Platino.png" alt="División Actual" id="current-division-trophy">
+                    </div>
+                    <div class="stat-info">
+                        <h4 id="current-division-name">División Platino</h4>
+                        <p>División Actual</p>
+                        <div class="current-rank">
+                            <span>Posición: #<span id="current-rank">?</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ranking-stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4 id="total-medals">0</h4>
+                        <p>Medallas Totales</p>
+                        <div class="medals-breakdown">
+                            <span class="medal-count gold">🥇 <span id="gold-medals">0</span></span>
+                            <span class="medal-count silver">🥈 <span id="silver-medals">0</span></span>
+                            <span class="medal-count bronze">🥉 <span id="bronze-medals">0</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ranking-stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4 id="ranking-score">0</h4>
+                        <p>Puntaje Integral</p>
+                        <div class="score-breakdown">
+                            <small>Actividad + Victorias + Logros + Nivel</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ranking-stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4 id="seasons-participated">0</h4>
+                        <p>Temporadas Participadas</p>
+                        <div class="season-info">
+                            <small>Temporada actual: <span id="current-season">2025-06</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Medallas por Temporada -->
+            <div class="medals-timeline">
+                <h4><i class="fas fa-trophy"></i> Historial de Medallas</h4>
+                <div class="timeline-container" id="medals-timeline">
+                    <!-- Se carga dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Mejor Rendimiento -->
+            <div class="best-performance">
+                <h4><i class="fas fa-star-of-life"></i> Mejor Rendimiento</h4>
+                <div class="performance-cards">
+                    <div class="performance-card">
+                        <div class="performance-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="performance-info">
+                            <h5>Mejor Posición</h5>
+                            <p id="best-position">#? en División ?</p>
+                            <small id="best-position-season">Temporada: ?</small>
+                        </div>
+                    </div>
+                    
+                    <div class="performance-card">
+                        <div class="performance-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <div class="performance-info">
+                            <h5>División Más Alta</h5>
+                            <p id="highest-division">División ?</p>
+                            <small id="highest-division-season">Temporada: ?</small>
+                        </div>
+                    </div>
+                    
+                    <div class="performance-card">
+                        <div class="performance-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="performance-info">
+                            <h5>Racha de Medallas</h5>
+                            <p id="medal-streak">0 temporadas</p>
+                            <small>Consecutivas en Top 3</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -126,63 +234,27 @@
             
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-play-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <span class="stat-number" id="games-played">0</span>
-                        <span class="stat-label">Partidas Jugadas</span>
-                    </div>
+                    <div class="stat-icon"><i class="fas fa-coins"></i></div>
+                    <div class="stat-number" id="stat-coins">0</div>
+                    <div class="stat-label">Monedas</div>
                 </div>
-
+                
                 <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="stat-info">
-                        <span class="stat-number" id="victories">0</span>
-                        <span class="stat-label">Victorias</span>
-                    </div>
+                    <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                    <div class="stat-number" id="stat-games">0</div>
+                    <div class="stat-label">Partidas</div>
                 </div>
-
+                
                 <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-coins"></i>
-                    </div>
-                    <div class="stat-info">
-                        <span class="stat-number" id="total-coins">0</span>
-                        <span class="stat-label">Monedas Ganadas</span>
-                    </div>
+                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-number" id="stat-victories">0</div>
+                    <div class="stat-label">Victorias</div>
                 </div>
-
+                
                 <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-medal"></i>
-                    </div>
-                    <div class="stat-info">
-                        <span class="stat-number" id="achievements-count">0</span>
-                        <span class="stat-label">Logros</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-percentage"></i>
-                    </div>
-                    <div class="stat-info">
-                        <span class="stat-number" id="win-rate">0%</span>
-                        <span class="stat-label">Tasa de Victoria</span>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-fire"></i>
-                    </div>
-                    <div class="stat-info">
-                        <span class="stat-number" id="current-streak">0</span>
-                        <span class="stat-label">Racha Actual</span>
-                    </div>
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-number" id="stat-perfect">0</div>
+                    <div class="stat-label">Perfectas</div>
                 </div>
             </div>
         </section>
@@ -193,22 +265,20 @@
             
             <div class="level-card">
                 <div class="level-info">
-                    <div class="level-badge" id="level-badge">
-                        <span id="current-level">1</span>
-                    </div>
+                    <div class="level-badge" id="level-badge">1</div>
                     <div class="level-details">
                         <h4 id="level-name">Principiante</h4>
-                        <p id="level-description">Sigue jugando para subir de nivel</p>
+                        <p id="level-description">Comienza tu aventura bíblica</p>
                     </div>
                 </div>
                 
                 <div class="experience-bar">
                     <div class="exp-info">
                         <span>Experiencia</span>
-                        <span id="exp-text">0 / 100</span>
+                        <span id="exp-numbers">0 / 100</span>
                     </div>
                     <div class="exp-bar">
-                        <div class="exp-fill" id="exp-fill"></div>
+                        <div class="exp-fill" id="exp-fill" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -219,22 +289,18 @@
             <div class="modal-overlay" onclick="closeAvatarModal()"></div>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Elige tu Avatar</h3>
+                    <h3><i class="fas fa-images"></i> Seleccionar Avatar</h3>
                     <button class="modal-close" onclick="closeAvatarModal()">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                
                 <div class="modal-body">
                     <div class="avatars-grid" id="avatars-grid">
-                        <!-- Avatares se cargan dinámicamente -->
+                        <!-- Se carga dinámicamente -->
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Notificaciones -->
-        <div class="notifications-container" id="notifications-container">
-            <!-- Las notificaciones aparecen aquí -->
         </div>
 
         <!-- Bottom Navigation -->
@@ -267,46 +333,219 @@
     <script src="js/modules/dark-mode.js"></script>
     <script src="js/pages/perfil.js"></script>
     <script src="js/modules/ads-manager.js" type="module"></script>
-    <!-- Script de inicialización -->
+    
     <script>
         // Variables globales
         let usernameCheckTimeout = null;
+        let isModalOpen = false;
+        let avatarClickCount = 0;
         
-        // Funciones globales para el HTML
-        window.showAvatarModal = function() {
-            if (typeof openAvatarSelector === 'function') {
-                openAvatarSelector();
-            }
-        };
+        // Funciones globales para eventos onclick
+        window.openAvatarSelector = openAvatarSelector;
+        window.closeAvatarModal = closeAvatarModal;
+        window.selectAvatarFromGrid = selectAvatarFromGrid;
+        window.saveUserProfile = saveUserProfile;
         
-        window.closeAvatarModal = function() {
-            const modal = document.getElementById('avatar-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        };
-        
-        window.saveProfile = function() {
-            if (typeof saveUserProfile === 'function') {
-                saveUserProfile();
-            }
-        };
-        
-        // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('👤 Perfil HTML cargado');
-            
-            // Verificar elementos críticos
-            const criticalElements = [
-                'avatar-image', 'username', 'display-name-input',
-                'games-played', 'victories', 'total-coins'
-            ];
-            
-            criticalElements.forEach(id => {
-                const element = document.getElementById(id);
-                console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
-            });
+            console.log('👤 Perfil HTML cargado con palmarés');
+            loadSavedProfileData();
+            setupFormValidation();
+            loadPlayerPalmares(); // ✅ NUEVA FUNCIÓN PARA CARGAR PALMARÉS
         });
+        
+        // ✅ FUNCIÓN PARA CARGAR DATOS DEL PALMARÉS
+        async function loadPlayerPalmares() {
+            console.log('🏆 Cargando palmarés del jugador...');
+            
+            try {
+                // Esperar a que GameDataManager esté disponible
+                if (!window.GameDataManager) {
+                    setTimeout(loadPlayerPalmares, 500);
+                    return;
+                }
+                
+                // Obtener datos del jugador
+                const gameData = window.GameDataManager.getStats();
+                const playerLevel = calculatePlayerLevel(gameData);
+                const playerScore = calculateIntegralScore(gameData);
+                
+                // Obtener datos del ranking (simulados por ahora)
+                const rankingData = getRankingDataFromStorage();
+                
+                // Actualizar UI del palmarés
+                updatePalmaresDisplay(rankingData, playerLevel, playerScore);
+                
+            } catch (error) {
+                console.error('❌ Error cargando palmarés:', error);
+                showEmptyPalmares();
+            }
+        }
+        
+        function getRankingDataFromStorage() {
+            // Obtener datos guardados del ranking o generar datos de ejemplo
+            const saved = localStorage.getItem('playerRankingData');
+            
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            
+            // Datos de ejemplo para demostración
+            return {
+                currentDivision: { 
+                    id: 'platino', 
+                    name: 'División Platino',
+                    trophyImage: 'assets/images/Trofeos/Platino.png'
+                },
+                currentRank: Math.floor(Math.random() * 25) + 5, // Posición aleatoria
+                medals: generateExampleMedals(),
+                seasonsParticipated: Math.floor(Math.random() * 8) + 1,
+                bestPosition: { rank: 3, division: 'platino', season: '2025-05' },
+                highestDivision: { name: 'División Platino', season: '2025-04' },
+                medalStreak: Math.floor(Math.random() * 4)
+            };
+        }
+        
+        function generateExampleMedals() {
+            const medals = [];
+            const seasons = ['2025-01', '2025-02', '2025-03', '2025-04', '2025-05'];
+            const divisions = ['platino', 'diamante'];
+            const positions = [1, 2, 3];
+            
+            // Generar algunas medallas de ejemplo
+            const numMedals = Math.floor(Math.random() * 4) + 1;
+            
+            for (let i = 0; i < numMedals; i++) {
+                medals.push({
+                    season: seasons[Math.floor(Math.random() * seasons.length)],
+                    division: divisions[Math.floor(Math.random() * divisions.length)],
+                    position: positions[Math.floor(Math.random() * positions.length)],
+                    date: new Date(2025, Math.floor(Math.random() * 6), 1)
+                });
+            }
+            
+            return medals.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+        
+        function updatePalmaresDisplay(rankingData, playerLevel, playerScore) {
+            // Actualizar división actual
+            document.getElementById('current-division-name').textContent = rankingData.currentDivision.name;
+            document.getElementById('current-division-trophy').src = rankingData.currentDivision.trophyImage;
+            document.getElementById('current-rank').textContent = rankingData.currentRank;
+            
+            // Contar medallas por tipo
+            const goldMedals = rankingData.medals.filter(m => m.position === 1).length;
+            const silverMedals = rankingData.medals.filter(m => m.position === 2).length;
+            const bronzeMedals = rankingData.medals.filter(m => m.position === 3).length;
+            
+            document.getElementById('total-medals').textContent = rankingData.medals.length;
+            document.getElementById('gold-medals').textContent = goldMedals;
+            document.getElementById('silver-medals').textContent = silverMedals;
+            document.getElementById('bronze-medals').textContent = bronzeMedals;
+            
+            // Puntaje y temporadas
+            document.getElementById('ranking-score').textContent = playerScore;
+            document.getElementById('seasons-participated').textContent = rankingData.seasonsParticipated;
+            document.getElementById('current-season').textContent = getCurrentSeason();
+            
+            // Mejor rendimiento
+            document.getElementById('best-position').textContent = 
+                `#${rankingData.bestPosition.rank} en ${rankingData.bestPosition.division}`;
+            document.getElementById('best-position-season').textContent = 
+                `Temporada: ${rankingData.bestPosition.season}`;
+            
+            document.getElementById('highest-division').textContent = rankingData.highestDivision.name;
+            document.getElementById('highest-division-season').textContent = 
+                `Temporada: ${rankingData.highestDivision.season}`;
+            
+            document.getElementById('medal-streak').textContent = `${rankingData.medalStreak} temporadas`;
+            
+            // Renderizar timeline de medallas
+            renderMedalsTimeline(rankingData.medals);
+        }
+        
+        function renderMedalsTimeline(medals) {
+            const timeline = document.getElementById('medals-timeline');
+            
+            if (medals.length === 0) {
+                timeline.innerHTML = `
+                    <div class="empty-timeline">
+                        <i class="fas fa-trophy"></i>
+                        <p>Aún no tienes medallas</p>
+                        <small>Participa en el ranking para ganar tu primera medalla</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            const timelineHTML = medals.map(medal => {
+                const medalIcon = medal.position === 1 ? '🥇' : medal.position === 2 ? '🥈' : '🥉';
+                const medalClass = medal.position === 1 ? 'gold' : medal.position === 2 ? 'silver' : 'bronze';
+                
+                return `
+                    <div class="timeline-item ${medalClass}">
+                        <div class="timeline-icon">
+                            <span class="medal-emoji">${medalIcon}</span>
+                        </div>
+                        <div class="timeline-content">
+                            <h5>Puesto ${medal.position} - ${medal.division.charAt(0).toUpperCase() + medal.division.slice(1)}</h5>
+                            <p>Temporada ${medal.season}</p>
+                            <small>${formatDate(medal.date)}</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            timeline.innerHTML = timelineHTML;
+        }
+        
+        function showEmptyPalmares() {
+            // Mostrar palmarés vacío
+            document.getElementById('total-medals').textContent = '0';
+            document.getElementById('gold-medals').textContent = '0';
+            document.getElementById('silver-medals').textContent = '0';
+            document.getElementById('bronze-medals').textContent = '0';
+            document.getElementById('ranking-score').textContent = '0';
+            document.getElementById('seasons-participated').textContent = '0';
+            
+            const timeline = document.getElementById('medals-timeline');
+            timeline.innerHTML = `
+                <div class="empty-timeline">
+                    <i class="fas fa-trophy"></i>
+                    <p>Aún no tienes medallas</p>
+                    <small>Participa en el ranking para ganar tu primera medalla</small>
+                </div>
+            `;
+        }
+        
+        // Funciones auxiliares
+        function calculatePlayerLevel(gameData) {
+            const experience = gameData.victories * 100 + gameData.gamesPlayed * 10;
+            return Math.floor(experience / 1000) + 1;
+        }
+        
+        function calculateIntegralScore(gameData) {
+            // Simplificado para el perfil
+            const activity = Math.min((gameData.gamesPlayed || 0) * 0.4, 40);
+            const victories = ((gameData.victories || 0) / Math.max(gameData.gamesPlayed || 1, 1)) * 30;
+            const achievements = Math.min((gameData.achievements?.length || 0) * 0.4, 20);
+            const level = Math.min(calculatePlayerLevel(gameData), 10);
+            
+            return Math.round(activity + victories + achievements + level);
+        }
+        
+        function getCurrentSeason() {
+            const now = new Date();
+            return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+        }
+        
+        function formatDate(date) {
+            return new Intl.DateTimeFormat('es-ES', {
+                year: 'numeric',
+                month: 'long'
+            }).format(new Date(date));
+        }
+        
+        console.log('✅ Perfil con palmarés inicializado completamente');
     </script>
 </body>
 </html>

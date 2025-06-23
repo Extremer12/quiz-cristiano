@@ -1,0 +1,11 @@
+{
+  "name": "quiz-cristiano-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "mercadopago": "^2.8.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}

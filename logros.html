@@ -4,17 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logros - Quiz Cristiano</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/pages/logros.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Logros de Quiz Cristiano - Tu progreso y gamificación">
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- ✅ STYLESHEETS EN ORDEN CORRECTO -->
     <link rel="stylesheet" href="css/pages/safari-fixes.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <link rel="stylesheet" href="css/pages/logros.css">
+    
+    <!-- ✅ SCRIPT DE MODO OSCURO GLOBAL - IGUAL QUE INDEX -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
+            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = savedTheme || systemPreference;
+            
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
+            }
+        })();
+    </script>
 
-<!-- ADSENSE-->
+    <!-- ADSENSE-->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
-
 </head>
 <body>
+    <!-- ✅ EL RESTO DEL HTML PERMANECE IGUAL -->
     <div class="app-container">
         <!-- Header -->
         <header class="header">
@@ -105,7 +135,7 @@
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
-            <a href="single-player.html" class="nav-item">
+            <a href="single-player-new.html" class="nav-item">
                 <i class="fas fa-play"></i>
                 <span>Jugar</span>
             </a>
@@ -124,6 +154,7 @@
         </nav>
     </div>
     
+    <!-- ✅ SCRIPTS EN ORDEN CORRECTO -->
     <script src="js/modules/gamedatamanager.js"></script>
     <script src="js/modules/dark-mode.js"></script>
     <script src="js/pages/logros.js"></script>
