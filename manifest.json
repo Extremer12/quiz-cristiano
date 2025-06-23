@@ -14,16 +14,149 @@
   "categories": ["games", "education", "entertainment"],
   "icons": [
     {
+      "src": "/assets/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "/assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-512.png",
-      "sizes": "512x512", 
+      "src": "/assets/icons/icon-384.png",
+      "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Modo Individual",
+      "short_name": "Individual",
+      "description": "Jugar en modo individual",
+      "url": "/single-player-new.html",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-individual.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Multijugador",
+      "short_name": "Multijugador",
+      "description": "Jugar con otros usuarios",
+      "url": "/multiplayer.html",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-multiplayer.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Tienda",
+      "short_name": "Tienda",
+      "description": "Comprar power-ups y mejoras",
+      "url": "/shop.html",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-shop.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/screenshot-narrow-1.png",
+      "sizes": "640x1136",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Pantalla principal del juego"
+    },
+    {
+      "src": "/assets/screenshots/screenshot-narrow-2.png",
+      "sizes": "640x1136",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Selección de categorías"
+    },
+    {
+      "src": "/assets/screenshots/screenshot-wide-1.png",
+      "sizes": "1024x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Vista de escritorio"
+    }
+  ],
+  "share_target": {
+    "action": "/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+quizcristiano",
+      "url": "/handle-protocol?type=%s"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-new"
+  }
 }

@@ -1,57 +1,106 @@
-# 🕊️ Quiz Cristiano
+# 📖 Quiz Cristiano - PWA Educativa
 
-Un juego de preguntas bíblicas interactivo con sistema de gamificación completo.
+Una Progressive Web App (PWA) interactiva para fortalecer el conocimiento bíblico a través del juego.
 
-## ✨ Características
+## ✨ Características Principales
 
-- 🎮 **Modo Individual** tipo "Preguntados"
-- 🏆 **Sistema de Logros** con 25+ achievements
-- 🛒 **Tienda Virtual** con power-ups y cosméticos
-- 💰 **Sistema de Monedas** balanceado
-- 📱 **Responsive Design** optimizado para móvil
-- 🔥 **Firebase Integration** (auth, database, hosting)
-
-## 🎯 Funcionalidades Implementadas
-
-### ✅ Core Gameplay
-- [x] Preguntas de 7 categorías bíblicas
-- [x] Sistema de rescate con segunda oportunidad
-- [x] Timer dinámico por pregunta
-- [x] Economía de monedas balanceada
-- [x] 100+ preguntas con referencias bíblicas
-
-### ✅ Gamificación
-- [x] 25 logros únicos con 4 categorías
-- [x] Sistema de rareza (Común → Legendario)
-- [x] Rachas diarias
-- [x] Puntos de achievement
-- [x] Notificaciones automáticas
-
-### ✅ Tienda Funcional
-- [x] Power-ups consumibles
-- [x] Cosméticos para mascota Joy
-- [x] Expansiones de contenido
-- [x] Bundles con descuentos
-- [x] Sistema de inventario
-
-### ✅ UI/UX
-- [x] Diseño profesional con gradientes
-- [x] Animaciones CSS fluidas
-- [x] Bottom navigation consistente
-- [x] Modales interactivos
-- [x] Efectos de rareza únicos
+- 🎮 **Sistema de Juego Completo:** Preguntas del Antiguo y Nuevo Testamento
+- 💰 **Economía Virtual:** Monedas, power-ups y sistema de recompensas
+- 🏆 **Gamificación:** Logros, ranking y estadísticas detalladas
+- 📱 **PWA Nativa:** Instalable como app móvil
+- 🌙 **Temas Personalizables:** Modo claro y oscuro
+- 👥 **Multijugador:** Sistema de salas privadas
+- 💳 **Tienda Premium:** Integración con MercadoPago
+- 🔥 **Firebase Backend:** Autenticación y sincronización
 
 ## 🛠️ Tecnologías
 
-- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-- **Backend:** Firebase (Auth, Firestore, Hosting)
-- **Monetización:** Google AdMob
-- **Estilos:** CSS Grid, Flexbox, Animaciones
-- **Icons:** Font Awesome 6.4.0
+- **Frontend:** HTML5, CSS3, JavaScript ES6+
+- **PWA:** Service Workers, Web App Manifest
+- **Backend:** Firebase (Auth, Firestore)
+- **Pagos:** MercadoPago API
+- **Hosting:** Vercel
+- **Analytics:** Google Analytics
 
-## 🚀 Setup Local
+## 🚀 Instalación Local
 
-1. **Clonar repositorio:**
-   ```bash
-   git clone https://github.com/TU_USUARIO/quiz-cristiano.git
-   cd quiz-cristiano
+```bash
+# Clonar repositorio
+git clone https://github.com/tu-usuario/quiz-cristiano.git
+cd quiz-cristiano
+
+# Configurar variables de entorno
+cp js/config/config.example.js js/config/config.js
+# Editar config.js con tus credenciales
+
+# Servir localmente
+npx serve . -p 3000
+```
+
+## 📱 Generar APK
+
+### Método 1: PWA Builder (Recomendado)
+1. Sube el proyecto a tu hosting
+2. Ve a [pwabuilder.com](https://pwabuilder.com)
+3. Ingresa tu URL
+4. Descarga el APK generado
+
+### Método 2: Capacitor
+```bash
+npm install @capacitor/core @capacitor/cli @capacitor/android
+npx cap init
+npx cap add android
+npx cap sync
+npx cap open android
+```
+
+## 🎮 Características del Juego
+
+- **+500 preguntas** categorizadas por dificultad
+- **Sistema de monedas** para compras en la tienda
+- **Power-ups estratégicos:** Eliminar opciones, tiempo extra, segunda oportunidad
+- **Logros desbloqueables** con recompensas
+- **Ranking global** con competencias
+- **Modo offline** para jugar sin internet
+
+## 🔧 Configuración
+
+### Firebase
+1. Crear proyecto en [Firebase Console](https://console.firebase.google.com)
+2. Configurar Authentication (Google, Anónimo)
+3. Crear base de datos Firestore
+4. Copiar credenciales a `config.js`
+
+### MercadoPago
+1. Crear cuenta en [MercadoPago Developers](https://developers.mercadopago.com)
+2. Obtener credenciales de prueba/producción
+3. Configurar webhook para notificaciones
+
+## 📊 Analytics y Monetización
+
+- **Google AdSense** integrado para anuncios no intrusivos
+- **Analytics detallado** de comportamiento del usuario
+- **Sistema freemium** con compras opcionales
+- **Respeto a usuarios premium** sin anuncios
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea tu feature branch (`git checkout -b feature/nueva-caracteristica`)
+3. Commit tus cambios (`git commit -m 'Agregar nueva característica'`)
+4. Push al branch (`git push origin feature/nueva-caracteristica`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
+
+## 🙏 Agradecimientos
+
+- Contenido bíblico basado en la traducción Reina-Valera
+- Iconografía cristiana con respeto y reverencia
+- Comunidad de desarrolladores web cristianos
+
+---
+
+**Desarrollado con ❤️ para fortalecer la fe a través de la tecnología**

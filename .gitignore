@@ -1,51 +1,38 @@
 # Dependencies
 node_modules/
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Environment variables
+# Environment variables - CRÍTICO
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.production
+js/config/.env
+*.env
+
+# Credenciales sensibles - IMPORTANTE
+js/config/mercadopago-config.js
+js/config/firebase-private.js
 
 # Build outputs
 dist/
 build/
+.vercel/
 
-# OS generated files
+# OS files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# IDE files
+# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # Logs
-logs
 *.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
 
 # Firebase
 .firebase/
-.firebaserc
 firebase-debug.log
 
-# Temporary files
+# Temporary
 *.tmp
-*.temp
-.vercel
+assets/screenshots/debug-*

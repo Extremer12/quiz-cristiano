@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "mercadopago": "^2.8.0"
+    "mercadopago": "^2.8.0",
+    "puppeteer": "^24.10.2"
   },
   "engines": {
     "node": "20.x"

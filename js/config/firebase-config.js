@@ -5,9 +5,9 @@ import { getAnalytics, logEvent } from 'https://www.gstatic.com/firebasejs/10.7.
 
 // 🔥 TU CONFIGURACIÓN FIREBASE REAL
 const firebaseConfig = {
-  apiKey: "AIzaSyBFQGl3T4szFn98mhJfyBrtrAaaqeWFRf8",
-  authDomain: "quiz-cristiano-gaming.firebaseapp.com",
-  projectId: "quiz-cristiano-gaming",
+  apiKey: process.env.FIREBASE_API_KEY || "AIzaSyBFQGl3T4szFn98mhJfyBrtrAaaqeWFRf8",
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN || "quiz-cristiano-gaming.firebaseapp.com",
+  projectId: process.env.FIREBASE_PROJECT_ID || "quiz-cristiano-gaming",
   storageBucket: "quiz-cristiano-gaming.firebasestorage.app",
   messagingSenderId: "67761249217",
   appId: "1:67761249217:web:5c370622351a2b8200ad40"
