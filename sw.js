@@ -63,6 +63,12 @@ self.addEventListener('install', event => {
   );
 });
 
+// ✅ REGISTRO MEJORADO PARA PWA BUILDER
+self.addEventListener('install', event => {
+  console.log(`🔧 SW v${VERSION}: Installing...`);
+  event.waitUntil(self.skipWaiting());
+});
+
 // ============================================
 // ACTIVACIÓN CON LIMPIEZA AGRESIVA
 // ============================================
@@ -330,3 +336,27 @@ setInterval(() => {
 }, FORCE_UPDATE_INTERVAL);
 
 console.log(`✅ SW v${VERSION} loaded with aggressive update strategy`);
+
+// ✅ NOTIFICACIONES PUSH (básicas)
+self.addEventListener('push', event => {
+  if (event.data) {
+    const data = event.data.json();
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/assets/icons/icon-192.png',
+      badge: '/assets/icons/icon-96.png'
+    });
+  }
+});
+
+// ✅ SINCRONIZACIÓN EN BACKGROUND
+self.addEventListener('sync', event => {
+  if (event.tag === 'background-sync') {
+    event.waitUntil(doBackgroundSync());
+  }
+});
+
+async function doBackgroundSync() {
+  console.log('🔄 Background sync ejecutándose');
+  // Aquí puedes sincronizar datos cuando vuelva la conexión
+}

@@ -1,5 +1,5 @@
 {
-  "name": "Quiz Cristiano - Juego Bíblico",
+  "name": "Quiz Cristiano - [TU NOMBRE]",
   "short_name": "Quiz Cristiano",
   "version": "1.3.0",
   "description": "Juego de preguntas bíblicas interactivo con sistema de gamificación",
@@ -158,5 +158,41 @@
   },
   "launch_handler": {
     "client_mode": "navigate-new"
-  }
+  },
+  "developer": {
+    "name": "Cristian Bordón",
+    "url": "https://github.com/Extremer12/Mi-Portafolio"
+  },
+  "author": "[Cristian Bordón] <cristianbordon187@gmail.com>",
+  "copyright": "Copyright 2025 [Cristian Bordón]. Todos los derechos reservados.",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "file_handlers": [
+    {
+      "action": "/handle-file",
+      "accept": {
+        "text/plain": [".txt"],
+        "application/json": [".json"]
+      }
+    }
+  ],
+  "handle_links": "preferred",
+  "widgets": [
+    {
+      "name": "Quiz Stats",
+      "short_name": "Stats",
+      "description": "Ver estadísticas rápidas",
+      "tag": "quiz-stats",
+      "template": "quiz-stats-template",
+      "ms_ac_template": "ms-ac-template",
+      "data": "/widget-data",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "/assets/screenshots/widget-screenshot.png",
+          "sizes": "400x200",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }
