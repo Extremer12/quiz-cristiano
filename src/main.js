@@ -13,6 +13,7 @@ import GameDataService from './services/GameDataService.js';
 import Mascot from './components/Mascot.js';
 import UIEffects from './components/UIEffects.js';
 import Store from './components/Store.js';
+import Ranking from './components/Ranking.js';
 import './utils/LegacyCompat.js'; // Compatibility layer for legacy code
 
 // Inicializar autenticación antes que nada
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     Mascot.init();
     UIEffects.init();
     Store.init();
+    Ranking.init();
     UI.initGlobalEvents();
 
     // 3. Inicializar App
