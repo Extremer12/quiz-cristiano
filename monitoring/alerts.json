@@ -1,0 +1,120 @@
+{
+  "alerts": {
+    "payment_failures": {
+      "name": "Payment Failures",
+      "description": "Alert when payment failure rate exceeds threshold",
+      "condition": {
+        "metric": "payment_failure_rate",
+        "threshold": 0.05,
+        "operator": "greater_than",
+        "timeWindow": "5m"
+      },
+      "actions": [
+        {
+          "type": "email",
+          "recipients": ["admin@quizcristiano.com"]
+        },
+        {
+          "type": "webhook",
+          "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+        }
+      ]
+    },
+    "webhook_errors": {
+      "name": "Webhook Processing Errors",
+      "description": "Alert when webhook processing fails",
+      "condition": {
+        "metric": "webhook_error_rate",
+        "threshold": 0.1,
+        "operator": "greater_than",
+        "timeWindow": "10m"
+      },
+      "actions": [
+        {
+          "type": "email",
+          "recipients": ["admin@quizcristiano.com"]
+        }
+      ]
+    },
+    "high_response_time": {
+      "name": "High API Response Time",
+      "description": "Alert when API response time is too high",
+      "condition": {
+        "metric": "api_response_time_p95",
+        "threshold": 5000,
+        "operator": "greater_than",
+        "timeWindow": "5m"
+      },
+      "actions": [
+        {
+          "type": "email",
+          "recipients": ["admin@quizcristiano.com"]
+        }
+      ]
+    },
+    "currency_conversion_failures": {
+      "name": "Currency Conversion Failures",
+      "description": "Alert when currency conversion fails",
+      "condition": {
+        "metric": "currency_conversion_error_rate",
+        "threshold": 0.02,
+        "operator": "greater_than",
+        "timeWindow": "15m"
+      },
+      "actions": [
+        {
+          "type": "email",
+          "recipients": ["admin@quizcristiano.com"]
+        }
+      ]
+    }
+  },
+  "dashboards": {
+    "payment_overview": {
+      "name": "Payment Overview",
+      "widgets": [
+        {
+          "type": "metric",
+          "title": "Total Payments Today",
+          "metric": "payments_total",
+          "timeRange": "24h"
+        },
+        {
+          "type": "chart",
+          "title": "Payment Success Rate",
+          "metric": "payment_success_rate",
+          "timeRange": "7d"
+        },
+        {
+          "type": "chart",
+          "title": "Revenue by Currency",
+          "metric": "revenue_by_currency",
+          "timeRange": "30d"
+        }
+      ]
+    },
+    "system_health": {
+      "name": "System Health",
+      "widgets": [
+        {
+          "type": "chart",
+          "title": "API Response Times",
+          "metric": "api_response_time",
+          "timeRange": "24h"
+        },
+        {
+          "type": "chart",
+          "title": "Error Rates",
+          "metric": "error_rate",
+          "timeRange": "24h"
+        },
+        {
+          "type": "metric",
+          "title": "Active Users",
+          "metric": "active_users",
+          "timeRange": "24h"
+        }
+      ]
+    }
+  }
+}

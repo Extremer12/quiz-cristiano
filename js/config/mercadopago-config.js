@@ -8,7 +8,7 @@
 
 // ✅ ACTUALIZAR A CREDENCIALES DE PRODUCCIÓN
 const MERCADOPAGO_CONFIG = {
-    // 🔑 CAMBIAR A CREDENCIALES DE PRODUCCIÓN
+    // CAMBIAR A CREDENCIALES DE PRODUCCIÓN
     public_key: 'APP_USR-973a31b1-d26f-495a-a41d-104d4df0e532', // ✅ YA TIENES ESTA
     access_token: 'APP_USR-152380984461471-061923-aa46cbff75052515b3bf2c1ef0c9d9c5-725736591', // ✅ YA TIENES ESTA
     
@@ -19,7 +19,7 @@ const MERCADOPAGO_CONFIG = {
     testMode: false // ✅ CAMBIAR A FALSE
 };
 
-// 🌐 INICIALIZAR MERCADO PAGO
+// INICIALIZAR MERCADO PAGO
 let mp = null;
 
 async function initMercadoPago() {
@@ -35,7 +35,7 @@ async function initMercadoPago() {
         });
         
         console.log('✅ Mercado Pago TEST inicializado correctamente');
-        console.log('🔑 Public Key:', MERCADOPAGO_CONFIG.public_key.substring(0, 20) + '...');
+        console.log('Public Key:', MERCADOPAGO_CONFIG.public_key.substring(0, 20) + '...');
         
         return mp;
         
@@ -82,14 +82,14 @@ function formatPrice(productId) {
     if (product.currency === 'coins') {
         return {
             coins: `${product.price} monedas`,
-            display: `${product.price} 🪙`
+            display: `${product.price} monedas`
         };
     }
     
     return '';
 }
 
-// 🛒 CREAR PREFERENCIA DE PAGO - CORREGIDA COMPLETAMENTE
+// CREAR PREFERENCIA DE PAGO - CORREGIDA COMPLETAMENTE
 async function crearPreferenciaMercadoPago(productId, quantity = 1) {
     const product = STORE_PRODUCTS[productId];
     const price = getPriceInARS(productId);
@@ -136,7 +136,7 @@ async function crearPreferenciaMercadoPago(productId, quantity = 1) {
         }
     };
     
-    console.log('🛒 Preferencia simplificada:', {
+    console.log('Preferencia simplificada:', {
         product: product.name,
         price: price,
         back_urls: preferenceData.back_urls
@@ -167,9 +167,9 @@ async function crearPreferenciaMercadoPago(productId, quantity = 1) {
     }
 }
 
-// 🎭 FUNCIÓN DE SIMULACIÓN PARA PRUEBAS SIN BACKEND
+// FUNCIÓN DE SIMULACIÓN PARA PRUEBAS SIN BACKEND
 async function simulateSuccessfulPurchase(productId) {
-    console.log('🎭 SIMULANDO COMPRA EXITOSA para:', productId);
+    console.log('SIMULANDO COMPRA EXITOSA para:', productId);
     
     // Simular delay de procesamiento
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -184,10 +184,10 @@ async function simulateSuccessfulPurchase(productId) {
     };
 }
 
-// 🔓 FUNCIÓN PARA DESBLOQUEAR PRODUCTO
+// FUNCIÓN PARA DESBLOQUEAR PRODUCTO
 async function unlockPremiumProduct(productId) {
     try {
-        console.log('🔓 Desbloqueando producto:', productId);
+        console.log('Desbloqueando producto:', productId);
         
         // Guardar en localStorage
         const purchases = JSON.parse(localStorage.getItem('premium-purchases') || '[]');
@@ -202,7 +202,7 @@ async function unlockPremiumProduct(productId) {
         }
         
         // Mostrar notificación de éxito
-        showNotification(`🎉 ¡${productId} desbloqueado exitosamente!`, 'success');
+        showNotification(`¡${productId} desbloqueado exitosamente!`, 'success');
         
         // Cerrar modal de compra
         if (typeof closePurchaseModal === 'function') {
@@ -216,10 +216,10 @@ async function unlockPremiumProduct(productId) {
     }
 }
 
-// 💳 PROCESAR PAGO CON MERCADO PAGO - MEJORADO
+// PROCESAR PAGO CON MERCADO PAGO - MEJORADO
 async function procesarPagoMercadoPago(productId) {
-    console.log('💙 === INICIANDO PAGO MERCADO PAGO ===');
-    console.log('🛒 Producto:', productId);
+    console.log('=== INICIANDO PAGO MERCADO PAGO ===');
+    console.log('Producto:', productId);
     
     try {
         showPaymentLoading(true);
@@ -232,7 +232,7 @@ async function procesarPagoMercadoPago(productId) {
         };
         
         sessionStorage.setItem('lastPurchaseAttempt', JSON.stringify(purchaseData));
-        console.log('💾 Datos de compra guardados:', purchaseData);
+        console.log('Datos de compra guardados:', purchaseData);
         
         // Verificar que el producto exista
         const product = STORE_PRODUCTS[productId];
@@ -240,7 +240,7 @@ async function procesarPagoMercadoPago(productId) {
             throw new Error(`Producto ${productId} no encontrado`);
         }
         
-        console.log('📦 Producto encontrado:', product.name);
+        console.log('Producto encontrado:', product.name);
         
         // Crear preferencia
         const preference = await crearPreferenciaMercadoPago(productId);
@@ -253,7 +253,7 @@ async function procesarPagoMercadoPago(productId) {
         
         // ✅ ABRIR PAGO - USANDO WINDOW.OPEN PARA MEJOR CONTROL
         if (preference.init_point) {
-            console.log('🌐 Abriendo checkout en nueva ventana...');
+            console.log('Abriendo checkout en nueva ventana...');
             
             // Abrir en la misma ventana para mejor control de redirección
             window.location.href = preference.init_point;
@@ -285,32 +285,32 @@ async function procesarPagoMercadoPago(productId) {
     }
 }
 
-// 🧪 MOSTRAR INFORMACIÓN DE PRUEBA ACTUALIZADA
+// MOSTRAR INFORMACIÓN DE PRUEBA ACTUALIZADA
 function showTestPaymentInfo() {
     const testInfo = `
-🧪 MODO DE PRUEBA ACTIVADO - MERCADO PAGO
+MODO DE PRUEBA ACTIVADO - MERCADO PAGO
 
-📱 TARJETAS DE PRUEBA OFICIALES:
+TARJETAS DE PRUEBA OFICIALES:
 
-💳 MASTERCARD (Aprobación automática):
+MASTERCARD (Aprobación automática):
    Número: 5031 7557 3453 0604
    Vencimiento: 11/30
    CVV: 123
    
-💳 VISA (Aprobación automática):
+VISA (Aprobación automática):
    Número: 4509 9535 6623 3704
    Vencimiento: 11/30
    CVV: 123
 
-🔐 DATOS ADICIONALES PARA PRUEBAS:
+DATOS ADICIONALES PARA PRUEBAS:
 • Titular: APRO (para aprobación automática)
 • DNI: 12345678
 • Email: test@test.com
 
-🚫 PARA PROBAR RECHAZOS:
+PARA PROBAR RECHAZOS:
 • Titular: OTHE (será rechazado automáticamente)
 
-💡 Este es un pago de prueba, no se cobrará dinero real.
+Este es un pago de prueba, no se cobrará dinero real.
     `;
     
     console.log(testInfo);
@@ -349,7 +349,7 @@ window.addEventListener('load', () => {
     const productId = urlParams.get('product');
     
     if (paymentStatus === 'success' && productId) {
-        console.log('🎉 Pago exitoso detectado para:', productId);
+        console.log('Pago exitoso detectado para:', productId);
         setTimeout(() => {
             unlockPremiumProduct(productId);
         }, 1000);
@@ -359,7 +359,7 @@ window.addEventListener('load', () => {
 // ❌ COMENTAR ESTA FUNCIÓN QUE CAUSA ERROR CORS:
 /*
 function debugMercadoPagoUrls() {
-    console.log('🔍 === DEBUG MERCADO PAGO URLs ===');
+    console.log('=== DEBUG MERCADO PAGO URLs ===');
     console.log('Base URL:', getBaseUrl());
     console.log('Success URL:', getSuccessUrl());
     console.log('Backend URL:', getBackendUrl());
@@ -379,7 +379,7 @@ function getBaseUrl() {
 
 // ✅ REEMPLAZAR CON ESTA VERSIÓN SIN FETCH:
 function debugMercadoPagoUrls() {
-    console.log('🔍 === DEBUG MERCADO PAGO URLs ===');
+    console.log('=== DEBUG MERCADO PAGO URLs ===');
     console.log('Base URL:', getBaseUrl());
     console.log('Backend URL:', getBackendUrl());
     console.log('Current URL:', window.location.href);
@@ -399,5 +399,5 @@ window.procesarPagoMercadoPago = procesarPagoMercadoPago;
 window.unlockPremiumProduct = unlockPremiumProduct;
 
 console.log('✅ MercadoPago Config REAL cargado - Modo PRUEBA (Nueva API)');
-console.log('🎮 App Quiz Cristiano lista para testing');
+console.log('App Quiz Cristiano lista para testing');
 

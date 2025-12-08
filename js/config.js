@@ -40,5 +40,10 @@ const CONFIG = {
     }
 };
 
-// Exportar la configuración
-export default CONFIG;
+// Export removed for browser compatibility
+// export default CONFIG;
+
+// Make CONFIG available globally
+if (typeof window !== 'undefined') {
+    window.CONFIG = CONFIG;
+}

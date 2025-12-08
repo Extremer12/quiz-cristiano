@@ -1,5 +1,6 @@
 {
-  "name": "Quiz Cristiano - [TU NOMBRE]",
+  "id": "/quiz-cristiano/",
+  "name": "Quiz Cristiano - Cristian Bordón",
   "short_name": "Quiz Cristiano",
   "version": "1.3.0",
   "description": "Juego de preguntas bíblicas interactivo con sistema de gamificación",
@@ -194,5 +195,6 @@
         }
       ]
     }
-  ]
+  ],
+  "iarc_rating_id": "e84b072d-71de-4d25-a8e3-b0a3a1e29070"
 }

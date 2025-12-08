@@ -10,7 +10,7 @@
 // ============================================
 
 const ACHIEVEMENTS = {
-    // 🎯 LOGROS DE INICIACIÓN (8 logros)
+    // LOGROS DE INICIACIÓN (8 logros)
     iniciacion: [
         {
             id: 'bienvenido',
@@ -86,7 +86,7 @@ const ACHIEVEMENTS = {
         }
     ],
 
-    // 🎯 LOGROS DE PROGRESO (12 logros)
+    // LOGROS DE PROGRESO (12 logros)
     progreso: [
         {
             id: 'aprendiz',
@@ -198,7 +198,7 @@ const ACHIEVEMENTS = {
         }
     ],
 
-    // 🎯 LOGROS DE MAESTRÍA (10 logros)
+    // LOGROS DE MAESTRÍA (10 logros)
     maestria: [
         {
             id: 'primera_victoria',
@@ -292,7 +292,7 @@ const ACHIEVEMENTS = {
         }
     ],
 
-    // 🎯 LOGROS DE RACHAS (8 logros)
+    // LOGROS DE RACHAS (8 logros)
     rachas: [
         {
             id: 'racha_respuestas_5',
@@ -368,7 +368,7 @@ const ACHIEVEMENTS = {
         }
     ],
 
-    // 🎯 LOGROS DE COLECCIÓN (7 logros)
+    // LOGROS DE COLECCIÓN (7 logros)
     coleccion: [
         {
             id: 'collector_basic',
@@ -435,7 +435,7 @@ const ACHIEVEMENTS = {
         }
     ],
 
-    // 🎯 LOGROS ESPECIALES/SECRETOS (5 logros)
+    // LOGROS ESPECIALES/SECRETOS (5 logros)
     especiales: [
         {
             id: 'medianoche',
@@ -524,7 +524,7 @@ let elements = {};
 // ============================================
 
 function init() {
-    console.log('🏆 Inicializando sistema de logros...');
+    console.log('Inicializando sistema de logros...');
     bindElements();
     loadAchievementsData();
     renderAchievements();
@@ -546,7 +546,7 @@ function bindElements() {
 function renderAchievements(filter = 'all') {
     if (!elements.achievementsGrid) return;
 
-    console.log(`🔍 Renderizando logros con filtro: ${filter}`);
+    console.log(`Renderizando logros con filtro: ${filter}`);
     
     elements.achievementsGrid.innerHTML = '';
     
@@ -766,7 +766,7 @@ window.closeAchievementModal = function() {
 // ============================================
 
 function checkAchievements() {
-    console.log('🔍 Verificando logros...');
+    console.log('Verificando logros...');
     
     const newAchievements = [];
     
@@ -783,13 +783,13 @@ function checkAchievements() {
     });
     
     if (newAchievements.length > 0) {
-        console.log(`🏆 ${newAchievements.length} nuevos logros desbloqueados!`);
+        console.log(`${newAchievements.length} nuevos logros desbloqueados!`);
         showAchievementNotifications(newAchievements);
     }
 }
 
 function unlockAchievement(achievement) {
-    console.log(`🎉 Logro desbloqueado: ${achievement.name}`);
+    console.log(`Logro desbloqueado: ${achievement.name}`);
     
     achievementsData.unlocked.push(achievement.id);
     achievementsData.stats.achievementPoints += achievement.points;
@@ -844,7 +844,7 @@ function showAchievementNotification(achievement) {
 // ============================================
 
 function updateGameStats(gameData) {
-    console.log('📊 Actualizando estadísticas del juego...');
+    console.log('Actualizando estadísticas del juego...');
     
     achievementsData.stats.gamesPlayed++;
     
@@ -878,7 +878,7 @@ function updateGameStats(gameData) {
     checkAchievements();
 }
 
-// 📊 TRACKING DE ESTADÍSTICAS EXPANDIDO
+// TRACKING DE ESTADÍSTICAS EXPANDIDO
 function updateExpandedGameStats(gameData) {
     const stats = achievementsData.stats;
     
@@ -973,7 +973,7 @@ function loadAchievementsData() {
         if (savedData) {
             const loaded = JSON.parse(savedData);
             achievementsData = { ...achievementsData, ...loaded };
-            console.log('📄 Datos de logros cargados:', achievementsData);
+            console.log('Datos de logros cargados:', achievementsData);
         }
         
         // También cargar datos del juego principal
@@ -995,7 +995,7 @@ function loadAchievementsData() {
 function saveAchievementsData() {
     try {
         localStorage.setItem('quizCristianoAchievements', JSON.stringify(achievementsData));
-        console.log('💾 Datos de logros guardados');
+        console.log('Datos de logros guardados');
     } catch (error) {
         console.error('❌ Error guardando datos de logros:', error);
     }
@@ -1019,7 +1019,7 @@ window.AchievementsSystem = {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🌟 DOM cargado, inicializando logros...');
+    console.log('DOM cargado, inicializando logros...');
     setTimeout(() => {
         init();
         

@@ -1,0 +1,627 @@
+/**
+ * STORE IMPROVED - MEJORAS PARA PRODUCTOS
+ * Respeta el patrón existente de la app (fondo, header, menú)
+ * Solo mejora la visualización de productos
+ */
+
+/* ========================================
+  VARIABLES ADICIONALES PARA PRODUCTOS
+   ======================================== */
+
+:root {
+  /* Colores para productos */
+  --product-gold: #ffd700;
+  --product-gold-dark: #e6c200;
+  --product-accent: #ff6b6b;
+  --product-success: #51cf66;
+  --product-premium: #8b5cf6;
+  
+  /* Gradientes para productos */
+  --product-gradient-gold: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  --product-gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  --product-gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  
+  /* Sombras para productos */
+  --product-shadow-glow: 0 0 20px rgba(255, 215, 0, 0.3);
+  --product-shadow-premium: 0 8px 25px rgba(139, 92, 246, 0.3);
+  
+  /* Transiciones */
+  --product-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --product-transition-fast: all 0.2s ease;
+}
+
+/* ========================================
+   MEJORAS PARA TARJETAS DE PRODUCTOS
+   ======================================== */
+
+/* Mantenemos la estructura base pero mejoramos el diseño */
+.product-card {
+  background: var(--surface-primary);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--border-primary);
+  border-radius: 20px; /* Más redondeado */
+  box-shadow: var(--shadow-secondary);
+  overflow: hidden;
+  transition: var(--product-transition);
+  position: relative;
+  transform: translateY(0);
+}
+
+.product-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--product-gradient-gold);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.product-card:hover::before {
+  transform: scaleX(1);
+}
+
+.product-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: var(--product-gold);
+}
+
+/* Mejoras para la imagen del producto */
+.product-image {
+  width: 100%;
+  height: 220px; /* Más alto */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.product-card:hover .product-image::after {
+  transform: translateX(100%);
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.1);
+}
+
+/* Badges mejorados */
+.product-badges {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: badgeFloat 3s ease-in-out infinite;
+}
+
+.badge.best-offer {
+  background: var(--product-gradient-premium);
+  color: white;
+  animation: badgeGlow 2s ease-in-out infinite alternate;
+}
+
+.badge.popular {
+  background: var(--product-gradient-success);
+  color: white;
+}
+
+.badge.new {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.badge.fallback {
+  background: rgba(107, 114, 128, 0.9);
+  color: white;
+}
+
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes badgeGlow {
+  from { box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+  to { box-shadow: 0 4px 20px rgba(139, 92, 246, 0.6); }
+}
+
+/* Información del producto mejorada */
+.product-info {
+  padding: 24px;
+}
+
+.product-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: var(--text-primary);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.product-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* Precio mejorado */
+.product-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.15),
+    rgba(255, 215, 0, 0.05)
+  );
+  border-radius: 16px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.product-price::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 215, 0, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.product-card:hover .product-price::before {
+  left: 100%;
+}
+
+.price-coins {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.price-coins i {
+  font-size: 1.5rem;
+  color: var(--product-gold);
+  animation: coinSpin 3s ease-in-out infinite;
+}
+
+.price-amount {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--product-gold);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.price-label {
+  font-size: 0.9rem;
+  color: var(--product-gold);
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+.price-usd {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+@keyframes coinSpin {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+
+/* Botones de acción mejorados */
+.product-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-buy {
+  background: var(--product-gradient-gold);
+  color: #2c3e50;
+  border: none;
+  padding: 16px 24px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--product-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-buy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-buy:hover::before {
+  left: 100%;
+}
+
+.btn-buy:hover {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+.btn-buy:active {
+  transform: translateY(-1px);
+}
+
+.btn-earn-free {
+  background: var(--product-gradient-success);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--product-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-earn-free:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Vista previa overlay */
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.product-card:hover .image-overlay {
+  opacity: 1;
+}
+
+.btn-preview {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-preview:hover {
+  background: white;
+  transform: scale(1.05);
+}
+
+/* ========================================
+   MEJORAS PARA PACKS
+   ======================================== */
+
+.pack-card {
+  background: var(--surface-primary);
+  backdrop-filter: var(--backdrop-blur);
+  border: 3px solid var(--product-gold);
+  border-radius: 20px;
+  box-shadow: var(--shadow-secondary);
+  overflow: hidden;
+  transition: var(--product-transition);
+  position: relative;
+  animation: packGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes packGlow {
+  from { box-shadow: var(--shadow-secondary); }
+  to { box-shadow: var(--product-shadow-glow); }
+}
+
+.pack-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--product-gradient-premium);
+  animation: packShimmer 2s ease-in-out infinite;
+}
+
+@keyframes packShimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.pack-card:hover {
+  transform: translateY(-15px) scale(1.03);
+  box-shadow: var(--product-shadow-premium);
+  border-color: var(--product-premium);
+}
+
+.pack-badges {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.badge.pack-discount {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.pack-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.pack-card:hover .pack-image {
+  transform: scale(1.08);
+}
+
+.pack-info {
+  padding: 24px;
+  text-align: center;
+}
+
+.pack-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.pack-value-proposition {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.savings-highlight {
+  background: var(--product-gradient-success);
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  margin-top: 12px;
+  animation: pulse 2s infinite;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-buy-pack {
+  background: var(--product-gradient-premium);
+  color: white;
+  border: none;
+  padding: 18px 28px;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--product-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: var(--product-shadow-premium);
+  margin-bottom: 12px;
+}
+
+.btn-buy-pack:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.btn-view-contents {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--text-secondary);
+  border: 2px solid rgba(107, 114, 128, 0.2);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--product-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-view-contents:hover {
+  background: rgba(107, 114, 128, 0.2);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+/* ========================================
+   ANIMACIONES ADICIONALES
+   ======================================== */
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-card,
+.pack-card {
+  animation: slideInFromBottom 0.6s ease-out;
+}
+
+/* Stagger animation para múltiples productos */
+.product-card:nth-child(1) { animation-delay: 0.1s; }
+.product-card:nth-child(2) { animation-delay: 0.2s; }
+.product-card:nth-child(3) { animation-delay: 0.3s; }
+.product-card:nth-child(4) { animation-delay: 0.4s; }
+.product-card:nth-child(5) { animation-delay: 0.5s; }
+.product-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* ========================================
+   RESPONSIVE MEJORADO
+   ======================================== */
+
+@media (max-width: 768px) {
+  .product-card,
+  .pack-card {
+    margin-bottom: 20px;
+  }
+  
+  .product-info,
+  .pack-info {
+    padding: 20px;
+  }
+  
+  .product-name,
+  .pack-name {
+    font-size: 1.2rem;
+  }
+  
+  .price-amount {
+    font-size: 1.8rem;
+  }
+  
+  .btn-buy,
+  .btn-buy-pack {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-image {
+    height: 180px;
+  }
+  
+  .pack-image {
+    height: 200px;
+  }
+  
+  .product-price,
+  .pack-value-proposition {
+    padding: 16px;
+  }
+  
+  .btn-buy,
+  .btn-buy-pack {
+    padding: 12px 18px;
+    font-size: 0.9rem;
+  }
+}

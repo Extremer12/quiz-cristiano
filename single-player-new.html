@@ -1,41 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modo Individual - Quiz Cristiano</title>
-    
+
     <!-- PWA Meta Tags -->
     <meta name="description" content="Modo Individual de Quiz Cristiano - Pon a prueba tu conocimiento bíblico">
     <meta name="theme-color" content="#ffd700">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Quiz Cristiano">
-    
+
     <!-- Icons -->
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
     <link rel="manifest" href="manifest.json">
-    
+
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/pages/safari-fixes.css">
-    <link rel="stylesheet" href="css/pages/dark-mode.css">
+    <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/pages/single-player-new.css">
 
-<!-- ADSENSE-->
+    <!-- ADSENSE -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
         crossorigin="anonymous"></script>
-
 </head>
+
 <body>
     <div class="game-container">
         <!-- Header -->
         <header class="game-header">
-            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio" aria-label="Volver al inicio">
+            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio"
+                aria-label="Volver al inicio">
                 <i class="fas fa-arrow-left"></i>
             </button>
             <div class="game-info">
@@ -47,52 +51,49 @@
             <div class="player-stats">
                 <div class="coins-display">
                     <i class="fas fa-coins"></i>
-                    <span id="player-coins">0</span>
+                    <span id="user-coins">0</span>
                 </div>
             </div>
         </header>
 
         <!-- Área Principal del Juego -->
         <main class="game-main">
-            <!-- Pantalla de Bienvenida SIMPLIFICADA -->
+            <!-- Pantalla de Bienvenida -->
             <div class="game-screen active" id="welcome-screen">
                 <div class="welcome-content">
-                    <!-- Mascota más pequeña -->
                     <div class="mascot-container">
-                        <img src="assets/images/mascota.png" alt="Joy" class="mascot-image" onclick="toggleSpeech()">
+                        <img src="assets/images/mascota.png" alt="Joy" class="mascot-image">
                         <div class="speech-bubble" id="speech-bubble">
-                            <p class="speech-text">¡Hola! Soy Joy, tu guía en este viaje bíblico. ¿Listo para demostrar tu conocimiento de las Escrituras?</p>
+                            <p class="speech-text">¡Hola! Soy Joy, tu guía en este viaje bíblico. ¿Listo para demostrar
+                                tu conocimiento?</p>
                         </div>
                     </div>
-                    
-                    <!-- Título principal -->
+
                     <div class="welcome-header">
                         <h1 class="welcome-title">Quiz Cristiano</h1>
                         <p class="welcome-subtitle">Pon a prueba tu conocimiento bíblico</p>
                     </div>
-                    
-                    <!-- Información básica -->
+
                     <div class="welcome-info">
                         <div class="info-card">
                             <i class="fas fa-bible"></i>
-                            <h3>6 Categorías Bíblicas</h3>
-                            <p>Explora diferentes temas de las Escrituras</p>
+                            <h3>4 Categorías</h3>
+                            <p>Antiguo, Nuevo, Personajes y Doctrina</p>
                         </div>
                         <div class="info-card">
                             <i class="fas fa-magic"></i>
-                            <h3>Power-ups Especiales</h3>
-                            <p>Usa herramientas para ayudarte en el juego</p>
+                            <h3>Power-ups</h3>
+                            <p>Usa herramientas para ayudarte</p>
                         </div>
                         <div class="info-card">
                             <i class="fas fa-trophy"></i>
-                            <h3>Sistema de Progreso</h3>
-                            <p>Avanza y desbloquea nuevos desafíos</p>
+                            <h3>Progreso</h3>
+                            <p>Gana monedas y sube de nivel</p>
                         </div>
                     </div>
-                    
-                    <!-- Botón principal centrado -->
+
                     <div class="welcome-actions">
-                        <button class="start-game-btn" onclick="startGame()">
+                        <button class="start-game-btn" id="start-game-btn">
                             <i class="fas fa-play"></i>
                             <span>Comenzar Aventura</span>
                         </button>
@@ -100,10 +101,9 @@
                 </div>
             </div>
 
-            <!-- Pantalla de Preguntas CORREGIDA -->
+            <!-- Pantalla de Preguntas -->
             <div class="game-screen" id="question-screen">
                 <div class="question-container">
-                    <!-- ✅ TIMER SECTION CORREGIDA -->
                     <div class="timer-section" id="timer-section">
                         <div class="timer-info">
                             <div class="timer-circle" id="timer-circle">
@@ -114,29 +114,25 @@
                                 <div class="timer-question" id="timer-question">1/3</div>
                             </div>
                         </div>
-                        
-                        <!-- ✅ POWER-UPS DENTRO DEL TIMER -->
+
                         <div class="powerups-compact" id="powerups-section">
-                            <button class="powerup-btn" id="eliminate-btn" onclick="usePowerup('eliminate')" title="Eliminar 2 opciones incorrectas">
+                            <button class="powerup-btn" id="eliminate-btn"
+                                title="Eliminar 2 opciones incorrectas (50 monedas)">
                                 <i class="fas fa-eraser"></i>
-                                <span class="powerup-count">0</span>
                             </button>
-                            <button class="powerup-btn" id="time-btn" onclick="usePowerup('timeExtender')" title="Añadir 15 segundos">
+                            <button class="powerup-btn" id="time-btn" title="Añadir 15 segundos (50 monedas)">
                                 <i class="fas fa-clock"></i>
-                                <span class="powerup-count">0</span>
                             </button>
-                            <button class="powerup-btn" id="rescue-btn" onclick="usePowerup('secondChance')" title="Segunda oportunidad">
+                            <button class="powerup-btn" id="rescue-btn" title="Segunda oportunidad (50 monedas)">
                                 <i class="fas fa-heart"></i>
-                                <span class="powerup-count">0</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- ✅ CONTENIDO DE PREGUNTA CORREGIDO -->
                     <div class="question-content">
                         <div class="bible-reference" id="bible-reference" style="display: none;"></div>
-                        <div class="question-text">¿Cuál es la pregunta que aparecerá aquí?</div>
-                        
+                        <div class="question-text">Cargando pregunta...</div>
+
                         <div class="answers-container" id="answers-container">
                             <!-- Las respuestas se cargan dinámicamente -->
                         </div>
@@ -165,7 +161,7 @@
                         </div>
                     </div>
                     <div class="victory-actions">
-                        <button class="victory-btn primary" onclick="restartGame()">
+                        <button class="victory-btn primary" onclick="window.location.reload()">
                             <i class="fas fa-redo"></i> Jugar de Nuevo
                         </button>
                         <button class="victory-btn secondary" onclick="window.location.href='index.html'">
@@ -175,30 +171,29 @@
                 </div>
             </div>
 
-
-
-<!-- Pantalla de Game Over MEJORADA -->
-<div class="game-screen" id="gameover-screen">
-    <div class="gameover-content">
-        <div class="joy-consoling">
-            <img src="assets/images/joy-consolando.png" alt="Joy consolando" class="joy-gameover-image">
-        </div>
-        <div class="gameover-message">
-            <h2 class="gameover-title">Game Over</h2>
-            <p class="gameover-subtitle">¡No te desanimes!</p>
-            <div class="gameover-description">
-                <p>Cada intento te acerca más a la maestría bíblica</p>
+            <!-- Pantalla de Game Over -->
+            <div class="game-screen" id="gameover-screen">
+                <div class="gameover-content">
+                    <div class="joy-consoling">
+                        <img src="assets/images/joy-consolando.png" alt="Joy consolando" class="joy-gameover-image">
+                    </div>
+                    <div class="gameover-message">
+                        <h2 class="gameover-title">Game Over</h2>
+                        <p class="gameover-subtitle">¡No te desanimes!</p>
+                        <div class="gameover-description">
+                            <p>Cada intento te acerca más a la maestría bíblica</p>
+                        </div>
+                    </div>
+                    <div class="gameover-actions">
+                        <button class="gameover-btn primary" onclick="window.location.reload()">
+                            <i class="fas fa-redo"></i> Intentar de Nuevo
+                        </button>
+                        <button class="gameover-btn secondary" onclick="window.location.href='index.html'">
+                            <i class="fas fa-home"></i> Volver al Inicio
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="gameover-actions">
-            <button class="gameover-btn primary" onclick="restartGame()">
-                <i class="fas fa-redo"></i> Intentar de Nuevo
-            </button>
-            <button class="gameover-btn secondary" onclick="window.location.href='index.html'">
-                <i class="fas fa-home"></i> Volver al Inicio
-            </button>
-        </div>
-</div>
         </main>
 
         <!-- Bottom Navigation -->
@@ -226,63 +221,20 @@
         </nav>
     </div>
 
-    <!-- Scripts principales -->
-    <script src="js/modules/gamedatamanager.js"></script>
-    <script src="js/modules/dark-mode.js"></script>
-    <script src="js/pages/single-player-new.js"></script>
-    <script src="js/modules/ads-manager.js" type="module"></script>
-    <!-- Script específico del HTML -->
-    <script>
-        let speechVisible = false;
-        
-        window.toggleSpeech = function() {
-            const speechBubble = document.getElementById('speech-bubble');
-            if (speechBubble) {
-                speechVisible = !speechVisible;
-                if (speechVisible) {
-                    speechBubble.classList.add('show');
-                } else {
-                    speechBubble.classList.remove('show');
-                }
+    <!-- Scripts -->
+    <script type="module" src="src/main.js"></script>
+    <script type="module">
+        import game from './src/core/Game.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-game-btn');
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    game.startGame();
+                });
             }
-        };
-        
-        // Debug y verificación
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎮 Single Player HTML cargado');
-            
-            const criticalElements = [
-                'welcome-screen', 'question-screen', 'categories-screen',
-                'victory-screen', 'gameover-screen', 'timer-section',
-                'powerups-section', 'answers-container'
-            ];
-            
-            criticalElements.forEach(id => {
-                const element = document.getElementById(id);
-                console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
-            });
         });
     </script>
-
-<script>
-// ✅ DEBUG: Forzar recarga de preguntas
-window.debugQuestions = function() {
-    console.log('🔍 === DEBUG PREGUNTAS ===');
-    fetch('./data/questions.json?' + Date.now())
-        .then(response => response.json())
-        .then(data => {
-            console.log('📚 Total preguntas cargadas:', data.length);
-            console.log('📝 Primera pregunta:', data[0]);
-            console.log('🔤 Categorías encontradas:', [...new Set(data.map(q => q.category))]);
-        })
-        .catch(error => console.error('❌ Error:', error));
-};
-
-// Ejecutar automáticamente
-setTimeout(() => {
-    debugQuestions();
-}, 2000);
-</script>
-
 </body>
+
 </html>

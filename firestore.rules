@@ -1,40 +1,93 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // ✅ REGLAS MÁS PERMISIVAS PARA DESARROLLO
     
-    // Usuarios autenticados (incluye anónimos)
+    // Reglas para datos de usuarios
     match /users/{userId} {
-      allow read, write: if request.auth != null && 
-        (request.auth.uid == userId || request.auth.token.firebase.sign_in_provider == 'anonymous');
+      // Los usuarios solo pueden leer y escribir sus propios datos
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Permitir lectura de datos públicos (ranking, etc.)
+      allow read: if resource.data.keys().hasAny(['displayName', 'avatar', 'level', 'totalScore']);
     }
     
-    // Permitir a usuarios anónimos crear sus propios documentos
-    match /users/{userId} {
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow read, update: if request.auth != null && request.auth.uid == userId;
+    // Reglas para transacciones de pago
+    match /transactions/{transactionId} {
+      // Solo lectura para el propietario de la transacción
+      allow read: if request.auth != null && 
+                     request.auth.uid == resource.data.userId;
+      
+      // Solo el sistema puede crear transacciones (via server-side)
+      allow create: if false; // Será manejado por Cloud Functions
+      
+      // No permitir actualizaciones directas desde el cliente
+      allow update, delete: if false;
     }
     
-    // Datos de juego - más permisivos
+    // Reglas para historial de pagos
+    match /paymentHistory/{userId} {
+      // Solo el propietario puede leer su historial
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Solo el sistema puede escribir historial
+      allow write: if false; // Será manejado por webhooks
+    }
+    
+    // Reglas para suscripciones
+    match /subscriptions/{subscriptionId} {
+      // Solo el propietario puede leer su suscripción
+      allow read: if request.auth != null && 
+                     request.auth.uid == resource.data.userId;
+      
+      // Solo el sistema puede manejar suscripciones
+      allow write: if false; // Será manejado por webhooks
+    }
+    
+    // Reglas para productos de la tienda (solo lectura)
+    match /storeProducts/{productId} {
+      // Todos pueden leer productos
+      allow read: if true;
+      
+      // Solo administradores pueden escribir
+      allow write: if request.auth != null && 
+                      request.auth.token.admin == true;
+    }
+    
+    // Reglas para configuración de precios
+    match /pricing/{currency} {
+      // Todos pueden leer precios
+      allow read: if true;
+      
+      // Solo administradores pueden actualizar precios
+      allow write: if request.auth != null && 
+                      request.auth.token.admin == true;
+    }
+    
+    // Reglas para logs de auditoría
+    match /auditLogs/{logId} {
+      // Solo administradores pueden leer logs
+      allow read: if request.auth != null && 
+                     request.auth.token.admin == true;
+      
+      // Solo el sistema puede escribir logs
+      allow write: if false; // Será manejado por Cloud Functions
+    }
+    
+    // Reglas para datos de juego (existentes)
     match /gameData/{userId} {
-      allow read, write: if request.auth != null;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
-    // Rankings - lectura pública, escritura autenticada
-    match /rankings/{rankingId} {
+    // Reglas para ranking (solo lectura para usuarios)
+    match /ranking/{document=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
     
-    // Productos de tienda - solo lectura
-    match /products/{productId} {
-      allow read: if true;
-      allow write: if false;
-    }
-    
-    // ✅ REGLA TEMPORAL PARA DESARROLLO (REMOVER EN PRODUCCIÓN)
+    // Reglas por defecto - denegar todo lo demás
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }

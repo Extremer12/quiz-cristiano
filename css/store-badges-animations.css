@@ -1,0 +1,155 @@
+/**
+ * ================================================
+ * ESTILOS ADICIONALES PARA TIENDA MEJORADA
+ * Quiz Cristiano - Badges, animaciones y responsivo
+ * ================================================
+ */
+
+/* ============================================
+   BADGES DE OFERTAS Y DESCUENTOS
+   ============================================ */
+
+.product-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  animation: badgePulse 2s infinite;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.product-badge.best-offer {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: 2px solid #fff;
+}
+
+.product-badge.special-offer {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  border: 2px solid #fff;
+}
+
+.product-badge.limited-time {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  color: white;
+  border: 2px solid #fff;
+}
+
+.product-badge.new {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: white;
+  border: 2px solid #fff;
+}
+
+.product-badge.popular {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: 2px solid #fff;
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ============================================
+   ANIMACIONES SUAVES PARA TRANSICIONES
+   ============================================ */
+
+.products-grid {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-card {
+  animation: slideInCard 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.product-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.product-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.product-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.product-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+@keyframes slideInCard {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.products-container.fade-out {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease-out;
+}
+
+.products-container.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease-in;
+}
+
+/* ============================================
+   ESTILOS RESPONSIVOS MEJORADOS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .product-card {
+    min-height: 300px;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .product-card {
+    min-height: 280px;
+    padding: 12px;
+  }
+}

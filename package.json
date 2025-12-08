@@ -2,9 +2,36 @@
   "name": "quiz-cristiano-backend",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:purchase": "playwright test complete-purchase-flow.test.js",
+    "test:e2e:subscription": "playwright test subscription-management.test.js",
+    "test:e2e:webhook": "playwright test webhook-processing.test.js",
+    "test:e2e:journey": "playwright test user-journey.test.js",
+    "test:e2e:mobile": "playwright test --project=\"Mobile Chrome\" --project=\"Mobile Safari\"",
+    "test:e2e:report": "playwright show-report",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
+  },
   "dependencies": {
     "mercadopago": "^2.8.0",
     "puppeteer": "^24.10.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@playwright/test": "^1.55.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-html-reporters": "^3.1.7"
   },
   "engines": {
     "node": "20.x"

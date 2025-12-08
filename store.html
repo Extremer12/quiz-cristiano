@@ -1,712 +1,130 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda - Quiz Cristiano</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="description" content="Tienda de Quiz Cristiano - Power-ups y elementos especiales">
-    <meta name="theme-color" content="#ffd700">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    
-    <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/pages/safari-fixes.css">
-    <link rel="stylesheet" href="css/pages/dark-mode.css">
-    <link rel="stylesheet" href="css/pages/store.css">
-    
-    <!-- SCRIPT DE MODO OSCURO GLOBAL - APLICAR INMEDIATAMENTE -->
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
-            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            const theme = savedTheme || systemPreference;
-            
-            document.documentElement.setAttribute('data-theme', theme);
-            
-            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-            if (metaThemeColor) {
-                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
-            }
-            
-            console.log(`🌙 Store tema aplicado: ${theme}`);
-        })();
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda - Quiz Cristiano</title>
+  <meta name="description" content="Tienda de avatares, monedas, power-ups y premium - Quiz Cristiano" />
+  <meta name="theme-color" content="#ffd700" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
 
-<!-- ADSENSE-->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
-        crossorigin="anonymous"></script>
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
 
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/pages/store.css" />
+  <link rel="stylesheet" href="css/pages/store-improved.css" />
+
+  <!-- Main Module -->
+  <script type="module" src="src/main.js"></script>
 </head>
+
 <body>
-    <div class="store-container">
-        <!-- Header Simplificado -->
-        <header class="store-header">
-            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            
-            <div class="store-title">
-                <h1>Tienda</h1>
-                <p>Mejora tu experiencia de juego</p>
-            </div>
-            
-            <div class="player-coins">
-                <i class="fas fa-coins"></i>
-                <span id="coins-display">0</span>
-            </div>
-        </header>
+  <div class="store-container">
+    <!-- Header de la Tienda -->
+    <header class="store-header">
+      <button type="button" class="back-btn" id="back-btn" onclick="window.location.href='index.html'"
+        title="Volver al inicio">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <div class="store-title">
+        <h1>Tienda</h1>
+        <p>Mejora tu experiencia de juego</p>
+      </div>
+      <div class="coins-display">
+        <i class="fas fa-coins"></i>
+        <span class="user-coins">0</span>
+      </div>
+    </header>
 
-        <!-- Mascota Joy con Corona (si está desbloqueada) -->
-        <section class="mascot-showcase">
-            <div class="mascot-container">
-                <img src="assets/images/mascota.png" alt="Joy" class="mascot-store" id="mascot-store">
-                <div class="mascot-status">
-                    <span id="mascot-status-text"> Aquí podrás adquirir objetos incribles!!</span>
-                </div>
-            </div>
-        </section>
+    <!-- Navegación de Categorías -->
+    <nav class="category-navigation">
+      <button type="button" class="category-btn active nav-btn" data-category="avatares">
+        <i class="fas fa-user-circle"></i>
+        <span>Avatares</span>
+      </button>
+      <button type="button" class="category-btn nav-btn" data-category="monedas">
+        <i class="fas fa-coins"></i>
+        <span>Monedas</span>
+      </button>
+      <button type="button" class="category-btn nav-btn" data-category="powerups">
+        <i class="fas fa-bolt"></i>
+        <span>Power-ups</span>
+      </button>
+    </nav>
 
-        <!-- Power-ups Section -->
-        <section class="powerups-section">
-            <div class="section-header">
-                <h2><i class="fas fa-magic"></i> Power-ups</h2>
-                <p>Herramientas para dominar las preguntas</p>
-            </div>
-            
-            <div class="products-grid" id="powerups-grid">
-                <!-- Power-ups se cargan dinámicamente -->
-            </div>
-        </section>
-
-        <!-- Premium Section -->
-        <section class="premium-section">
-            <div class="section-header">
-                <h2><i class="fas fa-crown"></i> Premium</h2>
-                <p>Elementos especiales y únicos</p>
-            </div>
-            
-            <div class="products-grid" id="premium-grid">
-                <!-- Elementos premium se cargan dinámicamente -->
-            </div>
-        </section>
-
-        <!-- Modal de Compra en store.html -->
-        <div class="purchase-modal" id="purchase-modal" style="display: none;">
-            <div class="modal-overlay" onclick="closePurchaseModal()"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="modal-title">Confirmar Compra</h3>
-                    <button class="modal-close" onclick="closePurchaseModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="product-preview" id="modal-product">
-                        <!-- Contenido del producto -->
-                    </div>
-                    <div class="purchase-info">
-                        <div class="cost-breakdown">
-                            <div class="cost-item">
-                                <span>Precio:</span>
-                                <span id="modal-price">0 monedas</span>
-                            </div>
-                            <div class="cost-item total">
-                                <span>Total:</span>
-                                <span id="modal-total">0 monedas</span>
-                            </div>
-                        </div>
-                        <div class="coins-info">
-                            <div class="coins-current">
-                                <span>Tienes:</span>
-                                <span id="modal-current-coins">0 monedas</span>
-                            </div>
-                            <div class="coins-remaining">
-                                <span>Te quedarán:</span>
-                                <span id="modal-remaining-coins">0 monedas</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closePurchaseModal()">Cancelar</button>
-                    <button class="btn-purchase" id="confirm-purchase-btn" onclick="confirmPurchase()">
-                        <i class="fas fa-shopping-cart"></i>
-                        Comprar
-                    </button>
-                </div>
-            </div>
+    <!-- Contenido Principal -->
+    <main class="store-content">
+      <!-- Sección de Avatares -->
+      <section class="category-section store-section active" id="avatares-section">
+        <div class="section-header">
+          <h2>Avatares</h2>
+          <p>Personaliza tu perfil con avatares únicos</p>
         </div>
+        <div class="products-grid" id="avatares-products"></div>
+      </section>
 
-        <!-- Notificaciones -->
-        <div class="notifications-container" id="notifications-container">
-            <!-- Las notificaciones aparecen aquí -->
+      <!-- Sección de Monedas -->
+      <section class="category-section store-section" id="monedas-section" style="display: none;">
+        <div class="section-header">
+          <h2>Paquetes de Monedas</h2>
+          <p>Obtén más monedas con bonificaciones por volumen</p>
         </div>
+        <div class="products-grid" id="monedas-products"></div>
+      </section>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Inicio</span>
-            </a>
-            <a href="single-player-new.html" class="nav-item">
-                <i class="fas fa-play"></i>
-                <span>Jugar</span>
-            </a>
-            <a href="ranking.html" class="nav-item">
-                <i class="fas fa-trophy"></i>
-                <span>Ranking</span>
-            </a>
-            <a href="logros.html" class="nav-item">
-                <i class="fas fa-medal"></i>
-                <span>Logros</span>
-            </a>
-            <a href="store.html" class="nav-item active">
-                <i class="fas fa-store"></i>
-                <span>Tienda</span>
-            </a>
-        </nav>
-    </div>
-
-    <!-- JavaScript -->
-    <!-- Agregar ANTES de los otros scripts, justo antes de cerrar </body> -->
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-<script src="js/config/mercadopago-config.js"></script>
-<script src="js/modules/gamedatamanager.js"></script>
-<script src="js/modules/dark-mode.js"></script>
-<script src="js/pages/store.js"></script>
-    <script src="js/modules/ads-manager.js" type="module"></script>
-    <!-- Script de inicialización en store.html -->
-    <script>
-        // ✅ NO DECLARAR currentPurchaseProduct AQUÍ (ya está en store.js)
-        
-        // Funciones globales para el HTML
-        window.buyProduct = function(productId) {
-            console.log('🛒 Iniciando compra desde HTML:', productId);
-            if (typeof showPurchaseModal === 'function') {
-                showPurchaseModal(productId);
-            } else {
-                console.error('❌ showPurchaseModal no está disponible');
-            }
-        };
-        
-        window.closePurchaseModal = function() {
-            const modal = document.getElementById('purchase-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            // No tocar currentPurchaseProduct aquí, se maneja en store.js
-        };
-        
-        window.confirmPurchase = function() {
-            console.log('💳 Confirmando compra desde HTML...');
-            if (typeof processPurchase === 'function') {
-                // Obtener el producto actual desde store.js
-                if (window.currentPurchaseProduct) {
-                    processPurchase(window.currentPurchaseProduct);
-                } else {
-                    console.error('❌ No hay producto para comprar');
-                }
-            } else {
-                console.error('❌ processPurchase no disponible');
-            }
-        };
-        
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏪 Store HTML cargado');
-            
-            // Verificar elementos críticos
-            const criticalElements = [
-                'coins-display', 'mascot-store', 'powerups-grid', 
-                'premium-grid', 'purchase-modal'
-            ];
-            
-            criticalElements.forEach(id => {
-                const element = document.getElementById(id);
-                console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
-            });
-            
-            // Verificar que store.js esté cargado
-            setTimeout(() => {
-                console.log('🔍 Verificando carga de store.js...');
-                console.log('- renderProducts:', typeof renderProducts);
-                console.log('- showPurchaseModal:', typeof showPurchaseModal);
-                console.log('- STORE_PRODUCTS:', typeof STORE_PRODUCTS);
-            }, 1000);
-        });
-    </script>
-
-<!-- Modal para Mercado Pago -->
-<div class="mercadopago-modal" id="mp-modal" style="display: none;">
-    <div class="modal-overlay" onclick="closeMPModal()"></div>
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Pagar con Mercado Pago</h3>
-            <button class="modal-close" onclick="closeMPModal()">
-                <i class="fas fa-times"></i>
-            </button>
+      <!-- Sección de Power-ups -->
+      <section class="category-section store-section" id="powerups-section" style="display: none;">
+        <div class="section-header">
+          <h2>Power-ups</h2>
+          <p>Mejora tu estrategia de juego con herramientas especiales</p>
         </div>
-        <div class="modal-body">
-            <div id="mp-checkout-container">
-                <!-- Aquí se renderiza el checkout de MP -->
-            </div>
-        </div>
-    </div>
-</div>
+        <div class="products-grid" id="powerups-products"></div>
+      </section>
+    </main>
 
-<!-- ✅ INFORMACIÓN DE TARJETAS DE PRUEBA -->
-<script>
-console.log('💳 TARJETAS DE PRUEBA MERCADO PAGO:');
-console.log('');
-console.log('🔵 MASTERCARD (Aprobación):');
-console.log('   📱 5031 7557 3453 0604');
-console.log('   📅 11/30');
-console.log('   🔐 123');
-console.log('');
-console.log('🔵 VISA (Aprobación):');
-console.log('   📱 4509 9535 6623 3704');
-console.log('   📅 11/30');
-console.log('   🔐 123');
-console.log('');
-console.log('👤 Titular: APRO (para aprobación)');
-console.log('🚫 Titular: OTHE (para rechazo)');
-console.log('💡 No se cobrará dinero real');
-</script>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span>Inicio</span>
+      </a>
+      <a href="ranking.html" class="nav-item">
+        <i class="fas fa-trophy"></i>
+        <span>Ranking</span>
+      </a>
+      <a href="single-player-new.html" class="nav-item">
+        <i class="fas fa-play"></i>
+        <span>Jugar</span>
+      </a>
+      <a href="logros.html" class="nav-item">
+        <i class="fas fa-medal"></i>
+        <span>Logros</span>
+      </a>
+      <a href="store.html" class="nav-item active">
+        <i class="fas fa-store"></i>
+        <span>Tienda</span>
+      </a>
+    </nav>
+  </div>
 
-
-
-<script>
-console.log('💳 CONFIGURACIÓN DE PAGOS:');
-console.log('✅ Mercado Pago: Configurado para Argentina');
-console.log('✅ PayPal: Configurado para internacional');
-console.log('');
-console.log('🧪 TARJETAS DE PRUEBA MERCADO PAGO:');
-console.log('💳 Mastercard: 5031 7557 3453 0604 (11/30, 123, APRO)');
-console.log('💳 Visa: 4509 9535 6623 3704 (11/30, 123, APRO)');
-console.log('');
-console.log('🌍 PayPal: Usa tu cuenta sandbox o real');
-</script>
-
-<style>
-/* ✅ MODAL CSS FORZADO - PRIORIDAD MÁXIMA */
-#purchase-modal {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: rgba(0, 0, 0, 0.85) !important;
-    backdrop-filter: blur(15px) !important;
-    z-index: 999999 !important;
-    display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-}
-
-/* ✅ MOSTRAR MODAL CUANDO TENGA ESTILO FLEX */
-#purchase-modal[style*="display: flex"],
-#purchase-modal[style*="display:flex"] {
-    display: flex !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* ✅ OVERLAY DEL MODAL */
-#purchase-modal .modal-overlay {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: transparent !important;
-    cursor: pointer !important;
-    z-index: 999990 !important;
-}
-
-/* ✅ CONTENIDO DEL MODAL */
-#purchase-modal .modal-content {
-    background: #1a1a1a !important;
-    border: 2px solid #ffd700 !important;
-    border-radius: 20px !important;
-    max-width: 90vw !important;
-    width: 500px !important;
-    max-height: 90vh !important;
-    overflow-y: auto !important;
-    position: relative !important;
-    z-index: 999999 !important;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8) !important;
-    margin: 20px !important;
-    transform: scale(1) !important;
-    opacity: 1 !important;
-}
-
-/* ✅ HEADER DEL MODAL */
-#purchase-modal .modal-header {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 20px !important;
-    border-bottom: 1px solid #333 !important;
-    background: #2a2a2a !important;
-    border-radius: 18px 18px 0 0 !important;
-}
-
-#purchase-modal .modal-header h3 {
-    margin: 0 !important;
-    color: #ffd700 !important;
-    font-size: 1.3rem !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-}
-
-#purchase-modal .modal-close {
-    background: #333 !important;
-    border: none !important;
-    color: #fff !important;
-    font-size: 1.5rem !important;
-    cursor: pointer !important;
-    padding: 8px !important;
-    border-radius: 50% !important;
-    width: 40px !important;
-    height: 40px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.3s ease !important;
-}
-
-#purchase-modal .modal-close:hover {
-    background: #555 !important;
-    transform: scale(1.1) !important;
-}
-
-/* ✅ BODY DEL MODAL */
-#purchase-modal .modal-body {
-    padding: 25px !important;
-    color: #fff !important;
-}
-
-/* ✅ PREVIEW DEL PRODUCTO */
-#purchase-modal .product-preview {
-    text-align: center !important;
-    margin-bottom: 20px !important;
-}
-
-#purchase-modal .preview-icon {
-    font-size: 4rem !important;
-    color: #ffd700 !important;
-    margin-bottom: 15px !important;
-}
-
-#purchase-modal .preview-image {
-    max-width: 120px !important;
-    max-height: 120px !important;
-    border-radius: 15px !important;
-    border: 2px solid #ffd700 !important;
-    margin: 0 auto 15px auto !important;
-    display: block !important;
-}
-
-/* ✅ INFORMACIÓN DEL PRODUCTO */
-#purchase-modal .purchase-info {
-    color: #fff !important;
-}
-
-#purchase-modal .product-description {
-    text-align: center !important;
-    margin-bottom: 20px !important;
-    color: #ccc !important;
-    font-size: 1rem !important;
-    line-height: 1.4 !important;
-}
-
-/* ✅ DETALLES DE PRECIOS */
-#purchase-modal .pricing-details {
-    background: #2a2a2a !important;
-    border-radius: 15px !important;
-    padding: 20px !important;
-    margin: 20px 0 !important;
-    border: 1px solid #444 !important;
-}
-
-#purchase-modal .pricing-details h4 {
-    color: #ffd700 !important;
-    margin-bottom: 15px !important;
-    text-align: center !important;
-    font-size: 1.2rem !important;
-}
-
-#purchase-modal .price-breakdown {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 15px !important;
-}
-
-#purchase-modal .price-line-usd,
-#purchase-modal .price-line-ars {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 15px !important;
-    border-radius: 10px !important;
-    background: rgba(255, 215, 0, 0.1) !important;
-    border: 1px solid rgba(255, 215, 0, 0.3) !important;
-}
-
-#purchase-modal .price-line-usd .currency,
-#purchase-modal .price-line-ars .currency {
-    font-weight: 600 !important;
-    color: #fff !important;
-}
-
-#purchase-modal .price-line-usd .amount,
-#purchase-modal .price-line-ars .amount {
-    font-weight: 700 !important;
-    color: #ffd700 !important;
-    font-size: 1.1rem !important;
-}
-
-/* ✅ OPCIONES DE PAGO */
-#purchase-modal .payment-options {
-    margin-top: 25px !important;
-}
-
-#purchase-modal .payment-options h4 {
-    color: #ffd700 !important;
-    margin-bottom: 20px !important;
-    text-align: center !important;
-    font-size: 1.2rem !important;
-}
-
-#purchase-modal .payment-btn {
-    display: flex !important;
-    align-items: center !important;
-    gap: 15px !important;
-    width: 100% !important;
-    padding: 18px !important;
-    margin: 12px 0 !important;
-    background: #2a2a2a !important;
-    border: 2px solid #444 !important;
-    border-radius: 15px !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    color: #fff !important;
-    text-decoration: none !important;
-    font-size: 1rem !important;
-}
-
-#purchase-modal .payment-btn:hover {
-    background: #333 !important;
-    border-color: #ffd700 !important;
-    transform: translateY(-3px) !important;
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.3) !important;
-}
-
-#purchase-modal .payment-btn.mercadopago {
-    border-color: #009ee3 !important;
-}
-
-#purchase-modal .payment-btn.mercadopago:hover {
-    border-color: #007bb5 !important;
-    background: rgba(0, 158, 227, 0.1) !important;
-}
-
-#purchase-modal .payment-btn.paypal {
-    border-color: #0070ba !important;
-}
-
-#purchase-modal .payment-btn.paypal:hover {
-    border-color: #005ea6 !important;
-    background: rgba(0, 112, 186, 0.1) !important;
-}
-
-#purchase-modal .payment-icon {
-    font-size: 2.2rem !important;
-    width: 50px !important;
-    text-align: center !important;
-    color: #ffd700 !important;
-}
-
-#purchase-modal .payment-btn.mercadopago .payment-icon {
-    color: #009ee3 !important;
-}
-
-#purchase-modal .payment-btn.paypal .payment-icon {
-    color: #0070ba !important;
-}
-
-#purchase-modal .payment-info {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
-}
-
-#purchase-modal .payment-name {
-    font-weight: 700 !important;
-    color: #fff !important;
-    font-size: 1.2rem !important;
-}
-
-#purchase-modal .payment-desc {
-    color: #ccc !important;
-    font-size: 0.9rem !important;
-}
-
-#purchase-modal .payment-price {
-    color: #ffd700 !important;
-    font-weight: 700 !important;
-    font-size: 1.2rem !important;
-    text-align: right !important;
-    align-self: center !important;
-}
-
-/* ✅ FOOTER DEL MODAL */
-#purchase-modal .modal-footer {
-    display: flex !important;
-    gap: 15px !important;
-    padding: 20px !important;
-    border-top: 1px solid #333 !important;
-    justify-content: flex-end !important;
-    background: #1a1a1a !important;
-    border-radius: 0 0 18px 18px !important;
-}
-
-#purchase-modal .btn-cancel,
-#purchase-modal .btn-purchase {
-    padding: 12px 25px !important;
-    border: none !important;
-    border-radius: 12px !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    font-size: 1rem !important;
-}
-
-#purchase-modal .btn-cancel {
-    background: #333 !important;
-    color: #fff !important;
-    border: 1px solid #555 !important;
-}
-
-#purchase-modal .btn-cancel:hover {
-    background: #444 !important;
-    transform: translateY(-2px) !important;
-}
-
-#purchase-modal .btn-purchase {
-    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
-    color: white !important;
-}
-
-#purchase-modal .btn-purchase:hover {
-    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4) !important;
-}
-
-#purchase-modal .btn-purchase:disabled,
-#purchase-modal .btn-purchase.disabled {
-    background: #333 !important;
-    color: #666 !important;
-    cursor: not-allowed !important;
-    opacity: 0.6 !important;
-}
-
-/* ✅ RESPONSIVE PARA MÓVILES */
-@media (max-width: 768px) {
-    #purchase-modal .modal-content {
-        width: 95vw !important;
-        margin: 10px !important;
-        max-height: 95vh !important;
-    }
-    
-    #purchase-modal .modal-header,
-    #purchase-modal .modal-body,
-    #purchase-modal .modal-footer {
-        padding: 15px !important;
-    }
-    
-    #purchase-modal .payment-btn {
-        flex-direction: column !important;
-        text-align: center !important;
-        gap: 12px !important;
-        padding: 20px !important;
-    }
-    
-    #purchase-modal .payment-info {
-        align-items: center !important;
-    }
-    
-    #purchase-modal .payment-price {
-        text-align: center !important;
-    }
-    
-    #purchase-modal .modal-footer {
-        flex-direction: column !important;
-    }
-    
-    #purchase-modal .btn-purchase,
-    #purchase-modal .btn-cancel {
-        width: 100% !important;
-        justify-content: center !important;
-    }
-}
-
-/* ✅ ANIMACIÓN DE ENTRADA */
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8) translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-#purchase-modal.show .modal-content {
-    animation: modalFadeIn 0.3s ease-out !important;
-}
-
-/* ✅ ASEGURAR VISIBILIDAD TOTAL */
-#purchase-modal * {
-    box-sizing: border-box !important;
-}
-
-#purchase-modal {
-    font-family: 'Lato', sans-serif !important;
-}
-
-/* ✅ FORZAR Z-INDEX MÁXIMO */
-#purchase-modal {
-    z-index: 2147483647 !important;
-}
-
-#purchase-modal .modal-content {
-    z-index: 2147483647 !important;
-}
-
-/* ✅ ELIMINAR CUALQUIER INTERFERENCIA */
-body.modal-open {
-    overflow: hidden !important;
-}
-</style>
+  <!-- Elementos de UI Globales (Mascota, Efectos) -->
+  <div class="mascot-container hidden">
+    <div class="mascot-message-bubble hidden"></div>
+    <img src="assets/images/mascot.png" alt="Mascota" class="mascot-image">
+  </div>
+  <div class="particles-container"></div>
 </body>
+
 </html>

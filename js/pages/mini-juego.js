@@ -947,7 +947,7 @@ function showNotification(message, type = 'info') {
 }
 
 function showErrorMessage(message) {
-    console.error('❌ Error en mini-juego:', message);
+    console.error('Error en mini-juego:', message);
     showNotification(`Error: ${message}`, 'error');
 }
 
@@ -956,7 +956,7 @@ function showErrorMessage(message) {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📚 Mini-juego Joy DOM cargado');
+    console.log('Mini-juego Joy DOM cargado');
     
     // Verificar elementos críticos
     const criticalElements = [
@@ -970,7 +970,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!element) {
             missingElements.push(id);
         }
-        console.log(`${element ? '✅' : '❌'} Elemento ${id}:`, !!element);
+        console.log(`${element ? 'OK' : 'ERROR'} Elemento ${id}:`, !!element);
     });
     
     if (missingElements.length > 0) {
@@ -1018,4 +1018,4 @@ window.MiniGameDebug = {
     forceLevel
 };
 
-console.log('✅ Mini-juego Joy JavaScript cargado completamente');
+console.log('Mini-juego Joy JavaScript cargado completamente');

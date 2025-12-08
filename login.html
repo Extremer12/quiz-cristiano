@@ -1,809 +1,263 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Quiz Cristiano</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/pages/safari-fixes.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Lato', Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            position: relative;
-        }
-        
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('./assets/images/fondo.png');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.3;
-            z-index: -1;
-        }
-        
-        .login-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-        
-        .logo {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            color: #ffd700;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        
-        .subtitle {
-            margin-bottom: 30px;
-            opacity: 0.8;
-            font-size: 1.1rem;
-            line-height: 1.4;
-        }
-        
-        .benefits {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        
-        .benefits h4 {
-            color: #ffd700;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .benefit-item {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            font-size: 0.9rem;
-        }
-        
-        .benefit-item i {
-            color: #27ae60;
-            margin-right: 10px;
-            width: 20px;
-        }
-        
-        .login-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 15px 20px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .login-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .login-btn:hover::before {
-            left: 100%;
-        }
-        
-        .google-btn {
-            background: #ffffff;
-            color: #333;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .google-btn:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .guest-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .guest-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid currentColor;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        .error-message {
-            background: rgba(231, 76, 60, 0.2);
-            border: 1px solid #e74c3c;
-            color: #e74c3c;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: none;
-            font-size: 0.9rem;
-        }
-        
-        .skip-login {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .skip-login a {
-            color: #ffd700;
-            text-decoration: none;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-        }
-        
-        .skip-login a:hover {
-            opacity: 1;
-        }
-        
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 20px;
-                margin: 20px;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar Sesión - Quiz Cristiano</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    /* Estilos específicos para login que no están en main.css */
+    body {
+      background: linear-gradient(135deg,
+          #1e3c8a 0%,
+          #142864 50%,
+          #0f1940 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      position: relative;
+    }
 
-<!-- ADSENSE-->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
-        crossorigin="anonymous"></script>
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("./assets/images/fondo.png");
+      background-size: cover;
+      background-position: center;
+      opacity: 0.3;
+      z-index: -1;
+    }
 
+    .login-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      font-family: "Cinzel", serif;
+      font-size: 2.5rem;
+      color: #ffd700;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .subtitle {
+      margin-bottom: 30px;
+      opacity: 0.8;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .benefits {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .benefits h4 {
+      color: #ffd700;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 0.9rem;
+    }
+
+    .benefit-item i {
+      color: #27ae60;
+      margin-right: 10px;
+      width: 20px;
+    }
+
+    .login-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 15px 20px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent);
+      transition: left 0.5s ease;
+    }
+
+    .login-btn:hover::before {
+      left: 100%;
+    }
+
+    .google-btn {
+      background: #ffffff;
+      color: #333;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .google-btn:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .facebook-btn {
+      background: #3b5998;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .facebook-btn:hover {
+      background: #2d4373;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .error-message {
+      background: rgba(231, 76, 60, 0.2);
+      border: 1px solid #e74c3c;
+      color: #e74c3c;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      display: none;
+      font-size: 0.9rem;
+    }
+
+    .skip-login {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .skip-login a {
+      color: #ffd700;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+
+    .skip-login a:hover {
+      opacity: 1;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="login-container">
-        <h1 class="logo">Quiz Cristiano</h1>
-        <p class="subtitle">Inicia sesión para sincronizar tu progreso en la nube</p>
-        
-        <div class="benefits">
-            <h4>Beneficios de crear cuenta:</h4>
-            <div class="benefit-item">
-                <i class="fas fa-cloud"></i>
-                <span>Progreso guardado en la nube</span>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-trophy"></i>
-                <span>Logros sincronizados</span>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-coins"></i>
-                <span>Monedas protegidas</span>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-users"></i>
-                <span>Acceso a rankings globales</span>
-            </div>
-        </div>
-        
-        <div class="error-message" id="error-message">
-            <!-- Los errores aparecen aquí -->
-        </div>
-        
-        <button class="login-btn google-btn" id="google-btn" onclick="signInWithGoogle()">
-            <i class="fab fa-google"></i>
-            <span>Continuar con Google</span>
-        </button>
-        
-        <button class="login-btn guest-btn" id="guest-btn" onclick="signInAsGuest()">
-            <i class="fas fa-user-secret"></i>
-            <span>Jugar como Invitado</span>
-        </button>
-        
-        <div class="skip-login">
-            <a href="index.html">Omitir por ahora</a>
-        </div>
+  <div class="login-container">
+    <h1 class="logo">Quiz Cristiano</h1>
+    <p class="subtitle">
+      Inicia sesión para sincronizar tu progreso en la nube
+    </p>
+
+    <div class="benefits">
+      <h4>Beneficios de crear cuenta:</h4>
+      <div class="benefit-item">
+        <i class="fas fa-cloud"></i>
+        <span>Progreso guardado en la nube</span>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-trophy"></i>
+        <span>Logros sincronizados</span>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-coins"></i>
+        <span>Monedas protegidas</span>
+      </div>
+      <div class="benefit-item">
+        <i class="fas fa-users"></i>
+        <span>Acceso a rankings globales</span>
+      </div>
     </div>
 
-    <script type="module">
-        // 🔥 IMPORTAR FIREBASE CONFIGURACIÓN
-        import { 
-            auth, 
-            signInWithGoogle as firebaseSignInWithGoogle, 
-            signInAsGuest as firebaseSignInAsGuest,
-            saveUserData, 
-            getUserData,
-            analytics,
-            // ✅ IMPORTAR FUNCIONES FALTANTES
-            signOut,
-            onAuthStateChanged
-        } from './js/config/firebase-config.js';
+    <div class="error-message" id="error-message">
+      <!-- Los errores aparecen aquí -->
+    </div>
 
-        import { logEvent } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+    <button class="login-btn google-btn" id="google-btn">
+      <i class="fab fa-google"></i>
+      <span>Continuar con Google</span>
+    </button>
 
-        // ============================================
-        // LISTENER ONAUTH COMPLETAMENTE CORREGIDO
-        // ============================================
+    <button class="login-btn facebook-btn" id="facebook-btn">
+      <i class="fab fa-facebook-f"></i>
+      <span>Continuar con Facebook</span>
+    </button>
 
-        // ✅ VERIFICACIÓN INMEDIATA DE FLAGS AL CARGAR
-        (function() {
-            console.log('🔍 === LOGIN PAGE CARGANDO ===');
-            
-            // Verificar parámetros URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const forceLogout = urlParams.get('forceLogout');
-            const emergency = urlParams.get('emergency');
-            
-            // Verificar flags de sessionStorage
-            const forceLoginActive = sessionStorage.getItem('FORCE_LOGIN_ACTIVE');
-            const changingUser = sessionStorage.getItem('CHANGING_USER_PROCESS');
-            const disableAutoLogin = sessionStorage.getItem('DISABLE_AUTO_LOGIN');
-            const logoutInProgress = localStorage.getItem('USER_LOGOUT_IN_PROGRESS');
-            const emergencyLogout = sessionStorage.getItem('EMERGENCY_LOGOUT');
-            
-            console.log('🔍 Estados detectados:', {
-                forceLogout: !!forceLogout,
-                emergency: !!emergency,
-                forceLoginActive: !!forceLoginActive,
-                changingUser: !!changingUser,
-                disableAutoLogin: !!disableAutoLogin,
-                logoutInProgress: !!logoutInProgress,
-                emergencyLogout: !!emergencyLogout
-            });
-            
-            // Si hay CUALQUIER flag de logout/cambio, limpiar todo
-            if (forceLogout || emergency || forceLoginActive || changingUser || 
-                disableAutoLogin || logoutInProgress || emergencyLogout) {
-                
-                console.log('🧹 FORZANDO LIMPIEZA COMPLETA...');
-                
-                // Limpiar localStorage completamente
-                try {
-                    localStorage.clear();
-                    console.log('✅ localStorage limpiado');
-                } catch (e) {
-                    console.error('Error limpiando localStorage:', e);
-                }
-                
-                // Establecer flag especial para bloquear redirección
-                sessionStorage.setItem('LOGIN_FORCED_STAY', 'true');
-                sessionStorage.setItem('BLOCK_AUTH_REDIRECT', 'true');
-                
-                // Limpiar URL
-                if (window.history && window.history.replaceState) {
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-                
-                console.log('✅ Login forzado a permanecer');
-            }
-        })();
+    <div class="skip-login">
+      <a href="index.html">Omitir por ahora</a>
+    </div>
+  </div>
 
-        // ✅ LISTENER DE AUTENTICACIÓN MEJORADO
-        onAuthStateChanged(auth, (user) => {
-            console.log('🔄 === OnAuthStateChanged disparado ===');
-            console.log('👤 Usuario Firebase:', user ? 'Autenticado' : 'No autenticado');
-            
-            // ✅ 1. VERIFICAR FLAGS DE BLOQUEO PRIMERO
-            const loginForcedStay = sessionStorage.getItem('LOGIN_FORCED_STAY');
-            const blockAuthRedirect = sessionStorage.getItem('BLOCK_AUTH_REDIRECT');
-            const forceLoginActive = sessionStorage.getItem('FORCE_LOGIN_ACTIVE');
-            
-            console.log('🛡️ Verificando flags de bloqueo:', {
-                loginForcedStay: !!loginForcedStay,
-                blockAuthRedirect: !!blockAuthRedirect,
-                forceLoginActive: !!forceLoginActive
-            });
-            
-            // Si hay CUALQUIER flag de bloqueo, NO REDIRIGIR
-            if (loginForcedStay || blockAuthRedirect || forceLoginActive) {
-                console.log('🛑 === REDIRECCIÓN BLOQUEADA POR FLAGS ===');
-                
-                // Si hay usuario de Firebase, cerrar sesión silenciosamente
-                if (user) {
-                    console.log('🔄 Cerrando sesión silenciosa de Firebase...');
-                    signOut(auth).catch(e => {
-                        console.warn('Error en signOut silencioso:', e);
-                    });
-                }
-                
-                // Limpiar flags después de un tiempo
-                setTimeout(() => {
-                    sessionStorage.removeItem('LOGIN_FORCED_STAY');
-                    sessionStorage.removeItem('BLOCK_AUTH_REDIRECT'); 
-                    sessionStorage.removeItem('FORCE_LOGIN_ACTIVE');
-                    sessionStorage.removeItem('CHANGING_USER_PROCESS');
-                    sessionStorage.removeItem('DISABLE_AUTO_LOGIN');
-                    console.log('🧹 Flags de bloqueo limpiados');
-                }, 2000);
-                
-                return; // SALIR COMPLETAMENTE
-            }
-            
-            // ✅ 2. VERIFICAR DATOS LOCALES SOLO SI NO HAY BLOQUEO
-            const currentUser = localStorage.getItem('currentUser');
-            const skipLogin = localStorage.getItem('skipLogin');
-            
-            console.log('📊 Estado de datos locales:', {
-                currentUser: !!currentUser,
-                skipLogin: !!skipLogin
-            });
-            
-            // ✅ 3. SOLO REDIRIGIR SI HAY USUARIO Y DATOS VÁLIDOS
-            if (user && (currentUser || skipLogin)) {
-                console.log('✅ Usuario válido detectado - Preparando redirección...');
-                
-                // Actualizar datos del usuario
-                const userData = {
-                    uid: user.uid,
-                    name: user.displayName || 'Invitado',
-                    email: user.email,
-                    photo: user.photoURL,
-                    loginMethod: user.isAnonymous ? 'anonymous' : 'google'
-                };
-                
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                localStorage.removeItem('skipLogin');
-                
-                // ✅ DELAY LARGO Y VERIFICACIÓN FINAL
-                setTimeout(() => {
-                    // Verificar una vez más que no hay flags de bloqueo
-                    const stillBlocked = sessionStorage.getItem('LOGIN_FORCED_STAY') || 
-                                       sessionStorage.getItem('BLOCK_AUTH_REDIRECT');
-                    
-                    if (!stillBlocked) {
-                        const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
-                        sessionStorage.removeItem('redirectAfterLogin');
-                        console.log('🏠 === REDIRECCIÓN FINAL A:', redirectUrl, '===');
-                        window.location.replace(redirectUrl);
-                    } else {
-                        console.log('🛑 Redirección cancelada por flags activos');
-                    }
-                }, 3000); // 3 segundos de espera
-                
-            } else if (user && !currentUser && !skipLogin) {
-                // ✅ 4. USUARIO SIN DATOS LOCALES
-                console.log('⚠️ Usuario Firebase sin datos locales - Cerrando sesión');
-                signOut(auth).catch(e => {
-                    console.warn('Error cerrando sesión inconsistente:', e);
-                });
-            } else {
-                console.log('✅ Estado normal - Usuario puede proceder con login');
-            }
-        });
+  <script type="module">
+    import AuthService from './src/services/AuthService.js';
+    import { showNotification } from './src/utils/Utils.js';
 
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
+    document.getElementById('google-btn').addEventListener('click', async () => {
+      try {
+        await AuthService.loginWithGoogle();
+      } catch (error) {
+        showErrorMessage(error.message);
+      }
+    });
 
-        function showLoading(btnId, loadingText) {
-            const btn = document.getElementById(btnId);
-            const btnText = btn.querySelector('span');
-            
-            btn.classList.add('loading');
-            btnText.textContent = loadingText;
-            
-            return () => {
-                btn.classList.remove('loading');
-            };
-        }
+    document.getElementById('facebook-btn').addEventListener('click', async () => {
+      try {
+        await AuthService.loginWithFacebook();
+      } catch (error) {
+        showErrorMessage(error.message);
+      }
+    });
 
-        // ✅ MODIFICAR LA FUNCIÓN signInWithGoogle
-        window.signInWithGoogle = async function() {
-            const stopLoading = showLoading('google-btn', 'Iniciando sesión...');
-            
-            try {
-                console.log('🔑 === INICIANDO LOGIN GOOGLE ===');
-                
-                const user = await firebaseSignInWithGoogle();
-                console.log('✅ Login Google exitoso:', user.displayName);
-                
-                // Log analytics event
-                logEvent(analytics, 'login', { method: 'google' });
-                
-                // ✅ GUARDAR DATOS DEL USUARIO
-                const userData = {
-                    uid: user.uid,
-                    name: user.displayName,
-                    email: user.email,
-                    photo: user.photoURL,
-                    loginMethod: 'google'
-                };
-                
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                
-                // ✅ INTENTAR CARGAR DATOS DESDE FIREBASE
-                try {
-                    await waitForGameDataManager();
-                    if (window.GameDataManager) {
-                        const dataLoaded = await window.GameDataManager.loadFromFirebase();
-                        if (dataLoaded) {
-                            console.log('🎉 Datos del usuario restaurados desde Firebase');
-                        } else {
-                            console.log('📱 Nuevo usuario o sin datos previos');
-                        }
-                    }
-                } catch (loadError) {
-                    console.warn('⚠️ Error cargando datos del usuario:', loadError);
-                }
-                
-                // ✅ GUARDAR ESTRUCTURA INICIAL EN FIREBASE
-                try {
-                    await saveUserData(user.uid, {
-                        profile: {
-                            name: user.displayName,
-                            email: user.email,
-                            photo: user.photoURL,
-                            loginMethod: 'google',
-                            lastLogin: new Date(),
-                            createdAt: new Date()
-                        },
-                        gameData: window.GameDataManager ? window.GameDataManager.gameData : {
-                            coins: 0,
-                            gamesPlayed: 0,
-                            victories: 0,
-                            perfectGames: 0
-                        },
-                        inventory: window.GameDataManager ? window.GameDataManager.inventory : {
-                            eliminate: 0,
-                            timeExtender: 0,
-                            secondChance: 0
-                        }
-                    });
-                } catch (saveError) {
-                    console.warn('⚠️ Error guardando datos iniciales:', saveError);
-                }
-                
-                console.log('🎉 Login completado, redirigiendo...');
-                
-                setTimeout(() => {
-                    const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
-                    sessionStorage.removeItem('redirectAfterLogin');
-                    window.location.replace(redirectUrl);
-                }, 1000);
-                
-            } catch (error) {
-                stopLoading();
-                console.error('❌ Error en login Google:', error);
-                showError('Error al iniciar sesión con Google. Intenta de nuevo.');
-            }
-        };
-
-        // ✅ FUNCIÓN AUXILIAR PARA ESPERAR GAMEDATAMANAGER
-        async function waitForGameDataManager() {
-            return new Promise((resolve) => {
-                if (window.GameDataManager) {
-                    resolve();
-                } else {
-                    const checkInterval = setInterval(() => {
-                        if (window.GameDataManager) {
-                            clearInterval(checkInterval);
-                            resolve();
-                        }
-                    }, 100);
-                    
-                    // Timeout después de 5 segundos
-                    setTimeout(() => {
-                        clearInterval(checkInterval);
-                        resolve();
-                    }, 5000);
-                }
-            });
-        }
-
-        window.signInAsGuest = async function() {
-            const stopLoading = showLoading('guest-btn', 'Entrando como invitado...');
-            
-            try {
-                console.log('👤 === INICIANDO LOGIN ANÓNIMO ===');
-                
-                // ✅ LIMPIAR TODOS LOS FLAGS DE BLOQUEO
-                sessionStorage.removeItem('LOGIN_FORCED_STAY');
-                sessionStorage.removeItem('BLOCK_AUTH_REDIRECT');
-                sessionStorage.removeItem('FORCE_LOGIN_ACTIVE');
-                sessionStorage.removeItem('CHANGING_USER_PROCESS');
-                sessionStorage.removeItem('DISABLE_AUTO_LOGIN');
-                localStorage.removeItem('USER_LOGOUT_IN_PROGRESS');
-                
-                const user = await firebaseSignInAsGuest();
-                console.log('✅ Login anónimo exitoso');
-                
-                // ✅ CREAR DATOS DE USUARIO LOCALES SIN FIRESTORE
-                const userData = {
-                    uid: user.uid,
-                    name: 'Invitado',
-                    email: null,
-                    photo: null,
-                    loginMethod: 'anonymous',
-                    isAnonymous: true
-                };
-                
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                
-                // ✅ NO INTENTAR GUARDAR EN FIRESTORE PARA INVITADOS
-                console.log('👤 Usuario invitado configurado, usando solo localStorage');
-                
-                // Log analytics event
-                if (window.logEvent && window.analytics) {
-                    logEvent(analytics, 'login', { method: 'anonymous' });
-                }
-                
-                console.log('🎉 Login anónimo completado, redirigiendo...');
-                
-                setTimeout(() => {
-                    const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
-                    sessionStorage.removeItem('redirectAfterLogin');
-                    window.location.replace(redirectUrl);
-                }, 1000);
-                
-            } catch (error) {
-                stopLoading();
-                console.error('❌ Error en login anónimo:', error);
-                showError('Error al entrar como invitado. Intenta de nuevo.');
-            }
-        };
-
-        async function migrateLocalData(user) {
-            try {
-                console.log('📦 Verificando datos locales para migrar...');
-                
-                const localGameData = localStorage.getItem('quizCristianoData');
-                const localAchievements = localStorage.getItem('quizCristianoAchievements');
-                
-                if (localGameData || localAchievements) {
-                    console.log('📤 Migrando datos locales a Firestore...');
-                    
-                    const migrationData = {};
-                    
-                    if (localGameData) {
-                        migrationData.gameData = JSON.parse(localGameData);
-                    }
-                    
-                    if (localAchievements) {
-                        migrationData.achievements = JSON.parse(localAchievements);
-                    }
-                    
-                    // Guardar en Firestore
-                    await saveUserData(user.uid, {
-                        migratedData: migrationData,
-                        migrationDate: new Date()
-                    });
-                    
-                    console.log('✅ Migración completada');
-                }
-            } catch (error) {
-                console.warn('⚠️ Error en migración (continuando...):', error);
-            }
-        }
-
-        // Log page view
-        logEvent(analytics, 'page_view', { page_title: 'Login' });
-
-
-
-// ============================================
-// FUNCIONES DEBUG PARA LOGIN.HTML
-// ============================================
-
-// ✅ DEBUG FUNCIONES EN LOGIN
-window.debugAuth = function() {
-    console.log('🔍 Estado actual de autenticación en LOGIN:');
-    console.log('localStorage.currentUser:', localStorage.getItem('currentUser'));
-    console.log('localStorage.skipLogin:', localStorage.getItem('skipLogin'));
-    console.log('sessionStorage.forceLogin:', sessionStorage.getItem('forceLogin'));
-    console.log('sessionStorage.changingUser:', sessionStorage.getItem('changingUser'));
-    
-    // Mostrar datos parseados
-    try {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const user = JSON.parse(currentUser);
-            console.log('Datos del usuario:', user);
-        } else {
-            console.log('No hay datos de usuario');
-        }
-    } catch (e) {
-        console.log('Error parseando usuario:', e);
+    function showErrorMessage(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
     }
-    
-    // Verificar estado de Firebase Auth
-    if (auth && auth.currentUser) {
-        console.log('Firebase user:', {
-            uid: auth.currentUser.uid,
-            email: auth.currentUser.email,
-            displayName: auth.currentUser.displayName,
-            isAnonymous: auth.currentUser.isAnonymous
-        });
-    } else {
-        console.log('Firebase user: No autenticado');
-    }
-    
-    // Estado de la página
-    console.log('URL actual:', window.location.href);
-    console.log('Timestamp:', new Date().toLocaleTimeString());
-};
-
-window.resetAuth = function() {
-    console.log('🗑️ Limpiando todo desde login...');
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    // Cerrar sesión de Firebase si existe
-    if (auth && auth.currentUser) {
-        signOut(auth).then(() => {
-            console.log('🔓 Sesión Firebase cerrada');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        }).catch((error) => {
-            console.error('Error cerrando Firebase:', error);
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        });
-    } else {
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
-    }
-};
-
-window.forceLogout = async function() {
-    console.log('🔄 Forzando logout completo desde login...');
-    
-    try {
-        // Cerrar sesión de Firebase
-        if (auth && auth.currentUser) {
-            await signOut(auth);
-            console.log('🔥 Firebase logout exitoso');
-        }
-    } catch (e) {
-        console.warn('Error cerrando Firebase:', e);
-    }
-    
-    // Limpiar todo
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    // Recargar página
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000);
-};
-
-// ✅ FUNCIÓN PARA SIMULAR CAMBIO DE USUARIO DESDE LOGIN
-window.simulateUserChange = function() {
-    console.log('🧪 Simulando cambio de usuario...');
-    
-    // Marcar flags
-    sessionStorage.setItem('forceLogin', 'true');
-    sessionStorage.setItem('changingUser', 'true');
-    
-    // Limpiar datos de usuario
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('skipLogin');
-    
-    // Cerrar Firebase si está abierto
-    if (auth && auth.currentUser) {
-        signOut(auth).then(() => {
-            console.log('✅ Simulación completada, recargar para probar');
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        });
-    } else {
-        console.log('✅ Simulación completada, recargar para probar');
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
-    }
-};
-
-console.log('🛠️ Debug funciones disponibles en LOGIN:');
-console.log('- debugAuth() : Mostrar estado actual');
-console.log('- resetAuth() : Limpiar todo y recargar');
-console.log('- forceLogout() : Logout completo');
-console.log('- simulateUserChange() : Simular cambio de usuario');
-
-// ✅ EJECUTAR DEBUG AUTOMÁTICO AL CARGAR
-console.log('📱 Login page cargada, ejecutando debug automático...');
-setTimeout(() => {
-    debugAuth();
-}, 1000);
-
-        // ✅ VERIFICACIÓN INMEDIATA AL CARGAR LOGIN
-        (function() {
-            console.log('🔍 Login page cargando - Verificando estado...');
-            
-            // Verificar si venimos de un cambio de usuario
-            const urlParams = new URLSearchParams(window.location.search);
-            const forceLogin = urlParams.get('forceLogin');
-            
-            if (forceLogin) {
-                console.log('🏁 ForceLogin detectado en URL - Limpiando todo...');
-                
-                // Limpiar todo el storage
-                localStorage.clear();
-                sessionStorage.clear();
-                
-                // Establecer flags de control
-                sessionStorage.setItem('FORCE_LOGIN_OVERRIDE', 'true');
-                
-                // Limpiar la URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-            
-            console.log('✅ Verificación inicial completada');
-        })();
-    </script>
-    <script src="js/modules/ads-manager.js" type="module"></script>
-
+  </script>
 </body>
+
 </html>

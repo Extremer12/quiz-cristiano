@@ -1,551 +1,373 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mi Perfil - Quiz Cristiano</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="description" content="Perfil de usuario - Quiz Cristiano">
-    <meta name="theme-color" content="#ffd700">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    
-    <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/pages/safari-fixes.css">
-    <link rel="stylesheet" href="css/pages/dark-mode.css">
-    <link rel="stylesheet" href="css/pages/perfil.css">
-    
-    <!-- SCRIPT DE MODO OSCURO GLOBAL -->
+    <meta name="description" content="Perfil de usuario - Quiz Cristiano" />
+    <meta name="theme-color" content="#ffd700" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="assets/icons/icon-192.png"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/pages/perfil.css" />
     <script>
-        (function() {
-            const savedTheme = localStorage.getItem('quiz-cristiano-theme');
-            const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            const theme = savedTheme || systemPreference;
-            
-            document.documentElement.setAttribute('data-theme', theme);
-            
-            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-            if (metaThemeColor) {
-                metaThemeColor.content = theme === 'dark' ? '#000000' : '#ffd700';
-            }
-        })();
+      // Tema inicial
+      (function () {
+        const savedTheme = localStorage.getItem("quiz-cristiano-theme");
+        const systemPreference = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches
+          ? "dark"
+          : "light";
+        const theme = savedTheme || systemPreference;
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
     </script>
-
-    <!-- ADSENSE -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
-        crossorigin="anonymous"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="profile-container">
-        <!-- Header -->
-        <header class="profile-header">
-            <button class="back-btn" onclick="window.location.href='index.html'" title="Volver al inicio">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            
-            <div class="profile-title">
-                <h1>Mi Perfil</h1>
-                <p>Personaliza tu experiencia</p>
-            </div>
-            
-            <div class="save-indicator" id="save-indicator" style="display: none;">
-                <i class="fas fa-check"></i>
-            </div>
-        </header>
+      <!-- Header -->
+      <header class="profile-header">
+        <button
+          class="back-btn"
+          onclick="window.location.href='index.html'"
+          title="Volver al inicio"
+        >
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="profile-title">
+          <h1>Mi Perfil</h1>
+          <p>Personaliza tu experiencia</p>
+        </div>
+        <div class="save-indicator" id="save-indicator" style="display: none">
+          <i class="fas fa-check"></i>
+        </div>
+      </header>
 
-        <!-- Foto de Perfil Section -->
-        <section class="avatar-section">
-            <div class="avatar-container">
-                <div class="current-avatar" id="current-avatar-btn">
-                    <img src="assets/images/fotos-perfil/niña.jpg" alt="Avatar actual" id="current-avatar-img">
-                    <div class="avatar-overlay">
-                        <i class="fas fa-camera"></i>
-                        <span>Cambiar</span>
-                    </div>
-                </div>
-                
-                <div class="avatar-info">
-                    <h3 id="current-username">Usuario</h3>
-                    <span class="user-level" id="user-level">Nivel 1</span>
-                </div>
+      <!-- Avatar Section -->
+      <section class="avatar-section">
+        <div class="avatar-container">
+          <div
+            class="current-avatar"
+            id="current-avatar-btn"
+            tabindex="0"
+            aria-label="Cambiar avatar"
+          >
+            <img
+              src="assets/images/fotos-perfil/niña.jpg"
+              alt="Avatar actual"
+              id="current-avatar-img"
+            />
+            <div class="avatar-overlay">
+              <i class="fas fa-camera"></i>
+              <span>Cambiar</span>
             </div>
-        </section>
+          </div>
+          <div class="avatar-info">
+            <h3 id="current-username">Usuario</h3>
+            <span class="user-level" id="user-level">Nivel 1</span>
+          </div>
+        </div>
+      </section>
 
-        <!-- Formulario de Perfil -->
-        <section class="profile-form-section">
-            <div class="form-container">
-                <h3><i class="fas fa-user-edit"></i> Información Personal</h3>
-                
-                <div class="form-group">
-                    <label for="username">Nombre de Usuario *</label>
-                    <div class="input-container">
-                        <input type="text" id="username" name="username" placeholder="Tu nombre de usuario único" maxlength="20" required>
-                        <div class="validation-status" id="username-status"></div>
-                    </div>
-                    <div class="input-help" id="username-help">
-                        El nombre de usuario debe ser único y tener entre 3-20 caracteres
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="display-name">Nombre a Mostrar</label>
-                    <input type="text" id="display-name" name="display-name" placeholder="¿Cómo quieres que te llamen?" maxlength="30">
-                    <div class="character-count">
-                        <span id="display-name-count">0</span>/30
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="favorite-verse">Versículo Favorito</label>
-                    <textarea id="favorite-verse" name="favorite-verse" placeholder="Comparte tu versículo bíblico favorito..." maxlength="200" rows="3"></textarea>
-                    <div class="character-count">
-                        <span id="favorite-verse-count">0</span>/200
-                    </div>
-                </div>
-
-                <button type="button" class="save-profile-btn" id="save-profile-btn" onclick="saveUserProfile()">
-                    <i class="fas fa-save"></i>
-                    <span>Guardar Cambios</span>
-                </button>
+      <!-- Formulario de Perfil -->
+      <section class="profile-form-section">
+        <form id="profile-form" autocomplete="off">
+          <h3><i class="fas fa-user-edit"></i> Información Personal</h3>
+          <div class="form-group">
+            <label for="username">Nombre de Usuario *</label>
+            <div class="input-container">
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Tu nombre único"
+                maxlength="20"
+                required
+              />
+              <div class="validation-status" id="username-status"></div>
             </div>
-        </section>
+            <div class="input-help" id="username-help">
+              3-20 caracteres, solo letras, números, _ y -
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="display-name">Nombre a Mostrar</label>
+            <input
+              type="text"
+              id="display-name"
+              name="display-name"
+              placeholder="¿Cómo quieres que te llamen?"
+              maxlength="30"
+            />
+            <div class="character-count">
+              <span id="display-name-count">0</span>/30
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="favorite-verse">Versículo Favorito</label>
+            <textarea
+              id="favorite-verse"
+              name="favorite-verse"
+              placeholder="Comparte tu versículo bíblico favorito..."
+              maxlength="200"
+              rows="3"
+            ></textarea>
+            <div class="character-count">
+              <span id="favorite-verse-count">0</span>/200
+            </div>
+          </div>
+          <button type="submit" class="save-profile-btn" id="save-profile-btn">
+            <i class="fas fa-save"></i>
+            <span>Guardar Cambios</span>
+          </button>
+        </form>
+      </section>
 
-        <!-- ✅ NUEVA SECCIÓN: PALMARÉS -->
-        <section class="palmares-section">
-            <h3><i class="fas fa-crown"></i> Mi Palmarés</h3>
-            <p class="palmares-description">Medallas y logros obtenidos en el ranking por divisiones</p>
-            
-            <!-- Estadísticas de Ranking -->
-            <div class="ranking-stats">
-                <div class="ranking-stat-card">
-                    <div class="stat-icon division-icon">
-                        <img src="assets/images/Trofeos/Platino.png" alt="División Actual" id="current-division-trophy">
-                    </div>
-                    <div class="stat-info">
-                        <h4 id="current-division-name">División Platino</h4>
-                        <p>División Actual</p>
-                        <div class="current-rank">
-                            <span>Posición: #<span id="current-rank">?</span></span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="ranking-stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-medal"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h4 id="total-medals">0</h4>
-                        <p>Medallas Totales</p>
-                        <div class="medals-breakdown">
-                            <span class="medal-count gold">🥇 <span id="gold-medals">0</span></span>
-                            <span class="medal-count silver">🥈 <span id="silver-medals">0</span></span>
-                            <span class="medal-count bronze">🥉 <span id="bronze-medals">0</span></span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="ranking-stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h4 id="ranking-score">0</h4>
-                        <p>Puntaje Integral</p>
-                        <div class="score-breakdown">
-                            <small>Actividad + Victorias + Logros + Nivel</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="ranking-stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h4 id="seasons-participated">0</h4>
-                        <p>Temporadas Participadas</p>
-                        <div class="season-info">
-                            <small>Temporada actual: <span id="current-season">2025-06</span></small>
-                        </div>
-                    </div>
-                </div>
+      <!-- Palmarés -->
+      <section class="palmares-section">
+        <h3><i class="fas fa-crown"></i> Mi Palmarés</h3>
+        <p class="palmares-description">
+          Medallas y logros obtenidos en el ranking por divisiones
+        </p>
+        <div class="ranking-stats"></div>
+        <div class="medals-timeline">
+          <h4><i class="fas fa-trophy"></i> Historial de Medallas</h4>
+          <div class="timeline-container" id="medals-timeline"></div>
+        </div>
+        <div class="best-performance">
+          <h4><i class="fas fa-star-of-life"></i> Mejor Rendimiento</h4>
+          <div class="performance-cards">
+            <div class="performance-card">
+              <div class="performance-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="performance-info">
+                <h5>Mejor Posición</h5>
+                <p id="best-position">#? en División ?</p>
+                <small id="best-position-season">Temporada: ?</small>
+              </div>
             </div>
-            
-            <!-- Medallas por Temporada -->
-            <div class="medals-timeline">
-                <h4><i class="fas fa-trophy"></i> Historial de Medallas</h4>
-                <div class="timeline-container" id="medals-timeline">
-                    <!-- Se carga dinámicamente -->
-                </div>
+            <div class="performance-card">
+              <div class="performance-icon">
+                <i class="fas fa-gem"></i>
+              </div>
+              <div class="performance-info">
+                <h5>División Más Alta</h5>
+                <p id="highest-division">División ?</p>
+                <small id="highest-division-season">Temporada: ?</small>
+              </div>
             </div>
-            
-            <!-- Mejor Rendimiento -->
-            <div class="best-performance">
-                <h4><i class="fas fa-star-of-life"></i> Mejor Rendimiento</h4>
-                <div class="performance-cards">
-                    <div class="performance-card">
-                        <div class="performance-icon">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="performance-info">
-                            <h5>Mejor Posición</h5>
-                            <p id="best-position">#? en División ?</p>
-                            <small id="best-position-season">Temporada: ?</small>
-                        </div>
-                    </div>
-                    
-                    <div class="performance-card">
-                        <div class="performance-icon">
-                            <i class="fas fa-gem"></i>
-                        </div>
-                        <div class="performance-info">
-                            <h5>División Más Alta</h5>
-                            <p id="highest-division">División ?</p>
-                            <small id="highest-division-season">Temporada: ?</small>
-                        </div>
-                    </div>
-                    
-                    <div class="performance-card">
-                        <div class="performance-icon">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <div class="performance-info">
-                            <h5>Racha de Medallas</h5>
-                            <p id="medal-streak">0 temporadas</p>
-                            <small>Consecutivas en Top 3</small>
-                        </div>
-                    </div>
-                </div>
+            <div class="performance-card">
+              <div class="performance-icon">
+                <i class="fas fa-fire"></i>
+              </div>
+              <div class="performance-info">
+                <h5>Racha de Medallas</h5>
+                <p id="medal-streak">0 temporadas</p>
+                <small>Consecutivas en Top 3</small>
+              </div>
             </div>
-        </section>
+          </div>
+        </div>
+        <div class="trophies-showcase">
+          <h4><i class="fas fa-trophy"></i> Vitrina de Trofeos</h4>
+          <div class="trophies-container" id="trophies-showcase"></div>
+        </div>
+      </section>
 
-        <!-- Estadísticas del Usuario -->
-        <section class="stats-section">
-            <h3><i class="fas fa-chart-line"></i> Mis Estadísticas</h3>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-coins"></i></div>
-                    <div class="stat-number" id="stat-coins">0</div>
-                    <div class="stat-label">Monedas</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
-                    <div class="stat-number" id="stat-games">0</div>
-                    <div class="stat-label">Partidas</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
-                    <div class="stat-number" id="stat-victories">0</div>
-                    <div class="stat-label">Victorias</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-star"></i></div>
-                    <div class="stat-number" id="stat-perfect">0</div>
-                    <div class="stat-label">Perfectas</div>
-                </div>
-            </div>
-        </section>
+      <!-- Estadísticas del Usuario -->
+      <section class="stats-section">
+        <h3><i class="fas fa-chart-line"></i> Mis Estadísticas</h3>
+        <div class="stats-grid"></div>
+      </section>
 
-        <!-- Progreso y Nivel -->
-        <section class="progress-section">
-            <h3><i class="fas fa-star"></i> Progreso</h3>
-            
-            <div class="level-card">
-                <div class="level-info">
-                    <div class="level-badge" id="level-badge">1</div>
-                    <div class="level-details">
-                        <h4 id="level-name">Principiante</h4>
-                        <p id="level-description">Comienza tu aventura bíblica</p>
-                    </div>
-                </div>
-                
-                <div class="experience-bar">
-                    <div class="exp-info">
-                        <span>Experiencia</span>
-                        <span id="exp-numbers">0 / 100</span>
-                    </div>
-                    <div class="exp-bar">
-                        <div class="exp-fill" id="exp-fill" style="width: 0%"></div>
-                    </div>
-                </div>
+      <!-- Progreso y Nivel -->
+      <section class="progress-section">
+        <h3><i class="fas fa-star"></i> Progreso</h3>
+        <div class="level-card">
+          <div class="level-info">
+            <div class="level-badge" id="level-badge">1</div>
+            <div class="level-details">
+              <h4 id="level-name">Principiante</h4>
+              <p id="level-description">Comienza tu aventura bíblica</p>
             </div>
-        </section>
+          </div>
+          <div class="experience-bar">
+            <div class="exp-info">
+              <span>Experiencia</span>
+              <span id="exp-numbers">0 / 100</span>
+            </div>
+            <div class="exp-bar">
+              <div class="exp-fill" id="exp-fill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- Modal de Selección de Avatar -->
-        <div class="avatar-modal" id="avatar-modal" style="display: none;">
-            <div class="modal-overlay" onclick="closeAvatarModal()"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><i class="fas fa-images"></i> Seleccionar Avatar</h3>
-                    <button class="modal-close" onclick="closeAvatarModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="modal-body">
-                    <div class="avatars-grid" id="avatars-grid">
-                        <!-- Se carga dinámicamente -->
-                    </div>
-                </div>
+      <!-- Historial de Pagos -->
+      <section class="payment-history-section">
+        <h3><i class="fas fa-credit-card"></i> Historial de Pagos</h3>
+        <div class="payment-summary">
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="fas fa-coins"></i>
             </div>
+            <div class="summary-info">
+              <h4>Total Gastado</h4>
+              <p id="total-spent">$0.00</p>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="summary-info">
+              <h4>Compras Realizadas</h4>
+              <p id="total-purchases">0</p>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="summary-info">
+              <h4>Última Compra</h4>
+              <p id="last-purchase">Nunca</p>
+            </div>
+          </div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="index.html" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Inicio</span>
-            </a>
-            <a href="single-player-new.html" class="nav-item">
-                <i class="fas fa-play"></i>
-                <span>Jugar</span>
-            </a>
-            <a href="ranking.html" class="nav-item">
-                <i class="fas fa-trophy"></i>
-                <span>Ranking</span>
-            </a>
-            <a href="logros.html" class="nav-item">
-                <i class="fas fa-medal"></i>
-                <span>Logros</span>
-            </a>
-            <a href="store.html" class="nav-item">
-                <i class="fas fa-store"></i>
-                <span>Tienda</span>
-            </a>
-        </nav>
+        <div class="payment-tabs">
+          <button
+            class="tab-btn active"
+            data-tab="transactions"
+            onclick="switchPaymentTab('transactions')"
+          >
+            <i class="fas fa-list"></i> Transacciones
+          </button>
+          <button
+            class="tab-btn"
+            data-tab="subscriptions"
+            onclick="switchPaymentTab('subscriptions')"
+          >
+            <i class="fas fa-sync-alt"></i> Suscripciones
+          </button>
+        </div>
+
+        <div class="payment-content">
+          <!-- Tab de Transacciones -->
+          <div class="tab-content active" id="transactions-tab">
+            <div class="transactions-header">
+              <div class="filter-controls">
+                <select id="transaction-filter" onchange="filterTransactions()">
+                  <option value="all">Todas las transacciones</option>
+                  <option value="completed">Completadas</option>
+                  <option value="pending">Pendientes</option>
+                  <option value="failed">Fallidas</option>
+                </select>
+                <button
+                  class="refresh-btn"
+                  onclick="refreshTransactionHistory()"
+                  title="Actualizar"
+                >
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+              </div>
+            </div>
+            <div class="transactions-list" id="transactions-list">
+              <div class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Cargando historial de pagos...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab de Suscripciones -->
+          <div class="tab-content" id="subscriptions-tab">
+            <div class="subscriptions-list" id="subscriptions-list">
+              <div class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Cargando suscripciones...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal de Selección de Avatar -->
+      <div class="avatar-modal" id="avatar-modal" style="display: none">
+        <div class="modal-overlay" tabindex="0"></div>
+        <div
+          class="modal-content"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="avatar-modal-title"
+        >
+          <div class="modal-header">
+            <h3 id="avatar-modal-title">
+              <i class="fas fa-images"></i> Seleccionar Avatar
+            </h3>
+            <button
+              class="modal-close"
+              type="button"
+              aria-label="Cerrar"
+              tabindex="0"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="avatars-grid" id="avatars-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav" aria-label="Navegación inferior">
+        <a href="index.html" class="nav-item">
+          <i class="fas fa-home"></i>
+          <span>Inicio</span>
+        </a>
+        <a href="single-player-new.html" class="nav-item">
+          <i class="fas fa-play"></i>
+          <span>Jugar</span>
+        </a>
+        <a href="ranking.html" class="nav-item">
+          <i class="fas fa-trophy"></i>
+          <span>Ranking</span>
+        </a>
+        <a href="logros.html" class="nav-item">
+          <i class="fas fa-medal"></i>
+          <span>Logros</span>
+        </a>
+        <a href="store.html" class="nav-item">
+          <i class="fas fa-store"></i>
+          <span>Tienda</span>
+        </a>
+      </nav>
     </div>
 
     <!-- Scripts -->
-    <script src="js/modules/gamedatamanager.js"></script>
-    <script src="js/modules/dark-mode.js"></script>
+    <script src="js/config/payment-config.js"></script>
+    <script src="js/modules/payments/currency-service.js"></script>
+    <script src="js/modules/payments/transaction-manager.js"></script>
+    <script src="js/modules/payments/payment-service.js"></script>
+    <script src="js/modules/payments/payment-history-ui.js"></script>
     <script src="js/pages/perfil.js"></script>
-    <script src="js/modules/ads-manager.js" type="module"></script>
-    
-    <script>
-        // Variables globales
-        let usernameCheckTimeout = null;
-        let isModalOpen = false;
-        let avatarClickCount = 0;
-        
-        // Funciones globales para eventos onclick
-        window.openAvatarSelector = openAvatarSelector;
-        window.closeAvatarModal = closeAvatarModal;
-        window.selectAvatarFromGrid = selectAvatarFromGrid;
-        window.saveUserProfile = saveUserProfile;
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('👤 Perfil HTML cargado con palmarés');
-            loadSavedProfileData();
-            setupFormValidation();
-            loadPlayerPalmares(); // ✅ NUEVA FUNCIÓN PARA CARGAR PALMARÉS
-        });
-        
-        // ✅ FUNCIÓN PARA CARGAR DATOS DEL PALMARÉS
-        async function loadPlayerPalmares() {
-            console.log('🏆 Cargando palmarés del jugador...');
-            
-            try {
-                // Esperar a que GameDataManager esté disponible
-                if (!window.GameDataManager) {
-                    setTimeout(loadPlayerPalmares, 500);
-                    return;
-                }
-                
-                // Obtener datos del jugador
-                const gameData = window.GameDataManager.getStats();
-                const playerLevel = calculatePlayerLevel(gameData);
-                const playerScore = calculateIntegralScore(gameData);
-                
-                // Obtener datos del ranking (simulados por ahora)
-                const rankingData = getRankingDataFromStorage();
-                
-                // Actualizar UI del palmarés
-                updatePalmaresDisplay(rankingData, playerLevel, playerScore);
-                
-            } catch (error) {
-                console.error('❌ Error cargando palmarés:', error);
-                showEmptyPalmares();
-            }
-        }
-        
-        function getRankingDataFromStorage() {
-            // Obtener datos guardados del ranking o generar datos de ejemplo
-            const saved = localStorage.getItem('playerRankingData');
-            
-            if (saved) {
-                return JSON.parse(saved);
-            }
-            
-            // Datos de ejemplo para demostración
-            return {
-                currentDivision: { 
-                    id: 'platino', 
-                    name: 'División Platino',
-                    trophyImage: 'assets/images/Trofeos/Platino.png'
-                },
-                currentRank: Math.floor(Math.random() * 25) + 5, // Posición aleatoria
-                medals: generateExampleMedals(),
-                seasonsParticipated: Math.floor(Math.random() * 8) + 1,
-                bestPosition: { rank: 3, division: 'platino', season: '2025-05' },
-                highestDivision: { name: 'División Platino', season: '2025-04' },
-                medalStreak: Math.floor(Math.random() * 4)
-            };
-        }
-        
-        function generateExampleMedals() {
-            const medals = [];
-            const seasons = ['2025-01', '2025-02', '2025-03', '2025-04', '2025-05'];
-            const divisions = ['platino', 'diamante'];
-            const positions = [1, 2, 3];
-            
-            // Generar algunas medallas de ejemplo
-            const numMedals = Math.floor(Math.random() * 4) + 1;
-            
-            for (let i = 0; i < numMedals; i++) {
-                medals.push({
-                    season: seasons[Math.floor(Math.random() * seasons.length)],
-                    division: divisions[Math.floor(Math.random() * divisions.length)],
-                    position: positions[Math.floor(Math.random() * positions.length)],
-                    date: new Date(2025, Math.floor(Math.random() * 6), 1)
-                });
-            }
-            
-            return medals.sort((a, b) => new Date(b.date) - new Date(a.date));
-        }
-        
-        function updatePalmaresDisplay(rankingData, playerLevel, playerScore) {
-            // Actualizar división actual
-            document.getElementById('current-division-name').textContent = rankingData.currentDivision.name;
-            document.getElementById('current-division-trophy').src = rankingData.currentDivision.trophyImage;
-            document.getElementById('current-rank').textContent = rankingData.currentRank;
-            
-            // Contar medallas por tipo
-            const goldMedals = rankingData.medals.filter(m => m.position === 1).length;
-            const silverMedals = rankingData.medals.filter(m => m.position === 2).length;
-            const bronzeMedals = rankingData.medals.filter(m => m.position === 3).length;
-            
-            document.getElementById('total-medals').textContent = rankingData.medals.length;
-            document.getElementById('gold-medals').textContent = goldMedals;
-            document.getElementById('silver-medals').textContent = silverMedals;
-            document.getElementById('bronze-medals').textContent = bronzeMedals;
-            
-            // Puntaje y temporadas
-            document.getElementById('ranking-score').textContent = playerScore;
-            document.getElementById('seasons-participated').textContent = rankingData.seasonsParticipated;
-            document.getElementById('current-season').textContent = getCurrentSeason();
-            
-            // Mejor rendimiento
-            document.getElementById('best-position').textContent = 
-                `#${rankingData.bestPosition.rank} en ${rankingData.bestPosition.division}`;
-            document.getElementById('best-position-season').textContent = 
-                `Temporada: ${rankingData.bestPosition.season}`;
-            
-            document.getElementById('highest-division').textContent = rankingData.highestDivision.name;
-            document.getElementById('highest-division-season').textContent = 
-                `Temporada: ${rankingData.highestDivision.season}`;
-            
-            document.getElementById('medal-streak').textContent = `${rankingData.medalStreak} temporadas`;
-            
-            // Renderizar timeline de medallas
-            renderMedalsTimeline(rankingData.medals);
-        }
-        
-        function renderMedalsTimeline(medals) {
-            const timeline = document.getElementById('medals-timeline');
-            
-            if (medals.length === 0) {
-                timeline.innerHTML = `
-                    <div class="empty-timeline">
-                        <i class="fas fa-trophy"></i>
-                        <p>Aún no tienes medallas</p>
-                        <small>Participa en el ranking para ganar tu primera medalla</small>
-                    </div>
-                `;
-                return;
-            }
-            
-            const timelineHTML = medals.map(medal => {
-                const medalIcon = medal.position === 1 ? '🥇' : medal.position === 2 ? '🥈' : '🥉';
-                const medalClass = medal.position === 1 ? 'gold' : medal.position === 2 ? 'silver' : 'bronze';
-                
-                return `
-                    <div class="timeline-item ${medalClass}">
-                        <div class="timeline-icon">
-                            <span class="medal-emoji">${medalIcon}</span>
-                        </div>
-                        <div class="timeline-content">
-                            <h5>Puesto ${medal.position} - ${medal.division.charAt(0).toUpperCase() + medal.division.slice(1)}</h5>
-                            <p>Temporada ${medal.season}</p>
-                            <small>${formatDate(medal.date)}</small>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            timeline.innerHTML = timelineHTML;
-        }
-        
-        function showEmptyPalmares() {
-            // Mostrar palmarés vacío
-            document.getElementById('total-medals').textContent = '0';
-            document.getElementById('gold-medals').textContent = '0';
-            document.getElementById('silver-medals').textContent = '0';
-            document.getElementById('bronze-medals').textContent = '0';
-            document.getElementById('ranking-score').textContent = '0';
-            document.getElementById('seasons-participated').textContent = '0';
-            
-            const timeline = document.getElementById('medals-timeline');
-            timeline.innerHTML = `
-                <div class="empty-timeline">
-                    <i class="fas fa-trophy"></i>
-                    <p>Aún no tienes medallas</p>
-                    <small>Participa en el ranking para ganar tu primera medalla</small>
-                </div>
-            `;
-        }
-        
-        // Funciones auxiliares
-        function calculatePlayerLevel(gameData) {
-            const experience = gameData.victories * 100 + gameData.gamesPlayed * 10;
-            return Math.floor(experience / 1000) + 1;
-        }
-        
-        function calculateIntegralScore(gameData) {
-            // Simplificado para el perfil
-            const activity = Math.min((gameData.gamesPlayed || 0) * 0.4, 40);
-            const victories = ((gameData.victories || 0) / Math.max(gameData.gamesPlayed || 1, 1)) * 30;
-            const achievements = Math.min((gameData.achievements?.length || 0) * 0.4, 20);
-            const level = Math.min(calculatePlayerLevel(gameData), 10);
-            
-            return Math.round(activity + victories + achievements + level);
-        }
-        
-        function getCurrentSeason() {
-            const now = new Date();
-            return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
-        }
-        
-        function formatDate(date) {
-            return new Intl.DateTimeFormat('es-ES', {
-                year: 'numeric',
-                month: 'long'
-            }).format(new Date(date));
-        }
-        
-        console.log('✅ Perfil con palmarés inicializado completamente');
-    </script>
-</body>
+  </body>
 </html>

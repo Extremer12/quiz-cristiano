@@ -1,0 +1,8 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="200" height="200" fill="#1A202C"/>
+<path d="M100 40L110 70H140L118 88L128 118L100 100L72 118L82 88L60 70H90L100 40Z" fill="#D69E2E"/>
+<path d="M100 50L108 75H130L113 87L121 112L100 98L79 112L87 87L70 75H92L100 50Z" fill="#F6E05E"/>
+<circle cx="100" cy="85" r="20" fill="#FBD38D"/>
+<text x="100" y="90" text-anchor="middle" fill="#2D3748" font-family="Arial" font-size="16" font-weight="bold">VIP</text>
+<text x="100" y="175" text-anchor="middle" fill="#E2E8F0" font-family="Arial" font-size="12">PREMIUM MENSUAL</text>
+</svg>

@@ -1,0 +1,100 @@
+/**
+ * Punto de entrada principal de la aplicación
+ */
+
+import QuizCristianoApp from './core/App.js';
+import AuthService from './services/AuthService.js';
+import UI from './components/UI.js';
+import ThemeService from './services/ThemeService.js';
+import PWAService from './services/PWAService.js';
+import AdsService from './services/AdsService.js';
+import FirebaseService from './services/FirebaseService.js';
+import GameDataService from './services/GameDataService.js';
+import Mascot from './components/Mascot.js';
+import UIEffects from './components/UIEffects.js';
+import Store from './components/Store.js';
+
+// Inicializar autenticación antes que nada
+AuthService.checkAuth();
+
+// Inicializar la aplicación cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 Iniciando Quiz Cristiano...');
+
+    // Inicializar servicios
+    AdsService.init();
+    FirebaseService.init();
+    GameDataService.init();
+    Mascot.init();
+    UIEffects.init();
+    Store.init();
+    UI.initGlobalEvents();
+
+    // Inicializar App
+    window.QuizApp = new QuizCristianoApp();
+    await window.QuizApp.init();
+
+    // Bindings de eventos
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Menú Toggle
+    const menuToggleBtn = document.querySelector('.menu-toggle');
+    if (menuToggleBtn) {
+        menuToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            UI.toggleMenu();
+        });
+    }
+
+    const dropdownCloseBtn = document.querySelector('.dropdown-close');
+    if (dropdownCloseBtn) {
+        dropdownCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            UI.toggleMenu();
+        });
+    }
+
+    const menuOverlay = document.getElementById('menu-overlay');
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', () => {
+            UI.toggleMenu();
+        });
+    }
+
+    // Mascota Speech
+    const mascotContainer = document.querySelector('.mascot-container');
+    if (mascotContainer) {
+        mascotContainer.addEventListener('click', () => {
+            UI.toggleSpeech();
+        });
+    }
+
+    // Cambiar Usuario (desde header o menú)
+    const changeUserBtns = document.querySelectorAll('.change-user-btn');
+    changeUserBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            AuthService.changeUser();
+        });
+    });
+
+    // Toggle Dark Mode
+    const themeToggleBtn = document.getElementById('theme-toggle-item');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            ThemeService.toggleTheme();
+        });
+    }
+
+    // Instalar App
+    const installAppBtn = document.getElementById('install-app-item');
+    if (installAppBtn) {
+        installAppBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            PWAService.installApp();
+        });
+    }
+}

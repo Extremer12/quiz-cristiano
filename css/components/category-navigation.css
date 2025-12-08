@@ -1,0 +1,484 @@
+/**
+ * ==========================================
+ * ESTILOS ESPECÍFICOS PARA NAVEGACIÓN DE CATEGORÍAS
+ * ==========================================
+ * 
+ * Estilos adicionales y animaciones para el componente de navegación
+ * de categorías que complementan los estilos principales de store.css
+ */
+
+/* ============================================
+   ANIMACIONES Y TRANSICIONES AVANZADAS
+   ============================================ */
+
+/* Animación de entrada para la navegación */
+@keyframes categoryNavSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.categories-nav.enhanced {
+  animation: categoryNavSlideIn 0.5s ease-out;
+}
+
+/* Animación del indicador de categoría activa */
+@keyframes indicatorSlide {
+  from {
+    transform: translateX(var(--indicator-start, 0));
+    width: var(--indicator-start-width, 80px);
+  }
+  to {
+    transform: translateX(var(--indicator-end, 0));
+    width: var(--indicator-end-width, 80px);
+  }
+}
+
+.category-indicator {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-indicator.animating {
+  animation: indicatorSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efectos de hover mejorados */
+.category-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.category-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s ease;
+  z-index: 1;
+}
+
+.category-btn:hover::before {
+  left: 100%;
+}
+
+/* Efecto de pulso para categoría activa */
+@keyframes activePulse {
+  0%,
+  100% {
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+  }
+}
+
+.category-btn.active {
+  animation: activePulse 3s ease-in-out infinite;
+}
+
+/* Animación de icono para categoría activa */
+@keyframes iconBounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-3px) scale(1.1);
+  }
+  60% {
+    transform: translateY(-1px) scale(1.05);
+  }
+}
+
+.category-btn.active .category-icon i {
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+/* ============================================
+   EFECTOS TÁCTILES Y ESTADOS
+   ============================================ */
+
+/* Estado de touch activo para móviles */
+.category-btn.touch-active {
+  transform: translateY(-1px) scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Estado de focus mejorado */
+.category-btn.focused {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
+  z-index: 10;
+}
+
+/* Estado deshabilitado */
+.category-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(50%);
+  pointer-events: none;
+}
+
+.category-btn.disabled .category-icon {
+  animation: none;
+}
+
+/* ============================================
+   BADGES Y NOTIFICACIONES
+   ============================================ */
+
+/* Animación de actualización de badge */
+@keyframes badgeUpdate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+    background: var(--store-warning);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.category-badge.badge-update {
+  animation: badgeUpdate 0.3s ease-out;
+}
+
+/* Badge pulsante para notificaciones importantes */
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.category-badge.important {
+  animation: badgePulse 1.5s ease-in-out infinite;
+  background: var(--store-error);
+}
+
+/* Badge con efecto de brillo */
+.category-badge::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.category-btn:hover .category-badge::after {
+  opacity: 1;
+  animation: badgeShine 1s ease-out;
+}
+
+@keyframes badgeShine {
+  0% {
+    transform: rotate(45deg) translateX(-200%);
+  }
+  100% {
+    transform: rotate(45deg) translateX(200%);
+  }
+}
+
+/* ============================================
+   TRANSICIONES DE CATEGORÍA
+   ============================================ */
+
+/* Estado de transición para toda la navegación */
+.categories-nav.transitioning {
+  pointer-events: none;
+}
+
+.categories-nav.transitioning .category-btn {
+  transition: all 0.3s ease;
+}
+
+.categories-nav.transitioning .category-btn:not(.active) {
+  opacity: 0.6;
+  transform: scale(0.95);
+}
+
+/* Efecto de ondas al cambiar categoría */
+@keyframes rippleEffect {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.category-btn.ripple::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: rippleEffect 0.6s ease-out;
+  pointer-events: none;
+}
+
+/* ============================================
+   RESPONSIVE Y ADAPTATIVO
+   ============================================ */
+
+/* Ajustes para tablets */
+@media (max-width: 1024px) {
+  .category-btn {
+    min-width: 75px;
+    padding: 14px 10px;
+  }
+
+  .category-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .category-icon i {
+    font-size: 1.2rem;
+  }
+}
+
+/* Ajustes para móviles grandes */
+@media (max-width: 768px) {
+  .categories-nav.enhanced {
+    margin: 15px;
+    padding: 15px;
+  }
+
+  .categories-container {
+    gap: 10px;
+  }
+
+  .category-btn {
+    min-width: 65px;
+    padding: 12px 8px;
+    gap: 6px;
+  }
+
+  .category-name {
+    font-size: 0.8rem;
+  }
+
+  .category-desc {
+    font-size: 0.7rem;
+  }
+
+  /* Simplificar animaciones en móviles */
+  .category-btn.active {
+    animation: none;
+  }
+
+  .category-btn.active .category-icon i {
+    animation: iconPulse 2s ease-in-out infinite;
+  }
+}
+
+/* Ajustes para móviles pequeños */
+@media (max-width: 480px) {
+  .categories-nav.enhanced {
+    margin: 10px;
+    padding: 12px;
+  }
+
+  .categories-container {
+    gap: 6px;
+  }
+
+  .category-btn {
+    min-width: 55px;
+    padding: 10px 6px;
+    gap: 4px;
+  }
+
+  .category-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .category-icon i {
+    font-size: 1rem;
+  }
+
+  .category-name {
+    font-size: 0.75rem;
+  }
+
+  /* Ocultar descripciones en móviles muy pequeños */
+  .category-desc {
+    display: none;
+  }
+
+  /* Simplificar badges */
+  .category-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+    top: -3px;
+    right: -3px;
+  }
+}
+
+/* ============================================
+   MODO OSCURO Y TEMAS
+   ============================================ */
+
+/* Ajustes específicos para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .category-btn::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+  }
+
+  .category-btn.focused {
+    outline-color: var(--text-accent);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
+  }
+}
+
+/* Tema de alto contraste */
+@media (prefers-contrast: high) {
+  .category-btn {
+    border-width: 2px;
+  }
+
+  .category-btn.active {
+    border-width: 3px;
+  }
+
+  .category-indicator {
+    height: 6px;
+  }
+
+  .category-badge {
+    border-width: 3px;
+  }
+}
+
+/* Reducir movimiento para usuarios que lo prefieren */
+@media (prefers-reduced-motion: reduce) {
+  .category-btn,
+  .category-indicator,
+  .category-icon i,
+  .category-badge {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .category-btn:hover {
+    transform: none;
+  }
+
+  .category-btn.active {
+    animation: none;
+  }
+}
+
+/* ============================================
+   UTILIDADES Y HELPERS
+   ============================================ */
+
+/* Clase para ocultar temporalmente durante carga */
+.categories-nav.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Clase para mostrar estado de error */
+.categories-nav.error .category-btn {
+  opacity: 0.3;
+  filter: grayscale(100%);
+}
+
+/* Clase para destacar una categoría específica */
+.category-btn.highlighted {
+  animation: highlightPulse 1s ease-in-out 3;
+}
+
+@keyframes highlightPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+  }
+}
+
+/* Clase para categorías con contenido nuevo */
+.category-btn.has-new-content .category-icon::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--store-success);
+  border-radius: 50%;
+  border: 2px solid var(--surface-primary);
+  animation: newContentPulse 2s ease-in-out infinite;
+}
+
+@keyframes newContentPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .categories-nav.enhanced {
+    display: none;
+  }
+}

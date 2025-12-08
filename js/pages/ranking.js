@@ -135,7 +135,7 @@ let rankingData = {
 // ============================================
 
 async function init() {
-    console.log('🏆 Inicializando sistema de ranking por divisiones...');
+    console.log('Inicializando sistema de ranking por divisiones...');
     
     try {
         await waitForGameDataManager();
@@ -145,10 +145,10 @@ async function init() {
         updateAllDisplays();
         
         rankingData.isInitialized = true;
-        console.log('✅ Sistema de ranking por divisiones inicializado');
+        console.log('Sistema de ranking por divisiones inicializado');
         
     } catch (error) {
-        console.error('❌ Error inicializando ranking:', error);
+        console.error('Error inicializando ranking:', error);
         showFallbackInterface();
     }
 }
@@ -229,7 +229,7 @@ function generateBotPalmares() {
 }
 
 async function loadAllDivisionsData() {
-    console.log('📊 Cargando datos de todas las divisiones...');
+    console.log('Cargando datos de todas las divisiones...');
     
     for (let division of DIVISION_SYSTEM.divisions) {
         rankingData.allDivisions[division.id] = generateDivisionPlayers(division);
@@ -259,7 +259,7 @@ async function loadAllDivisionsData() {
         rankingData.playerRank = playerIndex + 1;
     }
     
-    console.log('✅ Datos de todas las divisiones cargados');
+    console.log('Datos de todas las divisiones cargados');
 }
 
 function generateDivisionPlayers(division) {
@@ -333,7 +333,7 @@ function renderDivisionInterface() {
 
         <!-- Selector de División -->
         <section class="division-selector">
-            <h2><i class="fas fa-layer-group"></i> Ver División</h2>
+            <h2><i class="fas fa-layer-group"></i> Ver Division</h2>
             <div class="division-tabs">
                 ${DIVISION_SYSTEM.divisions.map(division => `
                     <button class="division-tab ${division.id === rankingData.currentDivision.id ? 'active' : ''}" 
@@ -429,13 +429,13 @@ function renderPromotionRelegationInfo() {
     const division = rankingData.currentDivision;
     
     if (currentRank <= 5 && division.promotionZone.end > 0) {
-        return `<div class="promotion-info">🎉 ¡En zona de ascenso! Mantén tu posición para subir de división.</div>`;
+        return `<div class="promotion-info">En zona de ascenso! Manten tu posicion para subir de division.</div>`;
     } else if (currentRank >= 26) {
-        return `<div class="relegation-info">⚠️ En zona de descenso. Mejora tu puntuación para mantenerte en la división.</div>`;
+        return `<div class="relegation-info">En zona de descenso. Mejora tu puntuacion para mantenerte en la division.</div>`;
     } else {
         const toPromotion = Math.max(0, 5 - currentRank + 1);
         const toRelegation = Math.max(0, currentRank - 25);
-        return `<div class="safe-info">✅ En zona segura. ${toPromotion > 0 ? `${toPromotion} posiciones para ascenso.` : `${toRelegation} posiciones del descenso.`}</div>`;
+        return `<div class="safe-info">En zona segura. ${toPromotion > 0 ? `${toPromotion} posiciones para ascenso.` : `${toRelegation} posiciones del descenso.`}</div>`;
     }
 }
 
@@ -449,7 +449,7 @@ window.showDivisionTable = function(divisionId) {
     
     if (!division || !players) return;
     
-    console.log(`📊 Mostrando tabla de ${division.name}`);
+    console.log(`Mostrando tabla de ${division.name}`);
     
     // Actualizar tabs activos
     document.querySelectorAll('.division-tab').forEach(tab => {
@@ -546,7 +546,7 @@ window.showPlayerProfile = function(playerId, divisionId) {
     
     if (!player) return;
     
-    console.log('👤 Mostrando perfil de:', player.name);
+    console.log('Mostrando perfil de:', player.name);
     
     const modal = document.getElementById('player-modal');
     const modalContent = modal.querySelector('.player-modal-content');
@@ -571,14 +571,14 @@ window.showPlayerProfile = function(playerId, divisionId) {
         
         <div class="player-profile-content">
             <div class="profile-section">
-                <h3><i class="fas fa-heart"></i> Versículo Favorito</h3>
+                <h3><i class="fas fa-heart"></i> Versiculo Favorito</h3>
                 <div class="favorite-verse">
                     "${player.favoriteVerse}"
                 </div>
             </div>
             
             <div class="profile-section">
-                <h3><i class="fas fa-chart-bar"></i> Estadísticas</h3>
+                <h3><i class="fas fa-chart-bar"></i> Estadisticas</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
@@ -604,7 +604,7 @@ window.showPlayerProfile = function(playerId, divisionId) {
             </div>
             
             <div class="profile-section">
-                <h3><i class="fas fa-calendar"></i> Información General</h3>
+                <h3><i class="fas fa-calendar"></i> Informacion General</h3>
                 <div class="general-info">
                     <div class="info-item">
                         <span class="info-label">Miembro desde:</span>
@@ -618,7 +618,7 @@ window.showPlayerProfile = function(playerId, divisionId) {
             </div>
             
             <div class="profile-section">
-                <h3><i class="fas fa-crown"></i> Palmarés</h3>
+                <h3><i class="fas fa-crown"></i> Palmares</h3>
                 <div class="palmares-section">
                     ${player.palmares && player.palmares.length > 0 ? 
                         player.palmares.map(medal => `
@@ -632,7 +632,7 @@ window.showPlayerProfile = function(playerId, divisionId) {
                                 </div>
                             </div>
                         `).join('') :
-                        '<div class="no-palmares">Aún no tiene medallas en su palmarés.</div>'
+                        '<div class="no-palmares">Aun no tiene medallas en su palmares.</div>'
                     }
                 </div>
             </div>
@@ -669,7 +669,7 @@ function calculatePlayerDivision() {
     const gameData = window.GameDataManager.getStats();
     const playerLevel = calculatePlayerLevel(gameData);
     
-    console.log('📊 Calculando división para nivel:', playerLevel);
+    console.log('Calculando division para nivel:', playerLevel);
     
     for (let division of DIVISION_SYSTEM.divisions) {
         if (playerLevel >= division.minLevel && playerLevel <= division.maxLevel) {
@@ -684,7 +684,7 @@ function calculatePlayerDivision() {
     
     rankingData.playerScore = calculateIntegralScore(gameData);
     
-    console.log(`🏆 Jugador en ${rankingData.currentDivision.name} con ${rankingData.playerScore} puntos`);
+    console.log(`Jugador en ${rankingData.currentDivision.name} con ${rankingData.playerScore} puntos`);
 }
 
 function calculateIntegralScore(gameData) {
@@ -819,7 +819,7 @@ async function waitForGameDataManager() {
 }
 
 function showFallbackInterface() {
-    console.log('⚠️ Mostrando interfaz de fallback...');
+    console.log('Mostrando interfaz de fallback...');
 }
 
 // ============================================
@@ -827,8 +827,8 @@ function showFallbackInterface() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏆 Ranking por divisiones cargando...');
+    console.log('Ranking por divisiones cargando...');
     init();
 });
 
-console.log('✅ Ranking por divisiones con tablas cargado completamente');
+console.log('Ranking por divisiones con tablas cargado completamente');

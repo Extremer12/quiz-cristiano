@@ -1,50 +1,121 @@
 {
   "version": 2,
+  "name": "quiz-cristiano",
+  "description": "Quiz Cristiano - Tienda con integración PayPal",
   "builds": [
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "css/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "data/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "manifest.json",
-      "use": "@vercel/static"
-    },
     {
       "src": "api/**/*.js",
       "use": "@vercel/node"
     }
   ],
-  "headers": [
+  "routes": [
     {
-      "source": "/manifest.json",
-      "headers": [
-        { "key": "Content-Type", "value": "application/json" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
+      "src": "/api/paypal/webhook",
+      "dest": "/api/paypal/webhook.js",
+      "methods": ["POST"]
     },
+    {
+      "src": "/api/paypal/orders",
+      "dest": "/api/paypal/orders.js",
+      "methods": ["POST"]
+    },
+    {
+      "src": "/api/paypal/capture",
+      "dest": "/api/paypal/capture.js",
+      "methods": ["POST"]
+    },
+    {
+      "src": "/api/paypal/subscriptions",
+      "dest": "/api/paypal/subscriptions.js",
+      "methods": ["POST", "GET", "DELETE"]
+    },
+    {
+      "src": "/api/paypal/(.*)",
+      "dest": "/api/paypal/$1.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "api/paypal/webhook.js": {
+      "maxDuration": 30,
+      "memory": 1024
+    },
+    "api/paypal/orders.js": {
+      "maxDuration": 10,
+      "memory": 512
+    },
+    "api/paypal/capture.js": {
+      "maxDuration": 15,
+      "memory": 512
+    },
+    "api/paypal/subscriptions.js": {
+      "maxDuration": 10,
+      "memory": 512
+    }
+  }
+}
+,
+  "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, paypal-transmission-id, paypal-cert-id, paypal-auth-algo, paypal-transmission-sig, paypal-transmission-time"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/store",
+      "destination": "/store.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/tienda",
+      "destination": "/store.html",
+      "permanent": true
     }
   ]
 }
