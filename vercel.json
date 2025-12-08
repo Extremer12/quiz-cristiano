@@ -12,22 +12,32 @@
     {
       "src": "/api/paypal/webhook",
       "dest": "/api/paypal/webhook.js",
-      "methods": ["POST"]
+      "methods": [
+        "POST"
+      ]
     },
     {
       "src": "/api/paypal/orders",
       "dest": "/api/paypal/orders.js",
-      "methods": ["POST"]
+      "methods": [
+        "POST"
+      ]
     },
     {
       "src": "/api/paypal/capture",
       "dest": "/api/paypal/capture.js",
-      "methods": ["POST"]
+      "methods": [
+        "POST"
+      ]
     },
     {
       "src": "/api/paypal/subscriptions",
       "dest": "/api/paypal/subscriptions.js",
-      "methods": ["POST", "GET", "DELETE"]
+      "methods": [
+        "POST",
+        "GET",
+        "DELETE"
+      ]
     },
     {
       "src": "/api/paypal/(.*)",
@@ -58,9 +68,7 @@
       "maxDuration": 10,
       "memory": 512
     }
-  }
-}
-,
+  },
   "headers": [
     {
       "source": "/api/(.*)",
