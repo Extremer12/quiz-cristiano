@@ -1,5 +1,11 @@
 /**
  * Firebase Configuration & Initialization
+ * 
+ * IMPORTANT: Firebase API keys for web apps are safe to expose publicly.
+ * They are not secret and are meant to identify your Firebase project.
+ * Security is enforced through Firebase Security Rules, not by hiding the API key.
+ * 
+ * Reference: https://firebase.google.com/docs/projects/api-keys
  */
 
 const firebaseConfig = {
@@ -33,4 +39,5 @@ if (window.firebase) {
     console.error('❌ Firebase SDK not loaded');
 }
 
-export { app, auth, db, analytics };
+export { app, auth, db, analytics, firebaseConfig };
+
