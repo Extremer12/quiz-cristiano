@@ -13,6 +13,7 @@ import GameDataService from './services/GameDataService.js';
 import Mascot from './components/Mascot.js';
 import UIEffects from './components/UIEffects.js';
 import Store from './components/Store.js';
+import './utils/LegacyCompat.js'; // Compatibility layer for legacy code
 
 // Inicializar autenticación antes que nada
 AuthService.checkAuth();
@@ -21,7 +22,20 @@ AuthService.checkAuth();
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando Quiz Cristiano...');
 
-    // Inicializar servicios
+    // 1. Ejecutar migración de datos si es necesaria
+    try {
+        const { default: DataMigration } = await import('./utils/DataMigration.js');
+        const migration = new DataMigration();
+        const result = migration.migrate();
+
+        if (result.migrated) {
+            console.log('✅ Datos legacy migrados al nuevo formato');
+        }
+    } catch (error) {
+        console.warn('⚠️ Error en migración de datos:', error);
+    }
+
+    // 2. Inicializar servicios
     AdsService.init();
     FirebaseService.init();
     GameDataService.init();
@@ -30,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     Store.init();
     UI.initGlobalEvents();
 
-    // Inicializar App
+    // 3. Inicializar App
     window.QuizApp = new QuizCristianoApp();
     await window.QuizApp.init();
 
