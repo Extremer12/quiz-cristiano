@@ -1,373 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi Perfil - Quiz Cristiano</title>
-    <meta name="description" content="Perfil de usuario - Quiz Cristiano" />
-    <meta name="theme-color" content="#ffd700" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="192x192"
-      href="assets/icons/icon-192.png"
-    />
-    <link rel="manifest" href="manifest.json" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/pages/perfil.css" />
-    <script>
-      // Tema inicial
-      (function () {
-        const savedTheme = localStorage.getItem("quiz-cristiano-theme");
-        const systemPreference = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches
-          ? "dark"
-          : "light";
-        const theme = savedTheme || systemPreference;
-        document.documentElement.setAttribute("data-theme", theme);
-      })();
-    </script>
-  </head>
-  <body>
-    <div class="profile-container">
-      <!-- Header -->
-      <header class="profile-header">
-        <button
-          class="back-btn"
-          onclick="window.location.href='index.html'"
-          title="Volver al inicio"
-        >
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <div class="profile-title">
-          <h1>Mi Perfil</h1>
-          <p>Personaliza tu experiencia</p>
-        </div>
-        <div class="save-indicator" id="save-indicator" style="display: none">
-          <i class="fas fa-check"></i>
-        </div>
-      </header>
 
-      <!-- Avatar Section -->
-      <section class="avatar-section">
-        <div class="avatar-container">
-          <div
-            class="current-avatar"
-            id="current-avatar-btn"
-            tabindex="0"
-            aria-label="Cambiar avatar"
-          >
-            <img
-              src="assets/images/fotos-perfil/niña.jpg"
-              alt="Avatar actual"
-              id="current-avatar-img"
-            />
-            <div class="avatar-overlay">
-              <i class="fas fa-camera"></i>
-              <span>Cambiar</span>
-            </div>
-          </div>
-          <div class="avatar-info">
-            <h3 id="current-username">Usuario</h3>
-            <span class="user-level" id="user-level">Nivel 1</span>
-          </div>
-        </div>
-      </section>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil - Quiz Cristiano</title>
 
-      <!-- Formulario de Perfil -->
-      <section class="profile-form-section">
-        <form id="profile-form" autocomplete="off">
-          <h3><i class="fas fa-user-edit"></i> Información Personal</h3>
-          <div class="form-group">
-            <label for="username">Nombre de Usuario *</label>
-            <div class="input-container">
-              <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="Tu nombre único"
-                maxlength="20"
-                required
-              />
-              <div class="validation-status" id="username-status"></div>
-            </div>
-            <div class="input-help" id="username-help">
-              3-20 caracteres, solo letras, números, _ y -
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="display-name">Nombre a Mostrar</label>
-            <input
-              type="text"
-              id="display-name"
-              name="display-name"
-              placeholder="¿Cómo quieres que te llamen?"
-              maxlength="30"
-            />
-            <div class="character-count">
-              <span id="display-name-count">0</span>/30
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="favorite-verse">Versículo Favorito</label>
-            <textarea
-              id="favorite-verse"
-              name="favorite-verse"
-              placeholder="Comparte tu versículo bíblico favorito..."
-              maxlength="200"
-              rows="3"
-            ></textarea>
-            <div class="character-count">
-              <span id="favorite-verse-count">0</span>/200
-            </div>
-          </div>
-          <button type="submit" class="save-profile-btn" id="save-profile-btn">
-            <i class="fas fa-save"></i>
-            <span>Guardar Cambios</span>
-          </button>
-        </form>
-      </section>
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Perfil de usuario - Quiz Cristiano">
+  <meta name="theme-color" content="#ffd700">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
-      <!-- Palmarés -->
-      <section class="palmares-section">
-        <h3><i class="fas fa-crown"></i> Mi Palmarés</h3>
-        <p class="palmares-description">
-          Medallas y logros obtenidos en el ranking por divisiones
-        </p>
-        <div class="ranking-stats"></div>
-        <div class="medals-timeline">
-          <h4><i class="fas fa-trophy"></i> Historial de Medallas</h4>
-          <div class="timeline-container" id="medals-timeline"></div>
-        </div>
-        <div class="best-performance">
-          <h4><i class="fas fa-star-of-life"></i> Mejor Rendimiento</h4>
-          <div class="performance-cards">
-            <div class="performance-card">
-              <div class="performance-icon">
-                <i class="fas fa-trophy"></i>
-              </div>
-              <div class="performance-info">
-                <h5>Mejor Posición</h5>
-                <p id="best-position">#? en División ?</p>
-                <small id="best-position-season">Temporada: ?</small>
-              </div>
-            </div>
-            <div class="performance-card">
-              <div class="performance-icon">
-                <i class="fas fa-gem"></i>
-              </div>
-              <div class="performance-info">
-                <h5>División Más Alta</h5>
-                <p id="highest-division">División ?</p>
-                <small id="highest-division-season">Temporada: ?</small>
-              </div>
-            </div>
-            <div class="performance-card">
-              <div class="performance-icon">
-                <i class="fas fa-fire"></i>
-              </div>
-              <div class="performance-info">
-                <h5>Racha de Medallas</h5>
-                <p id="medal-streak">0 temporadas</p>
-                <small>Consecutivas en Top 3</small>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="trophies-showcase">
-          <h4><i class="fas fa-trophy"></i> Vitrina de Trofeos</h4>
-          <div class="trophies-container" id="trophies-showcase"></div>
-        </div>
-      </section>
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="manifest" href="manifest.json">
 
-      <!-- Estadísticas del Usuario -->
-      <section class="stats-section">
-        <h3><i class="fas fa-chart-line"></i> Mis Estadísticas</h3>
-        <div class="stats-grid"></div>
-      </section>
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-      <!-- Progreso y Nivel -->
-      <section class="progress-section">
-        <h3><i class="fas fa-star"></i> Progreso</h3>
-        <div class="level-card">
-          <div class="level-info">
-            <div class="level-badge" id="level-badge">1</div>
-            <div class="level-details">
-              <h4 id="level-name">Principiante</h4>
-              <p id="level-description">Comienza tu aventura bíblica</p>
-            </div>
-          </div>
-          <div class="experience-bar">
-            <div class="exp-info">
-              <span>Experiencia</span>
-              <span id="exp-numbers">0 / 100</span>
-            </div>
-            <div class="exp-bar">
-              <div class="exp-fill" id="exp-fill" style="width: 0%"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css?v=2.0.0">
+  <link rel="stylesheet" href="css/pages/perfil.css?v=2.0.0">
 
-      <!-- Historial de Pagos -->
-      <section class="payment-history-section">
-        <h3><i class="fas fa-credit-card"></i> Historial de Pagos</h3>
-        <div class="payment-summary">
-          <div class="summary-card">
-            <div class="summary-icon">
-              <i class="fas fa-coins"></i>
-            </div>
-            <div class="summary-info">
-              <h4>Total Gastado</h4>
-              <p id="total-spent">$0.00</p>
-            </div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-icon">
-              <i class="fas fa-shopping-cart"></i>
-            </div>
-            <div class="summary-info">
-              <h4>Compras Realizadas</h4>
-              <p id="total-purchases">0</p>
-            </div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-icon">
-              <i class="fas fa-calendar-alt"></i>
-            </div>
-            <div class="summary-info">
-              <h4>Última Compra</h4>
-              <p id="last-purchase">Nunca</p>
-            </div>
-          </div>
-        </div>
+  <!-- ADSENSE-->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
+    crossorigin="anonymous"></script>
+</head>
 
-        <div class="payment-tabs">
-          <button
-            class="tab-btn active"
-            data-tab="transactions"
-            onclick="switchPaymentTab('transactions')"
-          >
-            <i class="fas fa-list"></i> Transacciones
-          </button>
-          <button
-            class="tab-btn"
-            data-tab="subscriptions"
-            onclick="switchPaymentTab('subscriptions')"
-          >
-            <i class="fas fa-sync-alt"></i> Suscripciones
-          </button>
-        </div>
+<body>
+  <div class="app-container profile-container">
+    <!-- El contenido se genera dinámicamente por Profile.js -->
+  </div>
 
-        <div class="payment-content">
-          <!-- Tab de Transacciones -->
-          <div class="tab-content active" id="transactions-tab">
-            <div class="transactions-header">
-              <div class="filter-controls">
-                <select id="transaction-filter" onchange="filterTransactions()">
-                  <option value="all">Todas las transacciones</option>
-                  <option value="completed">Completadas</option>
-                  <option value="pending">Pendientes</option>
-                  <option value="failed">Fallidas</option>
-                </select>
-                <button
-                  class="refresh-btn"
-                  onclick="refreshTransactionHistory()"
-                  title="Actualizar"
-                >
-                  <i class="fas fa-sync-alt"></i>
-                </button>
-              </div>
-            </div>
-            <div class="transactions-list" id="transactions-list">
-              <div class="loading-state">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Cargando historial de pagos...</p>
-              </div>
-            </div>
-          </div>
+  <!-- Firebase CDN Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
 
-          <!-- Tab de Suscripciones -->
-          <div class="tab-content" id="subscriptions-tab">
-            <div class="subscriptions-list" id="subscriptions-list">
-              <div class="loading-state">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Cargando suscripciones...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <!-- Main Module -->
+  <script type="module" src="src/main.js?v=2.0.0"></script>
+</body>
 
-      <!-- Modal de Selección de Avatar -->
-      <div class="avatar-modal" id="avatar-modal" style="display: none">
-        <div class="modal-overlay" tabindex="0"></div>
-        <div
-          class="modal-content"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="avatar-modal-title"
-        >
-          <div class="modal-header">
-            <h3 id="avatar-modal-title">
-              <i class="fas fa-images"></i> Seleccionar Avatar
-            </h3>
-            <button
-              class="modal-close"
-              type="button"
-              aria-label="Cerrar"
-              tabindex="0"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="avatars-grid" id="avatars-grid"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Navigation -->
-      <nav class="bottom-nav" aria-label="Navegación inferior">
-        <a href="index.html" class="nav-item">
-          <i class="fas fa-home"></i>
-          <span>Inicio</span>
-        </a>
-        <a href="single-player-new.html" class="nav-item">
-          <i class="fas fa-play"></i>
-          <span>Jugar</span>
-        </a>
-        <a href="ranking.html" class="nav-item">
-          <i class="fas fa-trophy"></i>
-          <span>Ranking</span>
-        </a>
-        <a href="logros.html" class="nav-item">
-          <i class="fas fa-medal"></i>
-          <span>Logros</span>
-        </a>
-        <a href="store.html" class="nav-item">
-          <i class="fas fa-store"></i>
-          <span>Tienda</span>
-        </a>
-      </nav>
-    </div>
-
-    <!-- Scripts -->
-    <script src="js/config/payment-config.js"></script>
-    <script src="js/modules/payments/currency-service.js"></script>
-    <script src="js/modules/payments/transaction-manager.js"></script>
-    <script src="js/modules/payments/payment-service.js"></script>
-    <script src="js/modules/payments/payment-history-ui.js"></script>
-    <script src="js/pages/perfil.js"></script>
-  </body>
 </html>
