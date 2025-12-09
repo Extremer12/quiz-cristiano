@@ -2,21 +2,173 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Quiz Cristiano - Pon a Prueba tu Fe</title>
 
-  <!-- PWA Meta Tags -->
+  <!-- SEO & Meta Tags -->
   <meta name="description"
-    content="Pon a prueba tu conocimiento bíblico con Quiz Cristiano. Juego educativo con preguntas del Antiguo y Nuevo Testamento." />
-  <meta name="theme-color" content="#ffd700" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Quiz Cristiano" />
+    content="El mejor juego de preguntas bíblicas. Desafía tu conocimiento, compite en rankings globales y aprende sobre la Biblia de forma divertida.">
+  <meta name="keywords" content="quiz biblico, juego cristiano, preguntas biblia, trivia cristiana, aprender biblia">
+  <meta name="author" content="Quiz Cristiano">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://quiz-cristiano-gaming.web.app/">
+  <meta property="og:title" content="Quiz Cristiano - Pon a Prueba tu Fe">
+  <meta property="og:description"
+    content="¿Cuánto sabes de la Biblia? Juega, aprende y compite con amigos en este emocionante quiz cristiano.">
+  <meta property="og:image" content="https://quiz-cristiano-gaming.web.app/assets/images/social-share.jpg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://quiz-cristiano-gaming.web.app/">
+  <meta property="twitter:title" content="Quiz Cristiano - Pon a Prueba tu Fe">
+  <meta property="twitter:description"
+    content="¿Cuánto sabes de la Biblia? Juega, aprende y compite con amigos en este emocionante quiz cristiano.">
+  <meta property="twitter:image" content="https://quiz-cristiano-gaming.web.app/assets/images/social-share.jpg">
+
+  <!-- PWA -->
+  <meta name="theme-color" content="#ffd700">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
 
   <!-- Icons -->
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
-  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
-  </body>
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+  <!-- Fonts & Styles -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Cinzel:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+
+  <!-- ADSENSE -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6335862771432698"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menu-overlay"></div>
+
+  <!-- Dropdown Menu -->
+  <div class="dropdown-menu" id="dropdown-menu">
+    <button class="dropdown-close">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="dropdown-header">
+      <h3>Quiz Cristiano</h3>
+      <p>Versión 2.1.0</p>
+    </div>
+    <div class="dropdown-content">
+      <a href="perfil.html" class="dropdown-item">
+        <i class="fas fa-user-circle"></i> Mi Perfil
+      </a>
+      <a href="ajustes.html" class="dropdown-item">
+        <i class="fas fa-cog"></i> Ajustes
+      </a>
+      <a href="#" class="dropdown-item" id="theme-toggle-item">
+        <i class="fas fa-moon"></i> Modo Oscuro
+      </a>
+      <a href="#" class="dropdown-item" id="install-app-item" style="display: none;">
+        <i class="fas fa-download"></i> Instalar App
+      </a>
+      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 20px;">
+      <a href="contacto.html" class="dropdown-item">
+        <i class="fas fa-envelope"></i> Contacto
+      </a>
+      <a href="politicas-privacidad.html" class="dropdown-item">
+        <i class="fas fa-shield-alt"></i> Privacidad
+      </a>
+      <a href="#" class="dropdown-item change-user-btn" style="color: #e74c3c;">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <button class="menu-toggle" aria-label="Abrir menú">
+        <i class="fas fa-bars"></i>
+      </button>
+      <h1 class="logo-title">Quiz</h1>
+      <div class="coins-display">
+        <i class="fas fa-coins"></i>
+        <span id="user-coins">0</span>
+      </div>
+    </header>
+
+    <!-- Mascot Section -->
+    <section class="mascot-section">
+      <div class="mascot-container">
+        <img src="assets/images/mascota.png" alt="Joy" class="mascot-image">
+      </div>
+      <div class="speech-bubble show" id="speech-bubble">
+        <p class="speech-text" id="mascot-text">¡Hola! ¿Listo para aprender hoy?</p>
+      </div>
+    </section>
+
+    <!-- Main Buttons -->
+    <main class="main-buttons">
+      <a href="single-player-new.html" class="game-button single-player">
+        <i class="fas fa-user"></i>
+        <span>Modo Individual</span>
+      </a>
+      <a href="multiplayer.html" class="game-button multiplayer">
+        <i class="fas fa-users"></i>
+        <span>Multijugador</span>
+      </a>
+    </main>
+
+    <!-- Player Stats -->
+    <section class="player-stats">
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-star"></i></div>
+        <div class="stat-value" id="user-level">1</div>
+        <div class="stat-label">Nivel</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-crown"></i></div>
+        <div class="stat-value" id="user-division">Bronce</div>
+        <div class="stat-label">División</div>
+      </div>
+    </section>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="store.html" class="nav-item">
+        <i class="fas fa-store"></i>
+        <span>Tienda</span>
+      </a>
+      <a href="ranking.html" class="nav-item">
+        <i class="fas fa-trophy"></i>
+        <span>Ranking</span>
+      </a>
+      <a href="single-player-new.html" class="nav-item play-button">
+        <div class="play-circle"></div>
+        <i class="fas fa-play"></i>
+      </a>
+      <a href="logros.html" class="nav-item">
+        <i class="fas fa-medal"></i>
+        <span>Logros</span>
+      </a>
+      <a href="mini-juego.html" class="nav-item">
+        <i class="fas fa-book-open"></i>
+        <span>Estudio</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="src/main.js"></script>
+
+  <!-- Preload critical images -->
+  <link rel="preload" as="image" href="assets/images/mascota.png">
+  <link rel="preload" as="image" href="assets/images/fondo.png">
+</body>
 
 </html>
