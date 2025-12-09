@@ -1,0 +1,307 @@
+/* Login Page Styles - Professional & Premium Design */
+:root {
+  --primary-color: #ffd700;
+  --secondary-color: #f39c12;
+  --bg-gradient-start: #0f1940;
+  --bg-gradient-end: #1e3c8a;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --error-color: #e74c3c;
+  --success-color: #2ecc71;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Lato', sans-serif;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, #142864 50%, var(--bg-gradient-end) 100%);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background overlay pattern */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Add a subtle vignette */
+body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.login-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 48px;
+  text-align: center;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 255, 255, 0.05);
+  max-width: 420px;
+  width: 90%;
+  position: relative;
+  z-index: 10;
+  animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-container {
+  margin-bottom: 24px;
+  position: relative;
+  display: inline-block;
+}
+
+.logo-icon {
+  font-size: 3rem;
+  background: linear-gradient(tobottom right, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+
+.logo-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(to right, #ffffff, #e0e0e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin-bottom: 32px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 300;
+  margin-top: 10px;
+}
+
+.benefits-card {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.benefits-title {
+  color: var(--primary-color);
+  font-family: 'Cinzel', serif;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.benefits-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.benefit-item:hover {
+  transform: translateX(5px);
+  color: #fff;
+}
+
+.benefit-item i {
+  color: var(--success-color);
+  font-size: 0.9rem;
+  background: rgba(46, 204, 113, 0.1);
+  padding: 6px;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Auth Buttons */
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  font-family: 'Lato', sans-serif;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.google-btn {
+  background: white;
+  color: #333;
+}
+
+.google-btn:hover {
+  background: #f8f9fa;
+}
+
+.facebook-btn {
+  background: #1877f2;
+  color: white;
+}
+
+.facebook-btn:hover {
+  background: #166fe5;
+}
+
+/* Button Icon styling */
+.btn-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.divider span {
+  padding: 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.7rem;
+}
+
+.skip-link {
+  display: inline-block;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  transition: color 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.skip-link:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Error Message */
+.error-message {
+  background: rgba(231, 76, 60, 0.2);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  color: #ff8d85;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: none;
+  font-size: 0.9rem;
+  animation: shake 0.5s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 32px 24px;
+    width: 85%;
+  }
+  
+  .logo-title {
+    font-size: 2rem;
+  }
+  
+  .benefits-list {
+    grid-template-columns: 1fr;
+  }
+}
