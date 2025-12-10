@@ -13,7 +13,7 @@ export function BottomNav(activePage = '') {
   ];
 
   return `
-    <nav class="bottom-nav">
+    <nav class="bottom-nav" style="view-transition-name: bottom-nav">
       ${items.map(item => `
         <a href="${item.href}" data-link class="nav-item ${activePage === item.page ? 'active' : ''}">
           <i class="fas ${item.icon}"></i>
