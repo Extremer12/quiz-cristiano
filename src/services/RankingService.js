@@ -174,7 +174,7 @@ class RankingService {
      * Genera un jugador (bot o real)
      */
     generatePlayer(isBot, division, position) {
-        const baseScore = Math.max(10, 100 - (position * 2) + (Math.random() * 10 - 5));
+        const baseScore = Math.round(Math.max(10, 100 - (position * 2) + (Math.random() * 10 - 5)));
 
         if (!isBot) {
             const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
@@ -210,10 +210,10 @@ class RankingService {
             id: `bot_${division.id}_${position}_${Date.now()}`,
             name: name,
             level: Math.floor(Math.random() * (division.maxLevel - division.minLevel + 1)) + division.minLevel,
-            score: Math.max(1, baseScore),
+            score: Math.round(Math.max(1, baseScore)),
             avatar: avatar,
-            monthlyGames: Math.floor(Math.random() * 80) + 20,
-            winRate: Math.random() * 0.6 + 0.3,
+            monthlyGames: Math.round(Math.random() * 80) + 20,
+            winRate: Math.round((Math.random() * 0.6 + 0.3) * 100) / 100,
             achievements: Math.floor(Math.random() * 25) + 5,
             favoriteVerse: verse,
             isBot: true,
