@@ -17,7 +17,9 @@ class StoreService {
                     price: 100,
                     currency: 'coins',
                     image: "assets/images/productos/avatares/Aguila.jpg",
-                    description: "Un símbolo de fuerza y visión."
+                    description: "Un símbolo de fuerza y visión.",
+                    badge: "POPULAR",
+                    featured: false
                 },
                 {
                     id: "avatar_2",
@@ -25,7 +27,9 @@ class StoreService {
                     price: 150,
                     currency: 'coins',
                     image: "assets/images/productos/avatares/Leon.jpg",
-                    description: "Valentía y liderazgo."
+                    description: "Valentía y liderazgo.",
+                    badge: "NUEVO",
+                    featured: true
                 },
                 {
                     id: "avatar_3",
@@ -33,7 +37,9 @@ class StoreService {
                     price: 120,
                     currency: 'coins',
                     image: "assets/images/productos/avatares/Ciervo.jpg",
-                    description: "Agilidad y gracia."
+                    description: "Agilidad y gracia.",
+                    badge: null,
+                    featured: false
                 }
             ],
             powerups: [
@@ -43,7 +49,9 @@ class StoreService {
                     price: 50,
                     currency: 'coins',
                     image: "assets/images/productos/powerups/50-50.png",
-                    description: "Elimina 2 opciones incorrectas."
+                    description: "Elimina 2 opciones incorrectas.",
+                    badge: "POPULAR",
+                    featured: false
                 },
                 {
                     id: "timeExtender",
@@ -51,7 +59,9 @@ class StoreService {
                     price: 50,
                     currency: 'coins',
                     image: "assets/images/productos/powerups/tiempo-extra.png",
-                    description: "Añade 15 segundos al reloj."
+                    description: "Añade 15 segundos al reloj.",
+                    badge: null,
+                    featured: false
                 },
                 {
                     id: "secondChance",
@@ -59,11 +69,24 @@ class StoreService {
                     price: 100,
                     currency: 'coins',
                     image: "assets/images/productos/powerups/segunda-oportunidad.png",
-                    description: "Revive si fallas una pregunta."
+                    description: "Revive si fallas una pregunta.",
+                    badge: "OFERTA",
+                    featured: true
                 }
             ],
             monedas: PaymentService.getProducts() // Productos de dinero real desde PaymentService
         };
+    }
+
+    getFeaturedProducts() {
+        const featured = [];
+        Object.keys(this.products).forEach(category => {
+            if (category !== 'monedas') {
+                const categoryFeatured = this.products[category].filter(p => p.featured);
+                featured.push(...categoryFeatured.map(p => ({ ...p, category })));
+            }
+        });
+        return featured;
     }
 
     getProductsByCategory(category) {

@@ -1,10 +1,11 @@
 /**
- * Componente de UI de Tienda
- * Maneja la renderización y eventos de la tienda.
+ * Componente de UI de Tienda - REDESIGN PROFESIONAL
+ * Estilo Supercell/Preguntados con productos destacados
  */
 
 import StoreService from '../services/StoreService.js';
 import PaymentService from '../services/PaymentService.js';
+import GameDataService from '../services/GameDataService.js';
 
 class Store {
     constructor() {
@@ -12,25 +13,80 @@ class Store {
     }
 
     init() {
-        // Solo inicializar si estamos en la página de tienda
         if (!document.querySelector('.store-container')) return;
 
-        console.log('🛒 Inicializando UI de Tienda...');
+        console.log('🛒 Inicializando Tienda Profesional...');
 
+        this.renderFeaturedSection();
         this.bindEvents();
         this.loadCategory(this.currentCategory);
+        this.updateCoinsDisplay();
 
-        // Inicializar PayPal si es necesario
         PaymentService.init();
     }
 
+    renderFeaturedSection() {
+        const featured = StoreService.getFeaturedProducts();
+        if (featured.length === 0) return;
+
+        const container = document.querySelector('.store-content');
+        if (!container) return;
+
+        const heroSection = document.createElement('section');
+        heroSection.className = 'featured-hero-section';
+        heroSection.innerHTML = `
+            <div class="hero-badge">⭐ DESTACADO DEL MES</div>
+            <div class="hero-content">
+                ${featured.map(product => `
+                    <div class="hero-product-card" data-id="${product.id}" data-category="${product.category}">
+                        <div class="hero-image">
+                            <img src="${product.image}" alt="${product.name}">
+                            ${product.badge ? `<span class="product-badge badge-${product.badge.toLowerCase()}">${product.badge}</span>` : ''}
+                        </div>
+                        <div class="hero-info">
+                            <h2>${product.name}</h2>
+                            <p>${product.description}</p>
+                            <div class="hero-price">
+                                <span class="price-value">${product.price}</span>
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <button class="btn-buy-hero" data-id="${product.id}" data-category="${product.category}">
+                                <i class="fas fa-shopping-cart"></i> COMPRAR AHORA
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        container.insertBefore(heroSection, container.firstChild);
+
+        // Bind events for hero products
+        heroSection.querySelectorAll('.btn-buy-hero').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.closest('.btn-buy-hero').dataset.id;
+                const category = e.target.closest('.btn-buy-hero').dataset.category;
+                StoreService.purchaseItem(id, category);
+                this.updateCoinsDisplay();
+            });
+        });
+    }
+
+    updateCoinsDisplay() {
+        const coinsEl = document.querySelector('.user-coins');
+        if (coinsEl) {
+            coinsEl.textContent = GameDataService.getCoins();
+        }
+    }
+
     bindEvents() {
-        // Navegación de categorías
-        const navButtons = document.querySelectorAll('.category-nav .nav-btn');
+        const navButtons = document.querySelectorAll('.category-nav .nav-btn, .category-btn');
         navButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const category = e.target.closest('.nav-btn').dataset.category;
-                this.switchCategory(category);
+                const category = e.target.closest('button').dataset.category;
+                if (category) {
+                    this.switchCategory(category);
+                }
             });
         });
     }
@@ -38,8 +94,7 @@ class Store {
     switchCategory(category) {
         this.currentCategory = category;
 
-        // Actualizar botones activos
-        document.querySelectorAll('.category-nav .nav-btn').forEach(btn => {
+        document.querySelectorAll('.category-btn').forEach(btn => {
             if (btn.dataset.category === category) {
                 btn.classList.add('active');
             } else {
@@ -47,12 +102,10 @@ class Store {
             }
         });
 
-        // Ocultar todas las secciones
         document.querySelectorAll('.store-section').forEach(section => {
             section.style.display = 'none';
         });
 
-        // Mostrar sección actual y cargar productos
         const activeSection = document.getElementById(`${category}-section`);
         if (activeSection) {
             activeSection.style.display = 'block';
@@ -67,18 +120,18 @@ class Store {
 
         if (!grid) return;
 
-        grid.innerHTML = ''; // Limpiar
+        grid.innerHTML = '';
 
         if (products.length === 0) {
-            grid.innerHTML = '<div class="empty-state">No hay productos disponibles</div>';
+            grid.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>No hay productos disponibles</p></div>';
             return;
         }
 
         products.forEach(product => {
             const card = document.createElement('div');
             card.className = 'product-card';
+            if (product.featured) card.classList.add('featured');
 
-            // Renderizado diferente para monedas (dinero real) vs items (monedas virtuales)
             if (category === 'monedas') {
                 this.renderRealMoneyProduct(card, product);
             } else {
@@ -88,7 +141,6 @@ class Store {
             grid.appendChild(card);
         });
 
-        // Si es categoría de monedas, renderizar botones de PayPal
         if (category === 'monedas') {
             PaymentService.renderButtons();
         }
@@ -96,6 +148,7 @@ class Store {
 
     renderVirtualProduct(card, product, category) {
         card.innerHTML = `
+            ${product.badge ? `<span class="product-badge badge-${product.badge.toLowerCase()}">${product.badge}</span>` : ''}
             <div class="product-image-container">
                 <img src="${product.image}" alt="${product.name}" class="product-image">
             </div>
@@ -106,13 +159,14 @@ class Store {
                     <span class="coins-price">${product.price} <i class="fas fa-coins"></i></span>
                 </div>
                 <button class="btn-buy" data-id="${product.id}">
-                    Comprar
+                    <i class="fas fa-shopping-cart"></i> Comprar
                 </button>
             </div>
         `;
 
         card.querySelector('.btn-buy').addEventListener('click', () => {
             StoreService.purchaseItem(product.id, category);
+            this.updateCoinsDisplay();
         });
     }
 
@@ -126,7 +180,6 @@ class Store {
                 <div class="product-price">
                     <span class="usd-price">$${product.price}</span>
                 </div>
-                <!-- Contenedor para botón de PayPal -->
                 <div class="paypal-button-container" data-product-id="${product.id}"></div>
             </div>
         `;
