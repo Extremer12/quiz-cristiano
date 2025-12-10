@@ -1,5 +1,4 @@
 import { auth, googleProvider, facebookProvider } from '../config/firebase.js';
-import { signInWithPopup, signInWithRedirect } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
 class AuthService {
     constructor() {
@@ -14,8 +13,9 @@ class AuthService {
 
     async loginWithGoogle() {
         try {
-            console.log('🔑 Iniciando login con Google...');
-            const result = await signInWithPopup(auth, googleProvider);
+            console.log('🔑 Iniciando login con Google (v8 compat)...');
+            // Usar método v8 directo, no import v9
+            const result = await auth.signInWithPopup(googleProvider);
             const user = result.user;
             console.log('✅ Login exitoso:', user.displayName);
             this.handleSuccessfulLogin(user, 'google');
@@ -23,7 +23,7 @@ class AuthService {
         } catch (error) {
             console.error('❌ Error en login Google:', error);
             if (error.code === 'auth/popup-blocked') {
-                await signInWithRedirect(auth, googleProvider);
+                await auth.signInWithRedirect(googleProvider);
             }
             throw error;
         }
@@ -31,8 +31,8 @@ class AuthService {
 
     async loginWithFacebook() {
         try {
-            console.log('🔑 Iniciando login con Facebook...');
-            const result = await signInWithPopup(auth, facebookProvider);
+            console.log('🔑 Iniciando login con Facebook (v8 compat)...');
+            const result = await auth.signInWithPopup(facebookProvider);
             const user = result.user;
             console.log('✅ Login exitoso:', user.displayName);
             this.handleSuccessfulLogin(user, 'facebook');
@@ -40,7 +40,7 @@ class AuthService {
         } catch (error) {
             console.error('❌ Error en login Facebook:', error);
             if (error.code === 'auth/popup-blocked') {
-                await signInWithRedirect(auth, facebookProvider);
+                await auth.signInWithRedirect(facebookProvider);
             }
             throw error;
         }
