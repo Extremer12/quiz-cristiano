@@ -36,7 +36,7 @@
 
   /* Variables de tema */
   --bg-primary: linear-gradient(135deg, #1e3c8a 0%, #3b82f6 100%);
-  --bg-image: url("../../assets/images/fondo.png");
+  --bg-image: url("/assets/images/fondo.png");
   --bg-overlay: rgba(30, 60, 138, 0.8);
   --surface-primary: rgba(0, 0, 0, 0.3);
   --surface-secondary: rgba(255, 255, 255, 0.1);
@@ -53,7 +53,7 @@
 
 [data-theme="dark"] {
   --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-  --bg-image: url("../../assets/images/fondo-black.png");
+  --bg-image: url("/assets/images/fondo-black.png");
   --bg-overlay: rgba(15, 15, 35, 0.9);
   --surface-primary: rgba(0, 0, 0, 0.5);
   --surface-secondary: rgba(255, 255, 255, 0.05);

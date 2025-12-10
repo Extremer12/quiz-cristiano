@@ -185,20 +185,4 @@ class DataMigration {
     }
 }
 
-// Exportar para uso en módulos
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = DataMigration;
-}
-
-// Auto-ejecutar si se carga como script standalone
-if (typeof window !== 'undefined') {
-    window.DataMigration = DataMigration;
-
-    // Ejecutar migración automáticamente al cargar
-    const migration = new DataMigration();
-    const result = migration.migrate();
-
-    if (result.migrated) {
-        console.log('✅ Datos migrados exitosamente al nuevo formato');
-    }
-}
+export default DataMigration;

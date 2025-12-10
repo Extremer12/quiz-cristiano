@@ -74,7 +74,7 @@ class AdsService {
         }
 
         try {
-            if (!window.pageAdsInitialized) {
+            if (!window.pageAdsInitialized && !window.google_ad_client) {
                 (window.adsbygoogle = window.adsbygoogle || []).push({
                     google_ad_client: this.adSenseConfig.publisherId,
                     enable_page_level_ads: true,
