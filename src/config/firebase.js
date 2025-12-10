@@ -17,7 +17,7 @@ const firebaseConfig = {
     appId: "1:67761249217:web:5c370622351a2b8200ad40"
 };
 
-let app, auth, db, analytics;
+let app, auth, db, analytics, googleProvider, facebookProvider;
 
 if (window.firebase) {
     try {
@@ -31,6 +31,10 @@ if (window.firebase) {
         db = firebase.firestore();
         analytics = firebase.analytics();
 
+        // Initialize providers
+        googleProvider = new firebase.auth.GoogleAuthProvider();
+        facebookProvider = new firebase.auth.FacebookAuthProvider();
+
         console.log('✅ Firebase initialized via src/config/firebase.js');
     } catch (error) {
         console.error('❌ Error initializing Firebase:', error);
@@ -39,5 +43,6 @@ if (window.firebase) {
     console.error('❌ Firebase SDK not loaded');
 }
 
-export { app, auth, db, analytics, firebaseConfig };
+export { app, auth, db, analytics, firebaseConfig, googleProvider, facebookProvider };
+
 
