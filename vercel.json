@@ -1,45 +1,5 @@
 {
   "version": 2,
-  "routes": [
-    {
-      "src": "/api/paypal/webhook",
-      "dest": "/api/paypal/webhook.js",
-      "methods": [
-        "POST"
-      ]
-    },
-    {
-      "src": "/api/paypal/orders",
-      "dest": "/api/paypal/orders.js",
-      "methods": [
-        "POST"
-      ]
-    },
-    {
-      "src": "/api/paypal/capture",
-      "dest": "/api/paypal/capture.js",
-      "methods": [
-        "POST"
-      ]
-    },
-    {
-      "src": "/api/paypal/subscriptions",
-      "dest": "/api/paypal/subscriptions.js",
-      "methods": [
-        "POST",
-        "GET",
-        "DELETE"
-      ]
-    },
-    {
-      "src": "/api/paypal/(.*)",
-      "dest": "/api/paypal/$1.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
   "env": {
     "NODE_ENV": "production"
   },
