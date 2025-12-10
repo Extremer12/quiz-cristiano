@@ -9,7 +9,7 @@
 :root {
     /* TEMA CLARO (por defecto) */
     --bg-primary: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
-    --bg-image: url('../assets/images/fondo.png'); /* Ajustado path */
+    --bg-image: url('/assets/images/fondo.png'); /* Ajustado path absoluto */
     --bg-overlay: rgba(30, 60, 138, 0.57);
     
     --text-primary: #ffffff;
@@ -41,7 +41,7 @@
 
 [data-theme="dark"] {
     --bg-primary: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d2d2d 100%);
-    --bg-image: url('../assets/images/fondo-black.png'); /* Ajustado path */
+    --bg-image: url('/assets/images/fondo-black.png'); /* Ajustado path absoluto */
     --bg-overlay: rgba(0, 0, 0, 0.8);
     
     --text-primary: #ffffff;
