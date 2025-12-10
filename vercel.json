@@ -1,13 +1,6 @@
 {
   "version": 2,
-  "name": "quiz-cristiano",
   "description": "Quiz Cristiano - Tienda con integración PayPal",
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/api/paypal/webhook",
