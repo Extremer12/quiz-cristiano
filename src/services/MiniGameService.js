@@ -83,8 +83,7 @@ class MiniGameService {
             { id: 'festejo', name: 'Joy Festejo', src: 'assets/images/joy-festejo.png', unlocked: true, unlockCondition: null },
             { id: 'consolando', name: 'Joy Consolando', src: 'assets/images/joy-consolando.png', unlocked: true, unlockCondition: null },
             { id: 'trofeo', name: 'Joy Trofeo', src: 'assets/images/joy-trofeo.png', unlocked: true, unlockCondition: null },
-            { id: 'corona', name: 'Joy Corona', src: 'assets/images/joy-corona.png', unlocked: false, unlockCondition: 'Nivel 10' },
-            { id: 'angel', name: 'Joy Ángel', src: 'assets/images/joy-angel.png', unlocked: false, unlockCondition: 'Racha de 30 días' }
+            { id: 'joy_corona', name: 'Joy Corona', src: 'assets/images/joy-corona.png', unlocked: false, unlockCondition: 'Nivel 10' }
         ];
 
         this.state = {
@@ -206,11 +205,7 @@ class MiniGameService {
             }
         }
 
-        // Verificar desbloqueo de ángel (racha 30)
-        if (this.state.studyStreak >= 30 && !this.state.unlockedOutfits.includes('angel')) {
-            this.state.unlockedOutfits.push('angel');
-            newOutfit = newOutfit ? `${newOutfit} y Joy Ángel` : 'Joy Ángel';
-        }
+
 
         this.saveData();
         GameDataService.addCoins(coinsEarned, 'joy_study');
