@@ -41,116 +41,127 @@ class MiniGame {
 
         return `
             <!-- Header -->
-            <header class="header">
+            <header class="mini-game-header">
                 <button class="back-btn" onclick="window.location.href='index.html'">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <h1>Estudio con Joy</h1>
-                <div class="header-stats">
-                    <span class="coins-display">
-                        <i class="fas fa-coins"></i>
-                        <span id="coins-count">${GameDataService.getCoins()}</span>
-                    </span>
+                <div class="game-title">
+                    <h1>Estudio con Joy</h1>
+                    <p>Aprende y crece</p>
+                </div>
+                <div class="player-progress">
+                    <div class="joy-level">
+                        <span class="joy-level-number" id="joy-level">${MiniGameService.state.joyLevel}</span>
+                        <span class="joy-level-text">Nivel</span>
+                    </div>
                 </div>
             </header>
 
             <!-- Joy Section -->
             <section class="joy-section active" id="joy-section">
                 <div class="joy-container">
-                    <div class="joy-avatar-container">
+                    <div class="joy-character" id="joy-character-container">
+                         <!-- Level Indicator (Absolute) -->
+                        <div class="joy-level-indicator">
+                            Nvl <span id="joy-level-badge">${MiniGameService.state.joyLevel}</span>
+                        </div>
                         <img src="${currentOutfitSrc}" alt="Joy" class="joy-avatar" id="joy-avatar">
-                        <div class="joy-level-badge">Nivel <span id="joy-level">1</span></div>
                     </div>
-                    <div class="speech-bubble" id="joy-message">
-                        ¡Hola! ¿Listo para aprender?
+                    
+                    <div class="joy-speech" id="joy-message">
+                        <p>¡Hola! ¿Listo para aprender?</p>
                     </div>
-                </div>
 
-                <div class="action-buttons">
-                    <button class="btn btn-primary btn-lg" id="start-study-btn">
-                        <i class="fas fa-book-open"></i> Estudiar Versículo
-                    </button>
-                    <button class="btn btn-secondary" id="customize-btn">
-                        <i class="fas fa-tshirt"></i> Personalizar Joy
-                    </button>
-                </div>
-
-                <div class="stats-row">
-                    <div class="stat-item">
-                        <i class="fas fa-fire"></i>
-                        <span id="study-streak">0</span> días racha
+                    <div class="joy-actions">
+                        <button class="study-btn" id="start-study-btn">
+                            <i class="fas fa-book-open"></i> Estudiar Versículo
+                        </button>
+                        <button class="customization-btn" id="customize-btn">
+                            <i class="fas fa-tshirt"></i> Personalizar Joy
+                        </button>
                     </div>
-                    <div class="stat-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span id="total-studies">0</span> estudios
+
+                    <div class="stats-row" style="margin-top: 20px; display: flex; gap: 15px; justify-content: center;">
+                        <div class="study-streak">
+                            <span class="streak-fire"><i class="fas fa-fire"></i></span>
+                            <span class="streak-number" id="study-streak">${MiniGameService.state.studyStreak}</span>
+                        </div>
+                        <div class="study-streak" style="background: rgba(52, 152, 219, 0.2); border-color: rgba(52, 152, 219, 0.3);">
+                            <span class="streak-fire" style="color: #3498db;"><i class="fas fa-check-circle"></i></span>
+                            <span class="streak-number" id="total-studies">${MiniGameService.state.totalStudies}</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- Study Section -->
-            <section class="study-section" id="study-section" style="display: none;">
-                <div class="study-card">
-                    <h3 id="verse-reference">Juan 3:16</h3>
-                    <p class="verse-text" id="verse-text">...</p>
+            <section class="study-section" id="study-section">
+                <div class="verse-card">
+                    <div class="verse-header">
+                         <h3 class="verse-reference" id="verse-reference">Juan 3:16</h3>
+                    </div>
+                    <div class="verse-text" id="verse-text">...</div>
                     
-                    <div class="timer-container">
-                        <div class="timer-circle">
-                            <span id="timer-display">00:30</span>
-                        </div>
-                        <p>Lee y medita en este versículo</p>
+                    <div class="study-timer">
+                        <i class="fas fa-hourglass-half timer-icon"></i>
+                        <span id="timer-display">00:30</span>
                     </div>
 
-                    <button class="btn btn-success btn-lg" id="complete-study-btn" disabled>
-                        <i class="fas fa-clock"></i> Estudiando...
-                    </button>
+                    <div class="study-actions">
+                        <button class="study-btn" id="complete-study-btn" disabled style="max-width: 250px;">
+                            <i class="fas fa-clock"></i> Estudiando...
+                        </button>
+                    </div>
                 </div>
             </section>
 
             <!-- Question Section -->
-            <section class="question-section" id="question-section" style="display: none;">
+            <section class="question-section" id="question-section">
                 <div class="question-card">
-                    <h3>Pregunta de Repaso</h3>
+                    <div class="question-header">
+                        <h3 class="question-title">Pregunta de Repaso</h3>
+                    </div>
                     <p id="question-text" class="question-text">...</p>
-                    <div class="answers-grid" id="answers-container">
+                    <div class="answers-container" id="answers-container">
                         <!-- Opciones generadas dinámicamente -->
                     </div>
                 </div>
             </section>
 
             <!-- Results Section -->
-            <section class="results-section" id="results-section" style="display: none;">
+            <section class="results-section" id="results-section">
                 <div class="results-card">
                     <div class="result-icon" id="result-icon"></div>
-                    <h2 id="result-title">¡Excelente!</h2>
-                    <p id="result-description">Has completado tu estudio diario.</p>
+                    <h2 class="result-title" id="result-title">¡Excelente!</h2>
+                    <p class="result-description" id="result-description">Has completado tu estudio diario.</p>
                     
-                    <div class="rewards-summary">
-                        <div class="reward-item">
+                    <div class="rewards-info">
+                        <h4>Recompensas</h4>
+                        <div class="reward-item" style="justify-content: center;">
                             <i class="fas fa-coins"></i>
-                            <span id="reward-coins">+0</span>
+                            <span id="reward-coins">+0 Monedas</span>
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" onclick="window.location.reload()">
-                        <i class="fas fa-redo"></i> Volver a Joy
-                    </button>
+                    <div class="result-actions">
+                        <button class="result-btn" onclick="window.location.reload()">
+                            <i class="fas fa-redo"></i> Volver a Joy
+                        </button>
+                    </div>
                 </div>
             </section>
 
             <!-- Customization Modal -->
-            <div class="modal" id="customization-modal" style="display: none;">
-                <div class="modal-overlay"></div>
+            <div class="customization-modal" id="customization-modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3>Armario de Joy</h3>
+                        <h3 class="modal-title">Armario de Joy</h3>
                         <button class="modal-close">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="outfits-grid" id="outfits-grid">
-                            <!-- Outfits generados dinámicamente -->
-                        </div>
+                    <div class="outfits-grid" id="outfits-grid">
+                        <!-- Outfits generados dinámicamente -->
                     </div>
                 </div>
             </div>
@@ -159,16 +170,18 @@ class MiniGame {
 
     updateStats() {
         const levelEl = document.getElementById('joy-level');
+        const levelBadgeEl = document.getElementById('joy-level-badge');
         const streakEl = document.getElementById('study-streak');
         const totalEl = document.getElementById('total-studies');
 
         if (levelEl) levelEl.textContent = MiniGameService.state.joyLevel;
+        if (levelBadgeEl) levelBadgeEl.textContent = MiniGameService.state.joyLevel;
         if (streakEl) streakEl.textContent = MiniGameService.state.studyStreak;
         if (totalEl) totalEl.textContent = MiniGameService.state.totalStudies;
     }
 
     updateJoyMessage() {
-        const messageEl = document.getElementById('joy-message');
+        const messageEl = document.querySelector('#joy-message p');
         if (messageEl) {
             messageEl.textContent = MiniGameService.getRandomMessage();
         }
@@ -182,8 +195,8 @@ class MiniGame {
 
         this.currentVerse = MiniGameService.getRandomVerse();
 
-        document.getElementById('joy-section').style.display = 'none';
-        document.getElementById('study-section').style.display = 'block';
+        document.getElementById('joy-section').classList.remove('active');
+        document.getElementById('study-section').classList.add('active');
 
         document.getElementById('verse-reference').textContent = this.currentVerse.reference;
         document.getElementById('verse-text').textContent = `"${this.currentVerse.text}"`;
@@ -212,16 +225,16 @@ class MiniGame {
     }
 
     showQuestion() {
-        document.getElementById('study-section').style.display = 'none';
-        document.getElementById('question-section').style.display = 'block';
+        document.getElementById('study-section').classList.remove('active');
+        document.getElementById('question-section').classList.add('active');
 
         document.getElementById('question-text').textContent = this.currentVerse.question.text;
 
         const container = document.getElementById('answers-container');
         container.innerHTML = this.currentVerse.question.options.map((option, index) => `
             <button class="answer-btn" data-index="${index}">
-                <span class="letter">${String.fromCharCode(65 + index)}</span>
-                <span class="text">${option}</span>
+                <span class="answer-letter">${String.fromCharCode(65 + index)}</span>
+                <span class="answer-text">${option}</span>
             </button>
         `).join('');
 
@@ -249,8 +262,8 @@ class MiniGame {
     showResults(isCorrect) {
         const result = MiniGameService.completeStudy(isCorrect);
 
-        document.getElementById('question-section').style.display = 'none';
-        document.getElementById('results-section').style.display = 'block';
+        document.getElementById('question-section').classList.remove('active');
+        document.getElementById('results-section').classList.add('active');
 
         const icon = document.getElementById('result-icon');
         const title = document.getElementById('result-title');
@@ -269,7 +282,7 @@ class MiniGame {
             desc.textContent = 'Lo importante es meditar en la Palabra.';
         }
 
-        coins.textContent = `+${result.coinsEarned}`;
+        coins.textContent = `+${result.coinsEarned} Monedas`;
 
         if (result.leveledUp) {
             this.showNotification(`¡Subiste al Nivel ${result.newLevel}!`, 'success');
@@ -286,15 +299,15 @@ class MiniGame {
         const currentOutfit = MiniGameService.state.currentOutfit;
 
         grid.innerHTML = outfits.map(outfit => `
-            <div class="outfit-card ${outfit.id === currentOutfit ? 'selected' : ''} ${!outfit.unlocked ? 'locked' : ''}" 
+            <div class="outfit-option ${outfit.id === currentOutfit ? 'selected' : ''} ${!outfit.unlocked ? 'locked' : ''}" 
                  data-id="${outfit.id}">
-                <img src="${outfit.src}" alt="${outfit.name}">
+                <img src="${outfit.src}" alt="${outfit.name}" class="outfit-preview">
                 <div class="outfit-name">${outfit.name}</div>
-                ${!outfit.unlocked ? `<div class="lock-info"><i class="fas fa-lock"></i> ${outfit.unlockCondition}</div>` : ''}
+                ${!outfit.unlocked ? `<div class="outfit-unlock"><i class="fas fa-lock"></i> ${outfit.unlockCondition}</div>` : ''}
             </div>
         `).join('');
 
-        grid.querySelectorAll('.outfit-card').forEach(card => {
+        grid.querySelectorAll('.outfit-option').forEach(card => {
             if (!card.classList.contains('locked')) {
                 card.addEventListener('click', () => {
                     MiniGameService.setOutfit(card.dataset.id);
@@ -305,11 +318,11 @@ class MiniGame {
             }
         });
 
-        modal.style.display = 'flex';
+        modal.classList.add('active');
     }
 
     closeCustomization() {
-        document.getElementById('customization-modal').style.display = 'none';
+        document.getElementById('customization-modal').classList.remove('active');
     }
 
     updateAvatar() {
