@@ -1,9 +1,22 @@
 import { defineConfig } from 'vite';
 import legacy from '@vitejs/plugin-legacy';
 import { VitePWA } from 'vite-plugin-pwa';
+import { imagetools } from 'vite-imagetools';
 
 export default defineConfig({
     plugins: [
+        imagetools({
+            defaultDirectives: (url) => {
+                if (url.searchParams.has('optimize')) {
+                    return new URLSearchParams({
+                        format: 'webp',
+                        quality: '80',
+                        width: '1920'
+                    });
+                }
+                return new URLSearchParams();
+            }
+        }),
         legacy({
             targets: ['defaults', 'not IE 11']
         }),
@@ -67,13 +80,29 @@ export default defineConfig({
         assetsDir: 'assets',
         sourcemap: false,
         minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true
+            }
+        },
         rollupOptions: {
             output: {
                 manualChunks: {
                     'vendor': ['./src/services/GameDataService.js', './src/services/RankingService.js']
-                }
+                },
+                assetFileNames: (assetInfo) => {
+                    let extType = assetInfo.name.split('.').at(1);
+                    if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+                        extType = 'images';
+                    }
+                    return `assets/${extType}/[name]-[hash][extname]`;
+                },
+                chunkFileNames: 'assets/js/[name]-[hash].js',
+                entryFileNames: 'assets/js/[name]-[hash].js'
             }
-        }
+        },
+        chunkSizeWarningLimit: 1000
     },
     server: {
         port: 3000,
