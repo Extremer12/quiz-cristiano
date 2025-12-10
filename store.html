@@ -15,98 +15,107 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
   <link rel="manifest" href="manifest.json" />
 
-  <button type="button" class="back-btn" id="back-btn" onclick="window.location.href='index.html'"
-    title="Volver al inicio">
-    <i class="fas fa-arrow-left"></i>
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/pages/store.css" />
+
+  <!-- Firebase Scripts (Compat v8) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+</head>
+title="Volver al inicio">
+<i class="fas fa-arrow-left"></i>
+</button>
+<div class="store-title">
+  <h1>Tienda</h1>
+  <p>Mejora tu experiencia de juego</p>
+</div>
+<div class="coins-display">
+  <i class="fas fa-coins"></i>
+  <span class="user-coins">0</span>
+</div>
+</header>
+
+<!-- Navegación de Categorías -->
+<nav class="category-navigation">
+  <button type="button" class="category-btn active nav-btn" data-category="avatares">
+    <i class="fas fa-user-circle"></i>
+    <span>Avatares</span>
   </button>
-  <div class="store-title">
-    <h1>Tienda</h1>
-    <p>Mejora tu experiencia de juego</p>
-  </div>
-  <div class="coins-display">
+  <button type="button" class="category-btn nav-btn" data-category="monedas">
     <i class="fas fa-coins"></i>
-    <span class="user-coins">0</span>
-  </div>
-  </header>
+    <span>Monedas</span>
+  </button>
+  <button type="button" class="category-btn nav-btn" data-category="powerups">
+    <i class="fas fa-bolt"></i>
+    <span>Power-ups</span>
+  </button>
+</nav>
 
-  <!-- Navegación de Categorías -->
-  <nav class="category-navigation">
-    <button type="button" class="category-btn active nav-btn" data-category="avatares">
-      <i class="fas fa-user-circle"></i>
-      <span>Avatares</span>
-    </button>
-    <button type="button" class="category-btn nav-btn" data-category="monedas">
-      <i class="fas fa-coins"></i>
-      <span>Monedas</span>
-    </button>
-    <button type="button" class="category-btn nav-btn" data-category="powerups">
-      <i class="fas fa-bolt"></i>
-      <span>Power-ups</span>
-    </button>
-  </nav>
+<!-- Contenido Principal -->
+<main class="store-content">
+  <!-- Sección de Avatares -->
+  <section class="category-section store-section active" id="avatares-section">
+    <div class="section-header">
+      <h2>Avatares</h2>
+      <p>Personaliza tu perfil con avatares únicos</p>
+    </div>
+    <div class="products-grid" id="avatares-products"></div>
+  </section>
 
-  <!-- Contenido Principal -->
-  <main class="store-content">
-    <!-- Sección de Avatares -->
-    <section class="category-section store-section active" id="avatares-section">
-      <div class="section-header">
-        <h2>Avatares</h2>
-        <p>Personaliza tu perfil con avatares únicos</p>
-      </div>
-      <div class="products-grid" id="avatares-products"></div>
-    </section>
+  <!-- Sección de Monedas -->
+  <section class="category-section store-section" id="monedas-section" style="display: none;">
+    <div class="section-header">
+      <h2>Paquetes de Monedas</h2>
+      <p>Obtén más monedas con bonificaciones por volumen</p>
+    </div>
+    <div class="products-grid" id="monedas-products"></div>
+  </section>
 
-    <!-- Sección de Monedas -->
-    <section class="category-section store-section" id="monedas-section" style="display: none;">
-      <div class="section-header">
-        <h2>Paquetes de Monedas</h2>
-        <p>Obtén más monedas con bonificaciones por volumen</p>
-      </div>
-      <div class="products-grid" id="monedas-products"></div>
-    </section>
+  <!-- Sección de Power-ups -->
+  <section class="category-section store-section" id="powerups-section" style="display: none;">
+    <div class="section-header">
+      <h2>Power-ups</h2>
+      <p>Mejora tu estrategia de juego con herramientas especiales</p>
+    </div>
+    <div class="products-grid" id="powerups-products"></div>
+  </section>
+</main>
 
-    <!-- Sección de Power-ups -->
-    <section class="category-section store-section" id="powerups-section" style="display: none;">
-      <div class="section-header">
-        <h2>Power-ups</h2>
-        <p>Mejora tu estrategia de juego con herramientas especiales</p>
-      </div>
-      <div class="products-grid" id="powerups-products"></div>
-    </section>
-  </main>
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item">
+    <i class="fas fa-home"></i>
+    <span>Inicio</span>
+  </a>
+  <a href="ranking.html" class="nav-item">
+    <i class="fas fa-trophy"></i>
+    <span>Ranking</span>
+  </a>
+  <a href="single-player-new.html" class="nav-item">
+    <i class="fas fa-play"></i>
+    <span>Jugar</span>
+  </a>
+  <a href="logros.html" class="nav-item">
+    <i class="fas fa-medal"></i>
+    <span>Logros</span>
+  </a>
+  <a href="store.html" class="nav-item active">
+    <i class="fas fa-store"></i>
+    <span>Tienda</span>
+  </a>
+</nav>
+</div>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="index.html" class="nav-item">
-      <i class="fas fa-home"></i>
-      <span>Inicio</span>
-    </a>
-    <a href="ranking.html" class="nav-item">
-      <i class="fas fa-trophy"></i>
-      <span>Ranking</span>
-    </a>
-    <a href="single-player-new.html" class="nav-item">
-      <i class="fas fa-play"></i>
-      <span>Jugar</span>
-    </a>
-    <a href="logros.html" class="nav-item">
-      <i class="fas fa-medal"></i>
-      <span>Logros</span>
-    </a>
-    <a href="store.html" class="nav-item active">
-      <i class="fas fa-store"></i>
-      <span>Tienda</span>
-    </a>
-  </nav>
-  </div>
-
-  <!-- Elementos de UI Globales (Mascota, Efectos) -->
-  <div class="mascot-container hidden">
-    <div class="mascot-message-bubble hidden"></div>
-    <img src="assets/images/mascot.png" alt="Mascota" class="mascot-image">
-  </div>
-  <div class="particles-container"></div>
-  <script type="module" src="src/main.js"></script>
-  </body>
+<!-- Elementos de UI Globales (Mascota, Efectos) -->
+<div class="mascot-container hidden">
+  <div class="mascot-message-bubble hidden"></div>
+  <img src="assets/images/mascot.png" alt="Mascota" class="mascot-image">
+</div>
+<div class="particles-container"></div>
+<script type="module" src="src/main.js"></script>
+</body>
 
 </html>

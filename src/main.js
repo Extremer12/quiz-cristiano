@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 1. Ejecutar migración de datos si es necesaria
     try {
-        const module = await import('./utils/DataMigration.js');
+        const module = await import('./utils/DataMigration.js?v=2.2');
         const DataMigration = module.default;
         const migration = new DataMigration();
         const result = migration.migrate();
