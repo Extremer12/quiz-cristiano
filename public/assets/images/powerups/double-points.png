@@ -1,9 +1,0 @@
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="200" height="200" fill="#1A202C"/>
-<circle cx="100" cy="100" r="60" fill="#D69E2E"/>
-<circle cx="100" cy="100" r="45" fill="#F6E05E"/>
-<text x="100" y="85" text-anchor="middle" fill="#2D3748" font-family="Arial" font-size="24" font-weight="bold">2X</text>
-<text x="100" y="105" text-anchor="middle" fill="#2D3748" font-family="Arial" font-size="12">PUNTOS</text>
-<path d="M70 130L85 115L100 125L115 110L130 125" stroke="#D69E2E" stroke-width="3" fill="none"/>
-<text x="100" y="175" text-anchor="middle" fill="#E2E8F0" font-family="Arial" font-size="12">PUNTOS DOBLES</text>
-</svg>

@@ -1,7 +1,0 @@
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="200" height="200" fill="#1A202C"/>
-<path d="M100 30L130 50V90C130 120 115 140 100 150C85 140 70 120 70 90V50L100 30Z" fill="#3182CE"/>
-<path d="M100 40L120 55V85C120 110 108 125 100 135C92 125 80 110 80 85V55L100 40Z" fill="#4299E1"/>
-<circle cx="100" cy="80" r="15" fill="#63B3ED"/>
-<text x="100" y="175" text-anchor="middle" fill="#E2E8F0" font-family="Arial" font-size="14" font-weight="bold">ESCUDO</text>
-</svg>
