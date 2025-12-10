@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "description": "Quiz Cristiano - Tienda con integración PayPal",
   "routes": [
     {
       "src": "/api/paypal/webhook",
