@@ -1,0 +1,962 @@
+/**
+ * ================================================
+ * MINI-JUEGO JOY CSS - ESTILO POU MEJORADO
+ * Quiz Cristiano - Joy como protagonista principal
+ * ================================================ */
+
+/* ============================================
+   IMPORTAR VARIABLES DE DARK-MODE.CSS
+   ============================================ */
+
+/* Las variables se heredan automáticamente de dark-mode.css */
+/* NO redefinir aquí para evitar conflictos */
+
+/* Variables locales específicas del mini-juego */
+:root {
+    /* Solo variables propias del mini-juego */
+    --joy-accent: #ff6b8a;
+    --joy-secondary: #4ecdc4;
+    --joy-success: #27ae60;
+    --joy-warning: #f39c12;
+    --joy-error: #e74c3c;
+    
+    /* Efectos específicos de Joy */
+    --joy-glow: 0 0 30px rgba(255, 107, 138, 0.4);
+    --study-glow: 0 0 25px rgba(78, 205, 196, 0.3);
+    
+    /* Transiciones específicas */
+    --joy-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   RESET Y BASE - USANDO VARIABLES GLOBALES
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    /* ✅ USAR VARIABLES DE DARK-MODE.CSS */
+    background: var(--bg-primary);
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    color: var(--text-primary);
+    overflow-x: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* ✅ OVERLAY SINCRONIZADO CON INDEX */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-overlay);
+    z-index: -1;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* ============================================
+   LAYOUT PRINCIPAL - CORREGIDO
+   ============================================ */
+
+.mini-game-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 80px; /* ✅ REDUCIDO para que el menú no se suba */
+}
+
+/* ============================================
+   HEADER - CON NIVEL SEPARADO DE JOY
+   ============================================ */
+
+.mini-game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    margin: 15px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.back-btn {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--joy-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.back-btn:hover {
+    background: var(--surface-accent);
+    transform: scale(1.05);
+}
+
+.game-title {
+    flex: 1;
+    text-align: center;
+    margin: 0 15px;
+}
+
+.game-title h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-accent);
+    margin-bottom: 3px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.game-title p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* ✅ NUEVO LAYOUT PARA STATS - VERTICAL */
+.player-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.joy-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 15px;
+    padding: 8px 12px;
+    min-width: 60px;
+}
+
+.joy-level-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-accent);
+    line-height: 1;
+}
+
+.joy-level-text {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    line-height: 1;
+}
+
+/* ✅ RACHA MÁS GRANDE Y PROMINENTE */
+.study-streak {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: 15px;
+    padding: 8px 12px;
+    min-width: 60px;
+}
+
+.streak-fire {
+    color: #e74c3c;
+    font-size: 1.2rem;
+    animation: fireFlicker 2s infinite;
+    line-height: 1;
+}
+
+.streak-number {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+@keyframes fireFlicker {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ============================================
+   SECCIÓN DE JOY - ESTILO POU MEJORADO
+   ============================================ */
+
+.joy-section {
+    margin: 20px;
+    padding: 40px 30px; /* ✅ MÁS PADDING VERTICAL */
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 25px; /* ✅ MÁS REDONDEADO */
+    box-shadow: var(--shadow-secondary);
+    text-align: center;
+    min-height: 500px; /* ✅ ALTURA MÍNIMA PARA DAR MÁS ESPACIO */
+}
+
+.joy-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px; /* ✅ MÁS ESPACIO ENTRE ELEMENTOS */
+    height: 100%;
+    justify-content: center;
+}
+
+/* ✅ JOY MUCHO MÁS GRANDE - PROTAGONISTA PRINCIPAL */
+.joy-character {
+    position: relative;
+    width: 250px; /* ✅ MÁS GRANDE (era 200px) */
+    height: 250px; /* ✅ MÁS GRANDE (era 200px) */
+    cursor: pointer;
+    transition: var(--joy-transition);
+    margin: 20px 0; /* ✅ MÁS MARGEN PARA RESPIRAR */
+}
+
+.joy-character:hover {
+    transform: scale(1.08); /* ✅ EFECTO HOVER MÁS SUAVE */
+}
+
+/* ✅ SIN BORDE DORADO - JOY NATURAL Y MÁS GRANDE */
+.joy-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: var(--shadow-primary);
+    transition: var(--joy-transition);
+    animation: joyFloat 4s ease-in-out infinite; /* ✅ ANIMACIÓN MÁS LENTA */
+    object-fit: cover;
+}
+
+.joy-character:hover .joy-avatar {
+    box-shadow: var(--joy-glow);
+}
+
+@keyframes joyFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); } /* ✅ MÁS MOVIMIENTO */
+}
+
+/* ✅ NIVEL FUERA DE LA MASCOTA - ARRIBA A LA IZQUIERDA */
+.joy-level-indicator {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    background: var(--text-accent);
+    color: #000;
+    padding: 8px 15px;
+    border-radius: 20px; /* ✅ MÁS REDONDEADO */
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-secondary);
+    border: 2px solid var(--surface-primary); /* ✅ BORDE PARA DESTACAR */
+    z-index: 10;
+}
+
+/* ✅ GLOBO DE DIÁLOGO MÁS GRANDE */
+.joy-speech {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 20px; /* ✅ MÁS REDONDEADO */
+    padding: 20px 30px; /* ✅ MÁS PADDING */
+    max-width: 400px; /* ✅ MÁS ANCHO */
+    position: relative;
+    margin-top: 20px;
+    box-shadow: var(--shadow-secondary);
+}
+
+.joy-speech::before {
+    content: '';
+    position: absolute;
+    top: -12px; /* ✅ MÁS GRANDE */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid var(--surface-secondary);
+}
+
+.joy-speech p {
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.5;
+    font-size: 1.1rem; /* ✅ TEXTO MÁS GRANDE */
+}
+
+/* ============================================
+   BOTONES SIMÉTRICOS - ESTILO POU
+   ============================================ */
+
+.joy-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px; /* ✅ ANCHO MÁXIMO PARA CONSISTENCIA */
+}
+
+.study-btn,
+.customization-btn {
+    width: 100%; /* ✅ ANCHO COMPLETO PARA SIMETRÍA */
+    padding: 18px 30px; /* ✅ MÁS PADDING */
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--joy-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center; /* ✅ CENTRADO PERFECTO */
+    gap: 12px;
+    border: none;
+    box-shadow: var(--shadow-secondary);
+}
+
+.study-btn {
+    background: linear-gradient(135deg, var(--text-accent), #e6c200);
+    color: #000;
+}
+
+.study-btn:hover {
+    transform: translateY(-3px); /* ✅ MÁS ELEVACIÓN */
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.study-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: var(--shadow-secondary);
+}
+
+.customization-btn {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: white;
+}
+
+.customization-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(155, 89, 182, 0.4);
+}
+
+/* ✅ ICONOS DE BOTONES MÁS GRANDES */
+.study-btn i,
+.customization-btn i {
+    font-size: 1.3rem;
+}
+
+/* ============================================
+   SECCIÓN DE ESTUDIO - MEJORADA
+   ============================================ */
+
+.study-section {
+    margin: 20px;
+    display: none;
+}
+
+.study-section.active {
+    display: block;
+}
+
+.verse-card {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 25px; /* ✅ MÁS REDONDEADO */
+    padding: 35px; /* ✅ MÁS PADDING */
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-secondary);
+}
+
+.verse-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.verse-reference {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem; /* ✅ MÁS GRANDE */
+    color: var(--text-accent);
+    margin-bottom: 10px;
+}
+
+.verse-text {
+    font-size: 1.3rem; /* ✅ MÁS GRANDE */
+    line-height: 1.6;
+    color: var(--text-primary);
+    font-style: italic;
+    text-align: center;
+    padding: 25px; /* ✅ MÁS PADDING */
+    background: var(--surface-secondary);
+    border-radius: 20px; /* ✅ MÁS REDONDEADO */
+    border-left: 4px solid var(--text-accent);
+    margin: 20px 0;
+}
+
+.study-timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 25px 0; /* ✅ MÁS MARGEN */
+    font-size: 1.2rem; /* ✅ MÁS GRANDE */
+    color: var(--text-secondary);
+}
+
+.timer-icon {
+    color: var(--text-accent);
+    animation: timerTick 1s infinite;
+    font-size: 1.3rem; /* ✅ MÁS GRANDE */
+}
+
+@keyframes timerTick {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.5; }
+}
+
+.study-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px; /* ✅ MÁS MARGEN */
+}
+
+/* ============================================
+   SECCIÓN DE PREGUNTAS - MEJORADA
+   ============================================ */
+
+.question-section {
+    margin: 20px;
+    display: none;
+}
+
+.question-section.active {
+    display: block;
+}
+
+.question-card {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 25px; /* ✅ MÁS REDONDEADO */
+    padding: 35px; /* ✅ MÁS PADDING */
+    box-shadow: var(--shadow-secondary);
+}
+
+.question-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.question-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem; /* ✅ MÁS GRANDE */
+    color: var(--text-accent);
+    margin-bottom: 10px;
+}
+
+.question-text {
+    font-size: 1.2rem; /* ✅ MÁS GRANDE */
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 30px; /* ✅ MÁS MARGEN */
+    text-align: center;
+}
+
+.answers-container {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.answer-btn {
+    background: var(--surface-secondary);
+    border: 2px solid var(--border-primary);
+    border-radius: 20px; /* ✅ MÁS REDONDEADO */
+    padding: 18px 20px; /* ✅ MÁS PADDING */
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--joy-transition);
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.1rem; /* ✅ MÁS GRANDE */
+}
+
+.answer-btn:hover {
+    background: var(--surface-accent);
+    border-color: var(--text-accent);
+    transform: translateY(-2px);
+}
+
+.answer-btn.correct {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    border-color: #27ae60;
+    color: white;
+}
+
+.answer-btn.incorrect {
+    background: linear-gradient(135deg, #e74c3c, #ec7063);
+    border-color: #e74c3c;
+    color: white;
+}
+
+.answer-letter {
+    width: 40px; /* ✅ MÁS GRANDE */
+    height: 40px; /* ✅ MÁS GRANDE */
+    border-radius: 50%;
+    background: var(--text-accent);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 1.1rem; /* ✅ MÁS GRANDE */
+}
+
+.answer-text {
+    flex: 1;
+}
+
+/* ============================================
+   SECCIÓN DE RESULTADOS - MEJORADA
+   ============================================ */
+
+.results-section {
+    margin: 20px;
+    display: none;
+}
+
+.results-section.active {
+    display: block;
+}
+
+.results-card {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 25px; /* ✅ MÁS REDONDEADO */
+    padding: 35px; /* ✅ MÁS PADDING */
+    box-shadow: var(--shadow-secondary);
+    text-align: center;
+}
+
+.result-icon {
+    font-size: 5rem; /* ✅ MÁS GRANDE */
+    margin-bottom: 25px; /* ✅ MÁS MARGEN */
+}
+
+.result-icon.success {
+    color: #27ae60;
+    animation: successPulse 2s infinite;
+}
+
+.result-icon.failure {
+    color: #e74c3c;
+    animation: failureShake 0.5s;
+}
+
+@keyframes successPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes failureShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.result-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.2rem; /* ✅ MÁS GRANDE */
+    color: var(--text-accent);
+    margin-bottom: 15px;
+}
+
+.result-description {
+    font-size: 1.2rem; /* ✅ MÁS GRANDE */
+    color: var(--text-secondary);
+    margin-bottom: 30px; /* ✅ MÁS MARGEN */
+    line-height: 1.5;
+}
+
+.rewards-info {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 20px; /* ✅ MÁS REDONDEADO */
+    padding: 25px; /* ✅ MÁS PADDING */
+    margin: 25px 0;
+}
+
+.rewards-info h4 {
+    color: var(--text-accent);
+    margin-bottom: 20px; /* ✅ MÁS MARGEN */
+    font-size: 1.2rem; /* ✅ MÁS GRANDE */
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* ✅ MÁS ESPACIO */
+    margin: 12px 0; /* ✅ MÁS MARGEN */
+    color: var(--text-primary);
+    font-size: 1.1rem; /* ✅ MÁS GRANDE */
+}
+
+.reward-item i {
+    color: var(--text-accent);
+    width: 25px; /* ✅ MÁS ANCHO */
+    font-size: 1.2rem; /* ✅ MÁS GRANDE */
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* ✅ MÁS ESPACIO */
+    margin-top: 30px; /* ✅ MÁS MARGEN */
+}
+
+.result-btn {
+    background: linear-gradient(135deg, var(--text-accent), #e6c200);
+    color: #000;
+    border: none;
+    padding: 18px 35px; /* ✅ MÁS PADDING */
+    border-radius: 25px;
+    font-size: 1.1rem; /* ✅ MÁS GRANDE */
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--joy-transition);
+    display: flex;
+    align-items: center;
+    gap: 12px; /* ✅ MÁS ESPACIO */
+}
+
+.result-btn:hover {
+    transform: translateY(-3px); /* ✅ MÁS ELEVACIÓN */
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.result-btn.secondary {
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+
+.result-btn.secondary:hover {
+    background: var(--surface-accent);
+}
+
+/* ============================================
+   MODAL DE PERSONALIZACIÓN - MEJORADO
+   ============================================ */
+
+.customization-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.customization-modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 25px; /* ✅ MÁS REDONDEADO */
+    padding: 35px; /* ✅ MÁS PADDING */
+    max-width: 550px; /* ✅ MÁS ANCHO */
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px; /* ✅ MÁS MARGEN */
+}
+
+.modal-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem; /* ✅ MÁS GRANDE */
+    color: var(--text-accent);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.8rem; /* ✅ MÁS GRANDE */
+    cursor: pointer;
+    padding: 8px; /* ✅ MÁS PADDING */
+    border-radius: 50%;
+    transition: var(--joy-transition);
+}
+
+.modal-close:hover {
+    background: var(--surface-secondary);
+}
+
+.outfits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* ✅ MÁS GRANDES */
+    gap: 20px; /* ✅ MÁS ESPACIO */
+    margin-bottom: 30px; /* ✅ MÁS MARGEN */
+}
+
+.outfit-option {
+    background: var(--surface-secondary);
+    border: 2px solid var(--border-primary);
+    border-radius: 20px; /* ✅ MÁS REDONDEADO */
+    padding: 20px; /* ✅ MÁS PADDING */
+    text-align: center;
+    cursor: pointer;
+    transition: var(--joy-transition);
+}
+
+.outfit-option:hover {
+    background: var(--surface-accent);
+    border-color: var(--text-accent);
+    transform: translateY(-3px); /* ✅ MÁS ELEVACIÓN */
+}
+
+.outfit-option.selected {
+    border-color: var(--text-accent);
+    background: rgba(255, 215, 0, 0.2);
+}
+
+.outfit-option.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.outfit-preview {
+    width: 90px; /* ✅ MÁS GRANDE */
+    height: 90px; /* ✅ MÁS GRANDE */
+    border-radius: 50%;
+    margin: 0 auto 15px; /* ✅ MÁS MARGEN */
+    object-fit: cover;
+}
+
+.outfit-name {
+    font-size: 1rem; /* ✅ MÁS GRANDE */
+    color: var(--text-primary);
+    margin-bottom: 8px; /* ✅ MÁS MARGEN */
+    font-weight: 600;
+}
+
+.outfit-unlock {
+    font-size: 0.85rem; /* ✅ MÁS GRANDE */
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   BOTTOM NAVIGATION
+   ============================================ */
+
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border-top: 1px solid var(--border-primary);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 15px;
+    transition: var(--joy-transition);
+    font-size: 0.8rem;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: var(--text-accent);
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.nav-item i {
+    font-size: 1.2rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .mini-game-header {
+        margin: 10px;
+        padding: 12px 15px;
+    }
+    
+    .joy-section, .verse-card, .question-card, .results-card {
+        margin: 15px;
+        padding: 25px 20px; /* ✅ MANTENER PADDING VERTICAL */
+    }
+    
+    /* ✅ JOY LIGERAMENTE MÁS PEQUEÑO EN MÓVILES PERO AÚN GRANDE */
+    .joy-character {
+        width: 200px; /* Reducido para móviles pero aún más grande que antes */
+        height: 200px;
+    }
+    
+    .study-actions, .result-actions {
+        flex-direction: column;
+    }
+    
+    .modal-content {
+        padding: 25px 20px;
+    }
+    
+    .outfits-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-title h1 {
+        font-size: 1.2rem;
+    }
+    
+    .player-progress {
+        gap: 8px;
+    }
+    
+    .verse-text {
+        font-size: 1.1rem;
+        padding: 20px;
+    }
+    
+    .question-text {
+        font-size: 1rem;
+    }
+    
+    /* ✅ JOY PARA PANTALLAS MUY PEQUEÑAS */
+    .joy-character {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .joy-speech {
+        padding: 15px 20px;
+        max-width: 320px;
+    }
+}
+
+/* ============================================
+   ANIMACIONES ADICIONALES
+   ============================================ */
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-content {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Efectos de entrada para las secciones */
+.joy-section, .study-section, .question-section, .results-section {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ✅ NUEVAS ANIMACIONES PARA BOTONES */
+@keyframes buttonPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.study-btn:not(:disabled):hover {
+    animation: buttonPulse 0.6s ease-in-out;
+}
+
+/* ✅ EFECTO ESPECIAL PARA JOY CUANDO SE INTERACTÚA */
+.joy-character.interacting {
+    animation: joyExcited 0.8s ease-in-out;
+}
+
+@keyframes joyExcited {
+    0%, 100% { transform: scale(1) translateY(0); }
+    25% { transform: scale(1.05) translateY(-5px); }
+    50% { transform: scale(1.08) translateY(-8px); }
+    75% { transform: scale(1.05) translateY(-5px); }
+}

@@ -1,0 +1,684 @@
+/**
+ * ================================================
+ * LOGROS CSS - SISTEMA DE GAMIFICACIÓN SINCRONIZADO
+ * Quiz Cristiano - Usando variables de dark-mode.css
+ * ================================================
+ */
+
+/* ============================================
+   VARIABLES LOCALES ESPECÍFICAS DE LOGROS
+   ============================================ */
+
+:root {
+    /* ✅ SOLO variables específicas de logros - NO redefinir las globales */
+    --achievement-common: #95a5a6;
+    --achievement-uncommon: #27ae60;
+    --achievement-rare: #3498db;
+    --achievement-legendary: #f39c12;
+    
+    /* Efectos específicos de logros */
+    --achievement-glow-common: 0 8px 25px rgba(149, 165, 166, 0.3);
+    --achievement-glow-uncommon: 0 8px 25px rgba(39, 174, 96, 0.3);
+    --achievement-glow-rare: 0 8px 25px rgba(52, 152, 219, 0.3);
+    --achievement-glow-legendary: 0 8px 25px rgba(243, 156, 18, 0.5);
+}
+
+/* ============================================
+   RESET Y BASE - SINCRONIZADO CON DARK-MODE.CSS
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    /* ✅ USAR VARIABLES GLOBALES DE DARK-MODE.CSS */
+    background: var(--bg-primary);
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    color: var(--text-primary);
+    overflow-x: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* ✅ OVERLAY SINCRONIZADO CON DARK-MODE.CSS */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-overlay);
+    z-index: -1;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* ============================================
+   LAYOUT PRINCIPAL
+   ============================================ */
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-bottom: 100px;
+}
+
+/* ============================================
+   HEADER SINCRONIZADO
+   ============================================ */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    /* ✅ USAR VARIABLES GLOBALES */
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    margin: 15px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-primary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.back-btn {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.back-btn:hover {
+    background: var(--surface-accent);
+    transform: scale(1.05);
+}
+
+.header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-accent);
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    flex: 1;
+    text-align: center;
+}
+
+.header-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.coins-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 15px;
+    padding: 8px 12px;
+    font-weight: 600;
+    color: var(--text-accent);
+    transition: all 0.3s ease;
+}
+
+.coins-display:hover {
+    background: rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+}
+
+.coins-display i {
+    color: var(--text-accent);
+    animation: coinSpin 3s linear infinite;
+}
+
+@keyframes coinSpin {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(180deg); }
+}
+
+/* ============================================
+   OVERVIEW CARDS SINCRONIZADAS
+   ============================================ */
+
+.achievements-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 15px;
+}
+
+.overview-card {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.overview-card:hover {
+    background: var(--surface-accent);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-secondary);
+}
+
+.overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.overview-card:hover::before {
+    left: 100%;
+}
+
+.overview-icon {
+    font-size: 2.5rem;
+    color: var(--text-accent);
+    margin-bottom: 10px;
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.overview-info h3 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.overview-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.progress-overview {
+    grid-column: 1 / -1;
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.progress-overview h3 {
+    margin-bottom: 15px;
+    color: var(--text-accent);
+    font-size: 1.1rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--text-accent), #e6c200);
+    border-radius: 10px;
+    transition: width 0.8s ease;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-percentage {
+    font-weight: bold;
+    color: var(--text-accent);
+    min-width: 50px;
+    text-align: right;
+}
+
+/* ============================================
+   FILTROS SINCRONIZADOS
+   ============================================ */
+
+.achievements-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 15px;
+    justify-content: center;
+}
+
+.filter-btn {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.3s ease;
+}
+
+.filter-btn:hover::before {
+    left: 100%;
+}
+
+.filter-btn:hover {
+    background: var(--surface-accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-secondary);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #3a86ff, #2563eb);
+    border-color: #3a86ff;
+    box-shadow: 0 8px 25px rgba(58, 134, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.filter-btn i {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.filter-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   ACHIEVEMENT CARDS SINCRONIZADAS
+   ============================================ */
+
+.achievements-container {
+    margin: 20px 15px;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.achievement-card {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    border-radius: 18px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.achievement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.achievement-card:hover::before {
+    left: 100%;
+}
+
+.achievement-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-secondary);
+    background: var(--surface-accent);
+}
+
+.achievement-card.locked {
+    opacity: 0.7;
+    filter: grayscale(50%);
+}
+
+.achievement-card.unlocked {
+    border-color: var(--achievement-uncommon);
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.achievement-card.unlocked::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(45deg, var(--achievement-uncommon), rgba(39, 174, 96, 0.5));
+    border-radius: 18px;
+    z-index: -1;
+    animation: unlockedGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes unlockedGlow {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.6; }
+}
+
+/* Efectos de rareza */
+.achievement-card.rarity-common:hover {
+    box-shadow: var(--achievement-glow-common);
+}
+
+.achievement-card.rarity-uncommon:hover {
+    box-shadow: var(--achievement-glow-uncommon);
+}
+
+.achievement-card.rarity-rare:hover {
+    box-shadow: var(--achievement-glow-rare);
+}
+
+.achievement-card.rarity-legendary:hover {
+    box-shadow: var(--achievement-glow-legendary);
+    animation: legendaryGlow 2s infinite alternate;
+}
+
+@keyframes legendaryGlow {
+    0% { box-shadow: var(--achievement-glow-legendary); }
+    100% { box-shadow: 0 15px 35px rgba(243, 156, 18, 0.7); }
+}
+
+/* ============================================
+   ICONOS DE ACHIEVEMENT
+   ============================================ */
+
+.achievement-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.achievement-icon.common {
+    background: linear-gradient(135deg, var(--achievement-common), #7f8c8d);
+}
+
+.achievement-icon.uncommon {
+    background: linear-gradient(135deg, var(--achievement-uncommon), #2ecc71);
+}
+
+.achievement-icon.rare {
+    background: linear-gradient(135deg, var(--achievement-rare), #5dade2);
+}
+
+.achievement-icon.legendary {
+    background: linear-gradient(135deg, var(--achievement-legendary), #e67e22);
+    animation: legendaryPulse 2s infinite;
+}
+
+@keyframes legendaryPulse {
+    0%, 100% { 
+        box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 12px 35px rgba(243, 156, 18, 0.5);
+        transform: scale(1.05);
+    }
+}
+
+.achievement-card:hover .achievement-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* ============================================
+   INFORMACIÓN DE ACHIEVEMENT
+   ============================================ */
+
+.achievement-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.achievement-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.achievement-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.achievement-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.achievement-points {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--text-accent);
+    font-weight: 600;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 4px 10px;
+    border-radius: 15px;
+}
+
+.achievement-rarity {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: var(--surface-secondary);
+}
+
+/* ============================================
+   BOTTOM NAVIGATION SINCRONIZADA
+   ============================================ */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 100;
+    border-top: 1px solid var(--border-primary);
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    padding: 8px 12px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: var(--text-accent);
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.nav-item i {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+    transition: transform 0.3s ease;
+}
+
+.nav-item:hover i {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+@media (max-width: 768px) {
+    .achievements-overview {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 15px 10px;
+    }
+    
+    .achievements-filters {
+        margin: 15px 10px;
+        gap: 8px;
+    }
+    
+    .filter-btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+    
+    .achievements-container {
+        margin: 15px 10px;
+    }
+    
+    .achievements-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .achievement-card {
+        padding: 16px;
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .achievement-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .achievements-overview {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .filter-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Final del archivo logros.css sincronizado */

@@ -1,0 +1,202 @@
+/**
+ * ================================================
+ * DARK MODE SYSTEM - SIN BOTÓN INDIVIDUAL
+ * Quiz Cristiano - Solo variables y temas
+ * ================================================
+ */
+
+/* ============================================
+   VARIABLES DE TEMA
+   ============================================ */
+
+:root {
+    /* TEMA CLARO (por defecto) */
+    --bg-primary: linear-gradient(135deg, #1e3c8a 0%, #142864 50%, #0f1940 100%);
+    --bg-image: url('../../assets/images/fondo.png');
+    --bg-overlay: rgba(30, 60, 138, 0.57);
+    
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-accent: #ffd700;
+    
+    --surface-primary: rgba(255, 255, 255, 0.1);
+    --surface-secondary: rgba(255, 255, 255, 0.15);
+    --surface-accent: rgba(255, 255, 255, 0.2);
+    
+    --border-primary: rgba(255, 255, 255, 0.2);
+    --border-secondary: rgba(255, 255, 255, 0.1);
+    
+    --shadow-primary: 0 8px 20px rgba(0, 0, 0, 0.3);
+    --shadow-secondary: 0 5px 15px rgba(0, 0, 0, 0.2);
+    
+    --backdrop-blur: blur(20px);
+    
+    /* Colores de estado */
+    --success: #27ae60;
+    --warning: #f39c12;
+    --error: #e74c3c;
+    --info: #3498db;
+}
+
+/* ============================================
+   TEMA OSCURO
+   ============================================ */
+
+[data-theme="dark"] {
+    --bg-primary: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d2d2d 100%);
+    --bg-image: url('../../assets/images/fondo-black.png');
+    --bg-overlay: rgba(0, 0, 0, 0.8);
+    
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-accent: #ffd700;
+    
+    --surface-primary: rgba(255, 255, 255, 0.05);
+    --surface-secondary: rgba(255, 255, 255, 0.08);
+    --surface-accent: rgba(255, 255, 255, 0.12);
+    
+    --border-primary: rgba(255, 255, 255, 0.1);
+    --border-secondary: rgba(255, 255, 255, 0.05);
+    
+    --shadow-primary: 0 8px 20px rgba(0, 0, 0, 0.6);
+    --shadow-secondary: 0 5px 15px rgba(0, 0, 0, 0.4);
+    
+    --backdrop-blur: blur(25px);
+}
+
+/* ============================================
+   APLICACIÓN DE VARIABLES
+   ============================================ */
+
+body {
+    background: var(--bg-primary);
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+body::before {
+    background: var(--bg-overlay);
+    transition: all 0.3s ease;
+}
+
+/* Superficies con backdrop */
+.header,
+.login-container,
+.player-info,
+.initial-phase,
+.category-selection,
+.main-game,
+.modal-content,
+.purchase-modal-content,
+.inventory-modal-content,
+.achievement-modal-content,
+.dropdown-menu,
+.overview-card,
+.achievement-card,
+.product-card,
+.bottom-nav,
+.mini-game-header,
+.joy-section,
+.study-section,
+.question-section,
+.results-section,
+.ranking-header,
+.podium-section,
+.my-position,
+.store-header,
+.powerups-section,
+.premium-section {
+    background: var(--surface-primary);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-primary);
+    transition: all 0.3s ease;
+}
+
+/* Superficies secundarias */
+.speech-bubble,
+.player-stats,
+.category-info,
+.bundle-preview,
+.benefits,
+.featured-item,
+.joy-speech,
+.verse-card,
+.question-card,
+.results-card {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-secondary);
+    transition: all 0.3s ease;
+}
+
+/* Texto */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+p, span, div {
+    color: var(--text-secondary);
+}
+
+.text-accent,
+.logo-title,
+.achievement-points,
+.coins-display,
+.price {
+    color: var(--text-accent) !important;
+}
+
+/* ============================================
+   EFECTOS ESPECÍFICOS PARA MODO OSCURO
+   ============================================ */
+
+[data-theme="dark"] .game-button:hover {
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .achievement-card.rarity-legendary:hover {
+    box-shadow: 0 15px 35px rgba(243, 156, 18, 0.6);
+}
+
+[data-theme="dark"] .product-card:hover {
+    background: var(--surface-accent);
+}
+
+[data-theme="dark"] .bottom-nav {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(25px);
+}
+
+[data-theme="dark"] .nav-item {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="dark"] .nav-item:hover,
+[data-theme="dark"] .nav-item.active {
+    color: #3a86ff;
+    background: rgba(58, 134, 255, 0.15);
+}
+
+/* ============================================
+   TRANSICIONES SUAVES
+   ============================================ */
+
+* {
+    transition: background-color 0.3s ease, 
+                border-color 0.3s ease, 
+                color 0.3s ease, 
+                box-shadow 0.3s ease;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Ajustes responsivos si es necesario */
+}

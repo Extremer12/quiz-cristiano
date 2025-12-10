@@ -1,0 +1,346 @@
+/**
+ * ================================================
+ * SAFARI COMPATIBILITY CSS FIXES
+ * Prefijos CSS para compatibilidad con Safari/iOS
+ * ================================================
+ */
+
+/* Backdrop Filter - Principal problema */
+.login-container,
+.header,
+.player-info,
+.initial-phase,
+.category-selection,
+.main-game,
+.modal-content,
+.purchase-modal-content,
+.inventory-modal-content,
+.achievement-modal-content,
+.dropdown-menu,
+.overview-card,
+.achievement-card,
+.product-card,
+.bottom-nav {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Safari 9+ */
+}
+
+/* Backdrop Filter - Intensidades menores */
+.menu-overlay,
+.modal {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Safari 9+ */
+}
+
+.category-card,
+.filter-btn {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Safari 9+ */
+}
+
+/* Backdrop Filter - Intensidades específicas */
+.speech-bubble,
+.notification,
+.achievement-notification {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px); /* Safari 9+ */
+}
+
+/* User Select - Prevenir selección de texto */
+.game-button,
+.nav-item,
+.btn,
+.option-btn,
+.action-btn,
+.login-btn,
+.category-card,
+.product-card,
+.achievement-card {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Appearance - Normalizar elementos de formulario */
+input[type="text"],
+input[type="email"],
+select,
+button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Transform - Animaciones y efectos */
+.game-button:hover,
+.nav-item:hover,
+.product-card:hover,
+.achievement-card:hover {
+    -webkit-transform: translateY(-3px);
+    -moz-transform: translateY(-3px);
+    -ms-transform: translateY(-3px);
+    transform: translateY(-3px);
+}
+
+/* Transform Scale */
+.mascot-container:hover,
+.back-btn:hover,
+.menu-toggle:hover {
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+/* Box Shadow - Efectos de sombra */
+.game-button,
+.product-card,
+.achievement-card,
+.overview-card {
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Border Radius - Bordes redondeados */
+.game-button,
+.login-btn,
+.option-btn,
+.btn,
+.product-card,
+.achievement-card,
+.overview-card,
+.modal-content {
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+
+/* Border Radius - Círculos */
+.back-btn,
+.menu-toggle,
+.mascot-image,
+.achievement-icon,
+.modal-icon {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
+/* Flex - Layout flexbox */
+.header-content,
+.player-info,
+.bottom-nav,
+.achievement-meta,
+.modal-footer {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+/* Flex Direction */
+.game-buttons,
+.achievements-grid,
+.store-grid {
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+/* Grid - Layout grid (Safari 10.1+) */
+.achievements-overview,
+.achievements-grid,
+.store-grid,
+.categories-grid {
+    display: -ms-grid;
+    display: grid;
+}
+
+/* Animation - Webkit específico */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@-webkit-keyframes pulse {
+    0%, 100% { -webkit-transform: scale(1); }
+    50% { -webkit-transform: scale(1.05); }
+}
+
+@-webkit-keyframes slideInLeft {
+    from { 
+        -webkit-transform: translateX(-20px);
+        opacity: 0; 
+    }
+    to { 
+        -webkit-transform: translateX(0);
+        opacity: 1; 
+    }
+}
+
+@-webkit-keyframes modalSlideIn {
+    from {
+        -webkit-transform: scale(0.8) translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        -webkit-transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Transition - Transiciones suaves */
+.game-button,
+.nav-item,
+.btn,
+.option-btn,
+.product-card,
+.achievement-card,
+.overview-card {
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+/* Filter - Efectos de filtro */
+.achievement-card.locked {
+    -webkit-filter: grayscale(50%);
+    -moz-filter: grayscale(50%);
+    -ms-filter: grayscale(50%);
+    filter: grayscale(50%);
+}
+
+.product-card.cannot-afford {
+    -webkit-filter: grayscale(30%);
+    -moz-filter: grayscale(30%);
+    -ms-filter: grayscale(30%);
+    filter: grayscale(30%);
+}
+
+/* Position Sticky - Safari necesita prefijo */
+.bottom-nav {
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+/* Scroll Behavior - Desplazamiento suave */
+html {
+    -webkit-scroll-behavior: smooth;
+    -moz-scroll-behavior: smooth;
+    -ms-scroll-behavior: smooth;
+    scroll-behavior: smooth;
+}
+
+/* Overflow Scrolling - iOS momentum scrolling */
+.achievements-grid,
+.store-grid,
+.inventory-grid,
+.modal-content {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Text Size Adjust - Prevenir zoom automático en iOS */
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+    font-size: 16px; /* Previene zoom en iOS */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+/* Tap Highlight - Quitar highlight en iOS */
+.game-button,
+.nav-item,
+.btn,
+.option-btn,
+.login-btn,
+.category-card,
+.product-card,
+.achievement-card {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+/* Safe Area - iPhone X+ notch support */
+@supports (padding: max(0px)) {
+    .header {
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+        padding-top: max(15px, env(safe-area-inset-top));
+    }
+    
+    .bottom-nav {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    
+    .container {
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+    }
+}
+
+/* iOS Specific Fixes */
+@supports (-webkit-touch-callout: none) {
+    /* Fix para inputs en iOS */
+    input[type="text"],
+    input[type="email"] {
+        border-radius: 0; /* Reset iOS rounded corners */
+        -webkit-border-radius: 25px;
+        border-radius: 25px;
+    }
+    
+    /* Fix para botones en iOS */
+    button,
+    .btn,
+    .game-button,
+    .login-btn {
+        border: none;
+        -webkit-border-radius: 15px;
+        border-radius: 15px;
+        -webkit-appearance: none;
+    }
+    
+    /* Fix para backdrop-filter fallback */
+    .login-container,
+    .modal-content {
+        background: rgba(30, 60, 120, 0.95);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+    }
+}
+
+/* Reduce motion para usuarios con preferencias de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        -webkit-animation-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        -webkit-animation-iteration-count: 1 !important;
+        animation-iteration-count: 1 !important;
+        -webkit-transition-duration: 0.01ms !important;
+        -o-transition-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* PWA específico - iOS */
+@media all and (display-mode: standalone) {
+    /* Cuando se ejecuta como PWA */
+    .header {
+        padding-top: max(20px, env(safe-area-inset-top, 20px));
+    }
+    
+    .app-container {
+        padding-top: env(safe-area-inset-top, 0);
+    }
+}
