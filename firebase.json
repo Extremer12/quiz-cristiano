@@ -8,12 +8,7 @@
       "README.md",
       "**/*.temp"
     ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
+    "rewrites": [],
     "headers": [
       {
         "source": "/sw.js",
