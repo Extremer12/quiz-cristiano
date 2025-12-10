@@ -70,7 +70,6 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
                     'vendor': ['./src/services/GameDataService.js', './src/services/RankingService.js']
                 }
             }
